@@ -1,4 +1,4 @@
-import { getUserData } from "../services/getUserData"
+import { getUserData } from "../../services/user-services/userCRUD"
 
 export const getUserTest = async (req, res) => {
     let data = await getUserData();

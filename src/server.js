@@ -3,7 +3,7 @@ import { configENV } from './config/configENV';
 import express from 'express';
 import { configLog } from './config/configLogServer';
 import { configStaticFiles } from './config/configStaticFiles';
-import { UserRouter } from './routes/UserAPI';
+import { UserRouter } from './routes/user/UserAPI';
 import { configBodyParse } from './config/configBodyParse';
 const app = express();
 
