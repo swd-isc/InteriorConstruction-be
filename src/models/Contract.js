@@ -27,7 +27,7 @@ const contractSchema = new Schema({
             values: ['CANCEL', 'PROCESSING', 'SUCCESS'],
             message: '{VALUE} is not supported.'
         },
-        required: true,
+        required: [true, 'Status required.'],
     }
 });
 

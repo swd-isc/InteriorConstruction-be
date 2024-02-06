@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const colorSchema = new Schema({
+const materialSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name required.'],
@@ -15,6 +15,6 @@ const colorSchema = new Schema({
     }
 });
 
-let Color = mongoose.model('color', colorSchema);
+let Material = mongoose.model('material', materialSchema);
 
-module.exports = Color;
+module.exports = Material;

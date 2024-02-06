@@ -1,41 +1,20 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-//TODO: This model not done yet. Just copy paste for a file
 const classificationSchema = new Schema({
-    email: {
+    classificationName: {
         type: String,
-        validate: {
-            validator: function (value) {
-                return /^[\w-\.]+@gmail\.com$/.test(value);
-            },
-            message: props => `${props.value} is not a valid email.`
-        },
-        required: [true, 'Email required.'],
-        unique: [true, 'Email must be unique.'],
+        required: [true, 'Classification name required.'],
+        unique: [true, 'Classification name must be unique.'],
         trim: true
     },
-    password: {
-        type: String,
-        required: [true, 'Password required.'],
-        minLength: [8, 'Password length at least 8 characters.'],
-        trim: true
-    },
-    role: {
+    type: {
         type: String,
         enum: {
-            values: ['CLIENT', 'ADMIN'],
+            values: ['PRODUCT', 'ROOM', 'STYLE'],
             message: '{VALUE} is not supported.'
         },
-        required: true,
-    },
-    logInMethod: {
-        type: String,
-        enum: {
-            values: ['DEFAULT', 'GOOGLE'],
-            message: '{VALUE} is not supported.'
-        },
-        required: true,
+        required: [true, 'Type required.'],
     }
 });
 

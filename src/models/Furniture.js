@@ -1,44 +1,49 @@
 import mongoose from 'mongoose';
+import Material from './Material';
+import Color from './Color';
+import Classification from './Classification';
 const Schema = mongoose.Schema;
 
-//TODO: This model not done yet. Just copy paste for a file
-const funitureSchema = new Schema({
-    email: {
+const furnitureSchema = new Schema({
+    name: {
         type: String,
-        validate: {
-            validator: function (value) {
-                return /^[\w-\.]+@gmail\.com$/.test(value);
-            },
-            message: props => `${props.value} is not a valid email.`
-        },
-        required: [true, 'Email required.'],
-        unique: [true, 'Email must be unique.'],
-        trim: true
+        required: [true, 'Name required.'],
     },
-    password: {
+    imgURL: {
         type: String,
-        required: [true, 'Password required.'],
-        minLength: [8, 'Password length at least 8 characters.'],
-        trim: true
+        required: false,
     },
-    role: {
+    materials: {
+        type: [Material],
+        required: [true, 'Materials required.'],
+    },
+    colors: {
+        type: [Color],
+        required: [true, 'Colors required.'],
+    },
+    sizes: {
+        type: String, //Example: D980 - R700 - C400/ D980 - R1880 - C400 mm
+        required: [true, 'Sizes required.'],
+    },
+    price: {
+        type: Number,
+        min: [0, 'Must be a positive number.'],
+        required: [true, 'Price required.'],
+    },
+    type: {
         type: String,
         enum: {
-            values: ['CLIENT', 'ADMIN'],
+            values: ['DEFAULT', 'CUSTOM'],
             message: '{VALUE} is not supported.'
         },
-        required: true,
+        required: [true, 'Type required.'],
     },
-    logInMethod: {
-        type: String,
-        enum: {
-            values: ['DEFAULT', 'GOOGLE'],
-            message: '{VALUE} is not supported.'
-        },
-        required: true,
+    classifications: {
+        type: [Classification],
+        required: [true, 'Classification required.'],
     }
 });
 
-let Funiture = mongoose.model('funiture', funitureSchema);
+let Furniture = mongoose.model('furniture', furnitureSchema);
 
-module.exports = Funiture;
+module.exports = Furniture;
