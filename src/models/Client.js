@@ -1,34 +1,46 @@
 import mongoose from 'mongoose';
+import Contract from './Contract'
 const Schema = mongoose.Schema;
 
 const clientSchema = new Schema({
     firstName: {
         type: String,
-        required: true,
+        required: [true, 'First name required.'],
     },
     lastName: {
         type: String,
-        required: true,
+        required: [true, 'Last name required.'],
     },
     birthDate: {
         type: Date,
-        required: true,
+        max: [
+            new Date('2006-01-01'),
+            ({ value }) => `${value} is not allowed. Client must be older than 18.`,
+        ],
+        required: [true, 'Birth date required.'],
     },
     phone: {
         type: String,
-        required: true,
+        validate: {
+            validator: function (value) {
+                return /((^(\+84|84|0){1})(3|5|7|8|9))+([0-9]{8})$/.test(value);
+            },
+            message: props => `${props.value} is not a valid VN phone number.`
+        },
+        required: [true, 'Phone required.'],
     },
     photoURL: {
         type: String,
-        required: true,
+        required: false,
     },
     accountId: {
-        type: ObjectId,
-        required: true,
+        type: Schema.Types.ObjectId,
+        required: [true, 'Account ID required.'],
+        ref: 'account'
     },
     contract: {
-        type: Array,
-        required: true,
+        type: [Contract],
+        required: false,
     }
 });
 
