@@ -12,13 +12,11 @@ const accountSchema = new Schema({
         },
         required: [true, 'Email required.'],
         unique: [true, 'Email must be unique.'],
-        trim: true
     },
     password: {
         type: String,
         required: [true, 'Password required.'],
         minLength: [8, 'Password length at least 8 characters.'],
-        trim: true
     },
     role: {
         type: String,
@@ -26,7 +24,7 @@ const accountSchema = new Schema({
             values: ['CLIENT', 'ADMIN'],
             message: '{VALUE} is not supported.'
         },
-        required: true,
+        required: [true, 'Role required.'],
     },
     logInMethod: {
         type: String,
@@ -34,7 +32,7 @@ const accountSchema = new Schema({
             values: ['DEFAULT', 'GOOGLE'],
             message: '{VALUE} is not supported.'
         },
-        required: true,
+        required: [true, 'Login method required.'],
     }
 });
 
