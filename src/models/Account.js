@@ -34,6 +34,9 @@ const accountSchema = new Schema({
         },
         required: [true, 'Login method required.'],
     }
+}, {
+    collection: 'account',
+    versionKey: false
 });
 
 let Account = mongoose.model('account', accountSchema);

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import Furniture from './Furniture'
-import Classification from './Classification'
+import { furnitureSchema } from './Furniture'
+import { classificationSchema } from './Classification'
 const Schema = mongoose.Schema;
 
 const designSchema = new Schema({
@@ -30,7 +30,7 @@ const designSchema = new Schema({
         required: [true, 'Type required.'],
     },
     furnitures: {
-        type: [Furniture],
+        type: [furnitureSchema],
         validate: {
             validator: async function (value) {
                 const Furniture = mongoose.model('furniture');
@@ -59,7 +59,7 @@ const designSchema = new Schema({
         required: [true, 'Furnitures required.'],
     },
     classifications: {
-        type: [Classification],
+        type: [classificationSchema],
         validate: {
             validator: async function (value) {
                 // Custom validator function to check if all elements in the array are valid ObjectId references
@@ -86,6 +86,9 @@ const designSchema = new Schema({
         },
         required: [true, 'Classifications required.'],
     }
+}, {
+    collection: 'design',
+    versionKey: false
 });
 
 let Design = mongoose.model('design', designSchema);

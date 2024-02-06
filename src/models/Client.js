@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Contract from './Contract'
+import { contractSchema } from './Contract'
 const Schema = mongoose.Schema;
 
 const clientSchema = new Schema({
@@ -38,10 +38,11 @@ const clientSchema = new Schema({
     accountId: {
         type: Schema.Types.ObjectId,
         required: [true, 'Account ID required.'],
-        ref: 'account'
+        ref: 'account',
+        unique: true
     },
     contract: {
-        type: [Contract],
+        type: [contractSchema],
         validate: {
             validator: async function (value) {
                 const Contract = mongoose.model('contract');
@@ -69,6 +70,9 @@ const clientSchema = new Schema({
         },
         required: false,
     }
+}, {
+    collection: 'client',
+    versionKey: false
 });
 
 let Client = mongoose.model('client', clientSchema);

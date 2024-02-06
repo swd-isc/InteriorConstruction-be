@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import Material from './Material';
-import Color from './Color';
-import Classification from './Classification';
+import { materialSchema } from './Material';
+import { colorSchema } from './Color';
+import { classificationSchema } from './Classification';
 const Schema = mongoose.Schema;
 
-const furnitureSchema = new Schema({
+export const furnitureSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name required.'],
@@ -14,11 +14,11 @@ const furnitureSchema = new Schema({
         required: false,
     },
     materials: {
-        type: [Material],
+        type: [materialSchema],
         required: [true, 'Materials required.'],
     },
     colors: {
-        type: [Color],
+        type: [colorSchema],
         required: [true, 'Colors required.'],
     },
     sizes: {
@@ -39,7 +39,7 @@ const furnitureSchema = new Schema({
         required: [true, 'Type required.'],
     },
     classifications: {
-        type: [Classification],
+        type: [classificationSchema],
         validate: {
             validator: async function (value) {
                 // Custom validator function to check if all elements in the array are valid ObjectId references
@@ -66,6 +66,9 @@ const furnitureSchema = new Schema({
         },
         required: [true, 'Classification required.'],
     }
+}, {
+    collection: 'furniture',
+    versionKey: false
 });
 
 let Furniture = mongoose.model('furniture', furnitureSchema);

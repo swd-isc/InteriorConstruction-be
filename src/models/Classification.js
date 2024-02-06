@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const classificationSchema = new Schema({
+export const classificationSchema = new Schema({
     classificationName: {
         type: String,
         required: [true, 'Classification name required.'],
@@ -16,6 +16,9 @@ const classificationSchema = new Schema({
         },
         required: [true, 'Type required.'],
     }
+}, {
+    collection: 'classification',
+    versionKey: false
 });
 
 let Classification = mongoose.model('classification', classificationSchema);

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const contractSchema = new Schema({
+export const contractSchema = new Schema({
     clientId: {
         type: Schema.Types.ObjectId,
         required: [true, 'Client ID required.'],
@@ -29,6 +29,9 @@ const contractSchema = new Schema({
         },
         required: [true, 'Status required.'],
     }
+}, {
+    collection: 'contract',
+    versionKey: false
 });
 
 let Contract = mongoose.model('contract', contractSchema);

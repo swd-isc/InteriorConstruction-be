@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const materialSchema = new Schema({
+export const materialSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name required.'],
@@ -13,6 +13,9 @@ const materialSchema = new Schema({
         required: [true, 'Description required.'],
         trim: true
     }
+}, {
+    collection: 'material',
+    versionKey: false
 });
 
 let Material = mongoose.model('material', materialSchema);
