@@ -42,6 +42,31 @@ const clientSchema = new Schema({
     },
     contract: {
         type: [Contract],
+        validate: {
+            validator: async function (value) {
+                const Contract = mongoose.model('contract');
+
+                if (!Array.isArray(value)) {
+                    return false; // Not an array
+                }
+
+                for (const contractId of value) {
+                    const contract = await Contract.findById(contractId);
+
+                    if (!contract) {
+                        return false; // Invalid ObjectId reference in the array
+                    }
+
+                    // Check if the clientId in the contract matches the _id of the client
+                    if (contract.clientId.toString() !== this._id.toString()) {
+                        return false; // ClientId in the contract doesn't match the _id of the client
+                    }
+                }
+
+                return true; // All elements are valid ObjectId references
+            },
+            message: "Invalid ObjectId references in the contracts array",
+        },
         required: false,
     }
 });

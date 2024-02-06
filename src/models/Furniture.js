@@ -40,6 +40,30 @@ const furnitureSchema = new Schema({
     },
     classifications: {
         type: [Classification],
+        validate: {
+            validator: async function (value) {
+                // Custom validator function to check if all elements in the array are valid ObjectId references
+                const Classification = mongoose.model('classification');
+
+                if (!Array.isArray(value)) {
+                    return false; // Not an array
+                }
+
+                for (const classificationId of value) {
+                    const classification = await Classification.findById(classificationId);
+                    if (!classification) {
+                        return false; // Invalid ObjectId reference in the array
+                    }
+                    console.log('check classification: ', classification);
+                    if (classification.type != 'PRODUCT' && classification.type != 'STYLE') {
+                        return false; // Invalid 'type' references in the classification array
+                    }
+                }
+
+                return true; // All elements are valid ObjectId references
+            },
+            message: "Invalid 'type' references in the classification array",
+        },
         required: [true, 'Classification required.'],
     }
 });
