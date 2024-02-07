@@ -58,5 +58,125 @@ export const accountData = [
     password: 'clientpass789',
     role: 'CLIENT',
     logInMethod: 'DEFAULT',
+  }, //10
+  {
+    email: 'JennyDoe1@gmail.com',
+    password: 'pass1234',
+    role: 'CLIENT',
+    logInMethod: 'DEFAULT',
   },
+  {
+    email: 'SmithAdmin2@gmail.com',
+    password: 'adminpass456',
+    role: 'ADMIN',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'JohnDoe3@gmail.com',
+    password: 'userpass789',
+    role: 'CLIENT',
+    logInMethod: 'GOOGLE',
+  },
+  {
+    email: 'BrownDesigner4@gmail.com',
+    password: 'clientpass123',
+    role: 'CLIENT',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'SuperAdmin5@gmail.com',
+    password: 'adminpass789',
+    role: 'ADMIN',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'AliceSmith6@gmail.com',
+    password: 'userpass456',
+    role: 'CLIENT',
+    logInMethod: 'GOOGLE',
+  },
+  {
+    email: 'WhiteDesigner7@gmail.com',
+    password: 'clientpass456',
+    role: 'CLIENT',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'TaylorAdmin8@gmail.com',
+    password: 'adminpass123',
+    role: 'ADMIN',
+    logInMethod: 'GOOGLE',
+  },
+  {
+    email: 'ClarkDesigner9@gmail.com',
+    password: 'userpass789',
+    role: 'CLIENT',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'Designer10@gmail.com',
+    password: 'clientpass789',
+    role: 'CLIENT',
+    logInMethod: 'DEFAULT',
+  }, //20
+  {
+    email: 'SophieMiller11@gmail.com',
+    password: 'pass1234',
+    role: 'CLIENT',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'LeoAnderson12@gmail.com',
+    password: 'adminpass',
+    role: 'ADMIN',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'EmmaWilson13@gmail.com',
+    password: 'userpass789',
+    role: 'CLIENT',
+    logInMethod: 'GOOGLE',
+  },
+  {
+    email: 'NoahPerez14@gmail.com',
+    password: 'clientpass123',
+    role: 'CLIENT',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'LilyHarris15@gmail.com',
+    password: 'adminpass789',
+    role: 'ADMIN',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'EthanMartin16@gmail.com',
+    password: 'userpass456',
+    role: 'CLIENT',
+    logInMethod: 'GOOGLE',
+  },
+  {
+    email: 'AvaJones17@gmail.com',
+    password: 'clientpass456',
+    role: 'CLIENT',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'MiaDavis18@gmail.com',
+    password: 'adminpass123',
+    role: 'ADMIN',
+    logInMethod: 'GOOGLE',
+  },
+  {
+    email: 'LucasMoore19@gmail.com',
+    password: 'userpass789',
+    role: 'CLIENT',
+    logInMethod: 'DEFAULT',
+  },
+  {
+    email: 'OliviaBrown20@gmail.com',
+    password: 'clientpass789',
+    role: 'CLIENT',
+    logInMethod: 'DEFAULT',
+  }, //30
 ];
