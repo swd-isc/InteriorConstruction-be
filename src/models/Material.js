@@ -5,7 +5,7 @@ export const materialSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name required.'],
-        unique: [true, 'Name must be unique.'],
+        unique: true,
         trim: true
     },
     description: {

@@ -5,7 +5,7 @@ export const classificationSchema = new Schema({
     classificationName: {
         type: String,
         required: [true, 'Classification name required.'],
-        unique: [true, 'Classification name must be unique.'],
+        unique: true,
         trim: true
     },
     type: {
