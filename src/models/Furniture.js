@@ -1,24 +1,90 @@
 import mongoose from 'mongoose';
-import { materialSchema } from './Material';
-import { colorSchema } from './Color';
-import { classificationSchema } from './Classification';
 const Schema = mongoose.Schema;
 
 export const furnitureSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name required.'],
+        unique: true
     },
     imgURL: {
         type: String,
         required: false,
     },
     materials: {
-        type: [materialSchema],
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'material', // Reference to the Material schema
+            validate: {
+                validator: async function (value) {
+                    const Material = mongoose.model('material');
+
+                    if (!value) {
+                        return false; // Value is required
+                    }
+
+                    const material = await Material.findById(value);
+                    if (!material) {
+                        return false; // Invalid ObjectId reference in the array
+                    }
+
+                    return true; // All elements are valid ObjectId references
+                },
+                message: props => `${props.value} is not a valid material ID.`
+            },
+        }],
+        validate: {
+            validator: async function (value) {
+                // Check for duplicate material ObjectId in the array
+                for (let i = 0; i < value.length - 1; i++) {
+                    for (let j = i + 1; j < value.length; j++) {
+                        if (value[i].toString() === value[j].toString()) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            },
+            message: 'Duplicate material ID in array'
+        },
         required: [true, 'Materials required.'],
     },
     colors: {
-        type: [colorSchema],
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'color', // Reference to the Color schema
+            validate: {
+                validator: async function (value) {
+                    const Color = mongoose.model('color');
+
+                    if (!value) {
+                        return false; // Value is required
+                    }
+
+                    const color = await Color.findById(value);
+                    if (!color) {
+                        return false; // Invalid ObjectId reference in the array
+                    }
+
+                    return true; // All elements are valid ObjectId references
+                },
+                message: props => `${props.value} is not a valid color ID.`
+            },
+        }],
+        validate: {
+            validator: async function (value) {
+                // Check for duplicate material ObjectId in the array
+                for (let i = 0; i < value.length - 1; i++) {
+                    for (let j = i + 1; j < value.length; j++) {
+                        if (value[i].toString() === value[j].toString()) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            },
+            message: 'Duplicate color ID in array'
+        },
         required: [true, 'Colors required.'],
     },
     sizes: {
@@ -39,7 +105,10 @@ export const furnitureSchema = new Schema({
         required: [true, 'Type required.'],
     },
     classifications: {
-        type: [classificationSchema],
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'classification', // Reference to the Classification schema
+        }],
         validate: {
             validator: async function (value) {
                 // Custom validator function to check if all elements in the array are valid ObjectId references
@@ -54,15 +123,23 @@ export const furnitureSchema = new Schema({
                     if (!classification) {
                         return false; // Invalid ObjectId reference in the array
                     }
-                    console.log('check classification: ', classification);
                     if (classification.type != 'PRODUCT' && classification.type != 'STYLE') {
+                        console.log('check classification err: ', classification);
                         return false; // Invalid 'type' references in the classification array
                     }
                 }
 
-                return true; // All elements are valid ObjectId references
+                // Check for duplicate material ObjectId in the array
+                for (let i = 0; i < value.length - 1; i++) {
+                    for (let j = i + 1; j < value.length; j++) {
+                        if (value[i].toString() === value[j].toString()) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
             },
-            message: "Invalid 'type' references in the classification array",
+            message: "Invalid classification array",
         },
         required: [true, 'Classification required.'],
     }

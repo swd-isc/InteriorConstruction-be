@@ -1,15 +1,47 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-export const contractSchema = new Schema({
+const contractSchema = new Schema({
     clientId: {
         type: Schema.Types.ObjectId,
         required: [true, 'Client ID required.'],
+        validate: {
+            validator: async function (value) {
+                const Client = mongoose.model('client');
+
+                if (!value) {
+                    return false; // Value is required
+                }
+
+                const client = await Client.findById(value);
+                if (!client) {
+                    return false; // Invalid ObjectId reference in the array
+                }
+                return true; // Return true if client exists, otherwise false
+            },
+            message: props => `${props.value} is not a valid client ID.`
+        },
         ref: 'client'
     },
     designId: {
         type: Schema.Types.ObjectId,
         required: [true, 'Design ID required.'],
+        validate: {
+            validator: async function (value) {
+                const Design = mongoose.model('design');
+
+                if (!value) {
+                    return false; // Value is required
+                }
+
+                const design = await Design.findById(value);
+                if (!design) {
+                    return false; // Invalid ObjectId reference in the array
+                }
+                return true; // Return true if design exists, otherwise false
+            },
+            message: props => `${props.value} is not a valid design ID.`
+        },
         ref: 'design'
     },
     contractPrice: {

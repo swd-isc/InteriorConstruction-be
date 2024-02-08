@@ -1,12 +1,11 @@
 import mongoose from 'mongoose';
-import { furnitureSchema } from './Furniture'
-import { classificationSchema } from './Classification'
 const Schema = mongoose.Schema;
 
 const designSchema = new Schema({
     designName: {
         type: String,
         required: [true, 'Design name required.'],
+        unique: true
     },
     description: {
         type: String,
@@ -30,7 +29,12 @@ const designSchema = new Schema({
         required: [true, 'Type required.'],
     },
     furnitures: {
-        type: [furnitureSchema],
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'furniture', // Reference to the Furniture schema
+            // Add a compound index to enforce uniqueness within each document's materials array
+            index: true,
+        }],
         validate: {
             validator: async function (value) {
                 const Furniture = mongoose.model('furniture');
@@ -52,14 +56,35 @@ const designSchema = new Schema({
                     }
                 }
 
-                return true; // All elements are valid ObjectId references
+                // Check for duplicate material ObjectId in the array
+                for (let i = 0; i < value.length - 1; i++) {
+                    for (let j = i + 1; j < value.length; j++) {
+                        if (value[i].toString() === value[j].toString()) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
             },
             message: "Invalid 'type' references in the furnitures array",
+        },
+        validate: {
+            validator: async function (value) {
+                // Check for duplicate color ObjectId in the array
+                const duplicates = value.filter((id, index, arr) => arr.indexOf(id) !== index);
+                return duplicates.length === 0;
+            },
+            message: props => `${props.value} is not a valid color ID.`
         },
         required: [true, 'Furnitures required.'],
     },
     classifications: {
-        type: [classificationSchema],
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'classification', // Reference to the Classification schema
+            // Add a compound index to enforce uniqueness within each document's materials array
+            index: true,
+        }],
         validate: {
             validator: async function (value) {
                 // Custom validator function to check if all elements in the array are valid ObjectId references
@@ -80,9 +105,17 @@ const designSchema = new Schema({
                     }
                 }
 
-                return true; // All elements are valid ObjectId references
+                // Check for duplicate material ObjectId in the array
+                for (let i = 0; i < value.length - 1; i++) {
+                    for (let j = i + 1; j < value.length; j++) {
+                        if (value[i].toString() === value[j].toString()) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
             },
-            message: "Invalid 'type' references in the classification array",
+            message: "Invalid classification array",
         },
         required: [true, 'Classifications required.'],
     }

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { contractSchema } from './Contract'
 const Schema = mongoose.Schema;
 
 const clientSchema = new Schema({
@@ -30,6 +29,7 @@ const clientSchema = new Schema({
             message: props => `${props.value} is not a valid VN phone number.`
         },
         required: [true, 'Phone required.'],
+        unique: true
     },
     photoURL: {
         type: String,
@@ -39,10 +39,30 @@ const clientSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: [true, 'Account ID required.'],
         ref: 'account',
+        validate: {
+            validator: async function (value) {
+                const Account = mongoose.model('account');
+
+                if (!value) {
+                    return false; // Value is required
+                }
+
+                const account = await Account.findById(value);
+                if (!account) {
+                    return false; // Invalid ObjectId reference in the array
+                }
+                return true; // Return true if account exists, otherwise false
+            },
+            message: props => `${props.value} is not a valid account ID.`
+        },
         unique: true
     },
     contract: {
-        type: [contractSchema],
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'contract', // Reference to the Material schema
+            unique: true
+        }],
         validate: {
             validator: async function (value) {
                 const Contract = mongoose.model('contract');
@@ -64,9 +84,17 @@ const clientSchema = new Schema({
                     }
                 }
 
-                return true; // All elements are valid ObjectId references
+                // Check for duplicate material ObjectId in the array
+                for (let i = 0; i < value.length - 1; i++) {
+                    for (let j = i + 1; j < value.length; j++) {
+                        if (value[i].toString() === value[j].toString()) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
             },
-            message: "Invalid ObjectId references in the contracts array",
+            message: "Invalid contracts array",
         },
         required: false,
     }

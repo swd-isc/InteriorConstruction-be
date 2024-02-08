@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-export const materialSchema = new Schema({
+const materialSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name required.'],
