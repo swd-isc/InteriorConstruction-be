@@ -7,6 +7,7 @@ import { UserRouter } from '../routes/user/UserAPI';
 import { AccountRouter } from '../routes/account/AccountAPI';
 import { configBodyParse } from '../config/configBodyParse';
 import { configCORS } from '../config/configCORS';
+import { ColorRouter } from '../routes/color/ColorAPI';
 const app = express();
 
 //Config .env
@@ -29,6 +30,9 @@ UserRouter(app);
 
 //Account routes
 AccountRouter(app);
+
+//Color routes
+ColorRouter(app);
 
 const port = process.env.PORT || 8888;
 
