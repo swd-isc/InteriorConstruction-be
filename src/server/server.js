@@ -4,6 +4,7 @@ import express from 'express';
 import { configLog } from '../config/configLogServer';
 import { configStaticFiles } from '../config/configStaticFiles';
 import { UserRouter } from '../routes/user/UserAPI';
+import { AccountRouter } from '../routes/account/AccountAPI';
 import { configBodyParse } from '../config/configBodyParse';
 import { configCORS } from '../config/configCORS';
 const app = express();
@@ -25,6 +26,9 @@ configStaticFiles(app);
 
 //User routes
 UserRouter(app);
+
+//Account routes
+AccountRouter(app);
 
 const port = process.env.PORT || 8888;
 
