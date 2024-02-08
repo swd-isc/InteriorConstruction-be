@@ -32,8 +32,6 @@ const designSchema = new Schema({
         type: [{
             type: Schema.Types.ObjectId,
             ref: 'furniture', // Reference to the Furniture schema
-            // Add a compound index to enforce uniqueness within each document's materials array
-            index: true,
         }],
         validate: {
             validator: async function (value) {
@@ -52,11 +50,12 @@ const designSchema = new Schema({
 
                     // Check conditions based on the type of Design
                     if (this.type === 'DEFAULT' && furniture.type !== 'DEFAULT') {
+                        console.log('wrong type furniture: ', furniture._id);
                         return false; // Furniture type must be 'DEFAULT' for 'DEFAULT' Design
                     }
                 }
 
-                // Check for duplicate material ObjectId in the array
+                // Check for duplicate furniture ObjectId in the array
                 for (let i = 0; i < value.length - 1; i++) {
                     for (let j = i + 1; j < value.length; j++) {
                         if (value[i].toString() === value[j].toString()) {
@@ -66,15 +65,7 @@ const designSchema = new Schema({
                 }
                 return true;
             },
-            message: "Invalid 'type' references in the furnitures array",
-        },
-        validate: {
-            validator: async function (value) {
-                // Check for duplicate color ObjectId in the array
-                const duplicates = value.filter((id, index, arr) => arr.indexOf(id) !== index);
-                return duplicates.length === 0;
-            },
-            message: props => `${props.value} is not a valid color ID.`
+            message: "Invalid furnitures array",
         },
         required: [true, 'Furnitures required.'],
     },
@@ -82,8 +73,6 @@ const designSchema = new Schema({
         type: [{
             type: Schema.Types.ObjectId,
             ref: 'classification', // Reference to the Classification schema
-            // Add a compound index to enforce uniqueness within each document's materials array
-            index: true,
         }],
         validate: {
             validator: async function (value) {
@@ -99,8 +88,8 @@ const designSchema = new Schema({
                     if (!classification) {
                         return false; // Invalid ObjectId reference in the array
                     }
-                    console.log('check classification: ', classification);
                     if (classification.type != 'ROOM' && classification.type != 'STYLE') {
+                        console.log('wrong classification: ', classification);
                         return false; // Invalid 'type' references in the classification array
                     }
                 }

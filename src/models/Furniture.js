@@ -73,7 +73,7 @@ export const furnitureSchema = new Schema({
         }],
         validate: {
             validator: async function (value) {
-                // Check for duplicate material ObjectId in the array
+                // Check for duplicate color ObjectId in the array
                 for (let i = 0; i < value.length - 1; i++) {
                     for (let j = i + 1; j < value.length; j++) {
                         if (value[i].toString() === value[j].toString()) {
@@ -129,7 +129,7 @@ export const furnitureSchema = new Schema({
                     }
                 }
 
-                // Check for duplicate material ObjectId in the array
+                // Check for duplicate classification ObjectId in the array
                 for (let i = 0; i < value.length - 1; i++) {
                     for (let j = i + 1; j < value.length; j++) {
                         if (value[i].toString() === value[j].toString()) {

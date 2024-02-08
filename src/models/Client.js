@@ -84,14 +84,14 @@ const clientSchema = new Schema({
                     }
                 }
 
-                // Check for duplicate material ObjectId in the array
-                for (let i = 0; i < value.length - 1; i++) {
-                    for (let j = i + 1; j < value.length; j++) {
-                        if (value[i].toString() === value[j].toString()) {
-                            return false;
-                        }
-                    }
-                }
+                // Check for duplicate contract ObjectId in the array
+                // for (let i = 0; i < value.length - 1; i++) {
+                //     for (let j = i + 1; j < value.length; j++) {
+                //         if (value[i].toString() === value[j].toString()) {
+                //             return false;
+                //         }
+                //     }
+                // }
                 return true;
             },
             message: "Invalid contracts array",
