@@ -6,6 +6,7 @@ import { configStaticFiles } from '../config/configStaticFiles';
 import { UserRouter } from '../routes/user/UserAPI';
 import { configBodyParse } from '../config/configBodyParse';
 import { configCORS } from '../config/configCORS';
+import { ColorRouter } from '../routes/color/ColorAPI';
 const app = express();
 
 //Config .env
@@ -25,6 +26,9 @@ configStaticFiles(app);
 
 //User routes
 UserRouter(app);
+
+//Color routes
+ColorRouter(app);
 
 const port = process.env.PORT || 8888;
 
