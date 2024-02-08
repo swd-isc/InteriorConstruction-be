@@ -57,7 +57,7 @@ const clientSchema = new Schema({
         },
         unique: true
     },
-    contract: {
+    contracts: {
         type: [{
             type: Schema.Types.ObjectId,
             ref: 'contract', // Reference to the Material schema

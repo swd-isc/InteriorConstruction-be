@@ -40,6 +40,27 @@ export const getUserData = async () => {
     //     // Close the database connection
     //     mongoose.connection.close();
     // }
+    try {
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' }).then(async () => {
+            // Iterate over the array of fake accounts and save each to the database
+            for (let i = 0; i < clientData.length; i++) {
+                try {
+                    let data = await Client.findOneAndUpdate({ firstName: clientData[i].firstName, lastName: clientData[i].lastName }, { contracts: clientData[i].contracts }).exec();
+                    console.log('ok: ', data);
+                } catch (error) {
+                    console.error('client', i, 'error:', error.message);
+                }
+            }
+
+            console.log('Fake accounts saved to the database!');
+        })
+    } catch (error) {
+        console.error(error.message);
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
     return {
         name: "Tuan Kiet",
         age: 21,
