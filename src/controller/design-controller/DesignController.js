@@ -1,7 +1,7 @@
-const accountRepository = require("../../services/account-services/accountServices");
+const designRepository = require("../../services/design-services/designServices");
 
-exports.getAccounts = async (req, res) => {
-  let data = await accountRepository.getAccounts(req.params.page);
+exports.getDesigns = async (req, res) => {
+  let data = await designRepository.getDesigns(req.params.page);
   if (!data.error) {
     return res.status(200).json({
       status: 200,
@@ -16,12 +16,12 @@ exports.getAccounts = async (req, res) => {
   }
 };
 
-exports.getAccountById = async (req, res) => {
-  let data = await accountRepository.getAccountById(req.params.id);
+exports.getDesignById = async (req, res) => {
+  let data = await designRepository.getDesignById(req.params.id);
   if (!data.error) {
     return res.status(200).json({
       status: 200,
-      data: account,
+      data: data,
       message: "OK",
     });
   } else {

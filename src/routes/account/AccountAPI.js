@@ -4,8 +4,8 @@ import accountController from "../../controller/account-controller/AccountContro
 const router = express.Router();
 
 const AccountRouter = (app) => {
-  router.get("/", accountController.getAccounts);
-  router.get("/:iddd", accountController.getAccountById)
+  router.get("/page/:page", accountController.getAccounts);
+  router.get("/:id", accountController.getAccountById)
 
   return app.use("/account", router);
 };
