@@ -8,6 +8,8 @@ import Color from '../../models/Color';
 import { colorData } from '../../sample-data/ColorData';
 import Classification from '../../models/Classification';
 import { classificationData } from '../../sample-data/ClassificationData';
+import Furniture from '../../models/Furniture';
+import { furnitureData } from '../../sample-data/FurnitureData';
 
 import mongoose from "mongoose";
 
@@ -16,9 +18,9 @@ export const getUserData = async () => {
         const url = process.env.URL_DB;
         await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' }).then(async () => {
             // Iterate over the array of fake accounts and save each to the database
-            for (let i = 0; i < classificationData.length; i++) {
+            for (let i = 0; i < furnitureData.length; i++) {
                 try {
-                    const account = new Classification(classificationData[i]);
+                    const account = new Furniture(furnitureData[i]);
                     await account.save();
                     console.log('ok: ', i);
                 } catch (error) {
