@@ -239,12 +239,4 @@ export const clientData = [
         photoURL: 'https://example.com/olivia_brown.jpg',
         accountId: '65c3ab6ccde89b612a97f7aa',
     }, //30
-    {
-        firstName: 'Nobita',
-        lastName: 'Chan',
-        birthDate: '1996-10-12',
-        phone: '+84723456800',
-        photoURL: 'https://example.com/olivia_brown.jpg',
-        accountId: '65c3ab6ccde89b612a97f7aa',
-    },
 ];

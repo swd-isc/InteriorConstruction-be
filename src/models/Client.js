@@ -61,7 +61,6 @@ const clientSchema = new Schema({
         type: [{
             type: Schema.Types.ObjectId,
             ref: 'contract', // Reference to the Material schema
-            unique: true
         }],
         validate: {
             validator: async function (value) {
