@@ -1,7 +1,7 @@
-const contractRepository = require("../../services/contract-services/contractServices");
+const accountRepository = require("../../services/account-services/accountServices");
 
-exports.getContracts = async (req, res) => {
-  let data = await contractRepository.getContracts(req.params.page);
+exports.getAccounts = async (req, res) => {
+  let data = await accountRepository.getAccounts(req.params.page);
   if (!data.error) {
     return res.status(200).json({
       status: 200,
@@ -16,12 +16,12 @@ exports.getContracts = async (req, res) => {
   }
 };
 
-exports.getContractById = async (req, res) => {
-  let data = await contractRepository.getContractById(req.params.id);
+exports.getAccountById = async (req, res) => {
+  let data = await accountRepository.getAccountById(req.params.id);
   if (!data.error) {
     return res.status(200).json({
       status: 200,
-      data: data,
+      data: account,
       message: "OK",
     });
   } else {

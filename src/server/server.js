@@ -4,6 +4,10 @@ import express from 'express';
 import { configLog } from '../config/configLogServer';
 import { configStaticFiles } from '../config/configStaticFiles';
 import { UserRouter } from '../routes/user/UserAPI';
+import { AccountRouter } from '../routes/account/AccountAPI';
+import { ClientRouter } from '../routes/client/ClientAPI';
+import { ContractRouter } from '../routes/contract/ContractAPI';
+import { DesignRouter } from '../routes/design/DesignAPI';
 import { configBodyParse } from '../config/configBodyParse';
 import { configCORS } from '../config/configCORS';
 import { ColorRouter } from '../routes/color/ColorAPI';
@@ -29,6 +33,18 @@ configStaticFiles(app);
 
 //User routes
 UserRouter(app);
+
+//Account routes
+AccountRouter(app);
+
+//Client routes
+ClientRouter(app);
+
+//Contract routes
+ContractRouter(app);
+
+//Design routes
+DesignRouter(app);
 
 //Color routes
 ColorRouter(app);
