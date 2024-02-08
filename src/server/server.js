@@ -7,6 +7,9 @@ import { UserRouter } from '../routes/user/UserAPI';
 import { configBodyParse } from '../config/configBodyParse';
 import { configCORS } from '../config/configCORS';
 import { ColorRouter } from '../routes/color/ColorAPI';
+import { MaterialRouter } from '../routes/material/MaterialAPI';
+import { FurnitureRouter } from '../routes/furniture/FurnitureAPI';
+import { ClassificationRouter } from '../routes/classification/ClassificationAPI';
 const app = express();
 
 //Config .env
@@ -29,6 +32,15 @@ UserRouter(app);
 
 //Color routes
 ColorRouter(app);
+
+//Material routes
+MaterialRouter(app);
+
+//Furniture routes
+FurnitureRouter(app);
+
+//Classification routes
+ClassificationRouter(app);
 
 const port = process.env.PORT || 8888;
 
