@@ -1,0 +1,210 @@
+[{
+  "_id": {
+    "$oid": "65c3ad90a62194b93e5321f5"
+  },
+  "name": "Wood",
+  "description": "Natural material commonly used for furniture."
+},
+{
+  "_id": {
+    "$oid": "65c3ad90a62194b93e5321fb"
+  },
+  "name": "Metal",
+  "description": "Durable and strong material suitable for various purposes."
+},
+{
+  "_id": {
+    "$oid": "65c3ad91a62194b93e5321ff"
+  },
+  "name": "Glass",
+  "description": "Transparent material often used for decorative elements."
+},
+{
+  "_id": {
+    "$oid": "65c3ad91a62194b93e532203"
+  },
+  "name": "Leather",
+  "description": "Luxurious material commonly used in upholstery."
+},
+{
+  "_id": {
+    "$oid": "65c3ad91a62194b93e532207"
+  },
+  "name": "Fabric",
+  "description": "Soft and versatile material used for upholstery and curtains."
+},
+{
+  "_id": {
+    "$oid": "65c3ad91a62194b93e53220a"
+  },
+  "name": "Plastic",
+  "description": "Lightweight and affordable material with various applications."
+},
+{
+  "_id": {
+    "$oid": "65c3ad91a62194b93e53220c"
+  },
+  "name": "Marble",
+  "description": "Elegant and durable material used for countertops and flooring."
+},
+{
+  "_id": {
+    "$oid": "65c3ad91a62194b93e53220e"
+  },
+  "name": "Bamboo",
+  "description": "Sustainable and eco-friendly material often used in furniture."
+},
+{
+  "_id": {
+    "$oid": "65c3ad91a62194b93e532210"
+  },
+  "name": "Concrete",
+  "description": "Sturdy material suitable for modern and industrial designs."
+},
+{
+  "_id": {
+    "$oid": "65c3ad91a62194b93e532212"
+  },
+  "name": "Ceramic",
+  "description": "Versatile material used for tiles, pottery, and decorative items."
+},
+{
+  "_id": {
+    "$oid": "65c3ad92a62194b93e532214"
+  },
+  "name": "Velvet",
+  "description": "Soft and luxurious fabric used for upholstery and drapery."
+},
+{
+  "_id": {
+    "$oid": "65c3ad92a62194b93e532216"
+  },
+  "name": "Stainless Steel",
+  "description": "Corrosion-resistant metal commonly used in modern designs."
+},
+{
+  "_id": {
+    "$oid": "65c3ad92a62194b93e532218"
+  },
+  "name": "Granite",
+  "description": "Durable and visually appealing material for countertops and surfaces."
+},
+{
+  "_id": {
+    "$oid": "65c3ad92a62194b93e53221a"
+  },
+  "name": "Rattan",
+  "description": "Natural material often used in the production of furniture."
+},
+{
+  "_id": {
+    "$oid": "65c3ad92a62194b93e53221c"
+  },
+  "name": "Linen",
+  "description": "Breathable fabric with a crisp texture, suitable for various applications."
+},
+{
+  "_id": {
+    "$oid": "65c3ad92a62194b93e53221e"
+  },
+  "name": "Acrylic",
+  "description": "Transparent plastic material with a glossy finish."
+},
+{
+  "_id": {
+    "$oid": "65c3ad92a62194b93e532220"
+  },
+  "name": "Quartz",
+  "description": "Engineered stone known for its durability and versatility."
+},
+{
+  "_id": {
+    "$oid": "65c3ad92a62194b93e532222"
+  },
+  "name": "Silk",
+  "description": "Luxurious and smooth fabric used for high-end furnishings."
+},
+{
+  "_id": {
+    "$oid": "65c3ad93a62194b93e532224"
+  },
+  "name": "Porcelain",
+  "description": "Durable ceramic material often used for tableware and tiles."
+},
+{
+  "_id": {
+    "$oid": "65c3ad93a62194b93e532226"
+  },
+  "name": "Teak",
+  "description": "Highly durable wood commonly used in outdoor furniture."
+},
+{
+  "_id": {
+    "$oid": "65c3ad93a62194b93e532228"
+  },
+  "name": "Suede",
+  "description": "Soft fabric with a velvety texture, commonly used in upholstery."
+},
+{
+  "_id": {
+    "$oid": "65c3ad93a62194b93e53222a"
+  },
+  "name": "Mahogany",
+  "description": "Hardwood known for its rich color and durability, used in furniture."
+},
+{
+  "_id": {
+    "$oid": "65c3ad93a62194b93e53222c"
+  },
+  "name": "Corian",
+  "description": "Solid surface material often used for countertops and sinks."
+},
+{
+  "_id": {
+    "$oid": "65c3ad93a62194b93e53222e"
+  },
+  "name": "Jute",
+  "description": "Natural fiber commonly used for rugs, twine, and textiles."
+},
+{
+  "_id": {
+    "$oid": "65c3ad93a62194b93e532230"
+  },
+  "name": "Aluminum",
+  "description": "Lightweight and corrosion-resistant metal with various applications."
+},
+{
+  "_id": {
+    "$oid": "65c3ad93a62194b93e532232"
+  },
+  "name": "Vinyl",
+  "description": "Synthetic material used for flooring, upholstery, and accessories."
+},
+{
+  "_id": {
+    "$oid": "65c3ad94a62194b93e532234"
+  },
+  "name": "Wicker",
+  "description": "Natural material woven into furniture and decorative items."
+},
+{
+  "_id": {
+    "$oid": "65c3ad94a62194b93e532236"
+  },
+  "name": "Maple",
+  "description": "Hardwood known for its light color and fine grain, used in furniture."
+},
+{
+  "_id": {
+    "$oid": "65c3ad94a62194b93e532238"
+  },
+  "name": "Cotton",
+  "description": "Soft and breathable fabric with a wide range of applications."
+},
+{
+  "_id": {
+    "$oid": "65c3ad94a62194b93e53223a"
+  },
+  "name": "Bronze",
+  "description": "Metal alloy with a distinct reddish-brown color, used in sculptures and decor."
+}]

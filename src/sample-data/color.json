@@ -1,0 +1,210 @@
+[{
+  "_id": {
+    "$oid": "65c3ada988d6e0ef97d612f1"
+  },
+  "name": "Ruby Red",
+  "description": "A vibrant shade of red reminiscent of precious gemstones."
+},
+{
+  "_id": {
+    "$oid": "65c3adaa88d6e0ef97d612f7"
+  },
+  "name": "Ocean Blue",
+  "description": "A calming and deep blue inspired by the colors of the ocean."
+},
+{
+  "_id": {
+    "$oid": "65c3adaa88d6e0ef97d612fb"
+  },
+  "name": "Emerald Green",
+  "description": "A rich and jewel-toned green resembling emerald gemstones."
+},
+{
+  "_id": {
+    "$oid": "65c3adaa88d6e0ef97d612fe"
+  },
+  "name": "Sunshine Yellow",
+  "description": "A bright and cheerful yellow reminiscent of sunny days."
+},
+{
+  "_id": {
+    "$oid": "65c3adaa88d6e0ef97d61300"
+  },
+  "name": "Royal Purple",
+  "description": "A regal and deep purple symbolizing luxury and sophistication."
+},
+{
+  "_id": {
+    "$oid": "65c3adaa88d6e0ef97d61303"
+  },
+  "name": "Goldenrod",
+  "description": "A warm and golden yellow hue reminiscent of autumn foliage."
+},
+{
+  "_id": {
+    "$oid": "65c3adaa88d6e0ef97d61306"
+  },
+  "name": "Turquoise Teal",
+  "description": "A refreshing and vibrant teal with a hint of turquoise."
+},
+{
+  "_id": {
+    "$oid": "65c3adaa88d6e0ef97d61309"
+  },
+  "name": "Slate Gray",
+  "description": "A cool and neutral gray resembling natural slate."
+},
+{
+  "_id": {
+    "$oid": "65c3adab88d6e0ef97d6130c"
+  },
+  "name": "Coral Pink",
+  "description": "A lively and tropical pink inspired by coral reefs."
+},
+{
+  "_id": {
+    "$oid": "65c3adab88d6e0ef97d6130e"
+  },
+  "name": "Mocha Brown",
+  "description": "A warm and earthy brown reminiscent of freshly brewed coffee."
+},
+{
+  "_id": {
+    "$oid": "65c3adab88d6e0ef97d61310"
+  },
+  "name": "Lavender",
+  "description": "A soft and calming shade of purple reminiscent of lavender flowers."
+},
+{
+  "_id": {
+    "$oid": "65c3adab88d6e0ef97d61312"
+  },
+  "name": "Midnight Blue",
+  "description": "A deep and dark blue resembling the night sky."
+},
+{
+  "_id": {
+    "$oid": "65c3adab88d6e0ef97d61314"
+  },
+  "name": "Crimson Red",
+  "description": "A bold and intense shade of red associated with passion and energy."
+},
+{
+  "_id": {
+    "$oid": "65c3adab88d6e0ef97d61316"
+  },
+  "name": "Forest Green",
+  "description": "A deep and rich green inspired by the colors of a forest."
+},
+{
+  "_id": {
+    "$oid": "65c3adab88d6e0ef97d61318"
+  },
+  "name": "Tangerine Orange",
+  "description": "A bright and citrusy orange with a refreshing vibe."
+},
+{
+  "_id": {
+    "$oid": "65c3adab88d6e0ef97d6131a"
+  },
+  "name": "Silver Gray",
+  "description": "A cool and metallic gray resembling silver tones."
+},
+{
+  "_id": {
+    "$oid": "65c3adac88d6e0ef97d6131c"
+  },
+  "name": "Amber Yellow",
+  "description": "A warm and amber-toned yellow associated with amber gemstones."
+},
+{
+  "_id": {
+    "$oid": "65c3adac88d6e0ef97d6131e"
+  },
+  "name": "Indigo Blue",
+  "description": "A deep and mysterious blue with hints of purple."
+},
+{
+  "_id": {
+    "$oid": "65c3adac88d6e0ef97d61320"
+  },
+  "name": "Rose Gold",
+  "description": "A trendy and warm metallic pink with golden undertones."
+},
+{
+  "_id": {
+    "$oid": "65c3adac88d6e0ef97d61322"
+  },
+  "name": "Charcoal Black",
+  "description": "A dark and intense black resembling charcoal."
+},
+{
+  "_id": {
+    "$oid": "65c3adac88d6e0ef97d61324"
+  },
+  "name": "Peachy Pink",
+  "description": "A soft and delicate shade of pink resembling ripe peaches."
+},
+{
+  "_id": {
+    "$oid": "65c3adac88d6e0ef97d61326"
+  },
+  "name": "Olive Green",
+  "description": "A muted and earthy green inspired by olive trees."
+},
+{
+  "_id": {
+    "$oid": "65c3adac88d6e0ef97d61328"
+  },
+  "name": "Azure Blue",
+  "description": "A bright and vibrant blue reminiscent of the clear sky."
+},
+{
+  "_id": {
+    "$oid": "65c3adac88d6e0ef97d6132a"
+  },
+  "name": "Copper Brown",
+  "description": "A warm and metallic brown with reddish undertones resembling copper."
+},
+{
+  "_id": {
+    "$oid": "65c3adac88d6e0ef97d6132c"
+  },
+  "name": "Plum Purple",
+  "description": "A deep and rich purple resembling the color of ripe plums."
+},
+{
+  "_id": {
+    "$oid": "65c3adad88d6e0ef97d6132e"
+  },
+  "name": "Ivory White",
+  "description": "A creamy and off-white color associated with ivory."
+},
+{
+  "_id": {
+    "$oid": "65c3adad88d6e0ef97d61330"
+  },
+  "name": "Steel Gray",
+  "description": "A cool and industrial gray resembling steel tones."
+},
+{
+  "_id": {
+    "$oid": "65c3adad88d6e0ef97d61332"
+  },
+  "name": "Cobalt Blue",
+  "description": "A vibrant and intense blue similar to cobalt pigments."
+},
+{
+  "_id": {
+    "$oid": "65c3adad88d6e0ef97d61334"
+  },
+  "name": "Mint Green",
+  "description": "A fresh and cool green resembling mint leaves."
+},
+{
+  "_id": {
+    "$oid": "65c3adad88d6e0ef97d61336"
+  },
+  "name": "Coral Reef",
+  "description": "A lively and tropical coral color inspired by coral reefs."
+}]
