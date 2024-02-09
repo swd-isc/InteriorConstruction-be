@@ -31,7 +31,7 @@ export const getFurnitureByPage = async (pageReq) => {
             };
         } else {
             return {
-                status: 404,
+                status: 400,
                 error: 'No data',
             }
         }
