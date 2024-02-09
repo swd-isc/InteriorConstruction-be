@@ -1,10 +1,11 @@
 import express from 'express';
-import { getMaterialData } from '../../controller/material-controller/MaterialController';
+import { getMaterialData, postMaterial } from '../../controller/material-controller/MaterialController';
 
 const router = express.Router();
 
 const MaterialRouter = (app) => {
     router.get('/page/:page', getMaterialData);
+    router.post('/', postMaterial);
 
     return app.use('/material', router);
 }
