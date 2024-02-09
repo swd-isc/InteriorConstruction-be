@@ -46,3 +46,31 @@ export const getMaterialByPage = async (pageReq) => {
         mongoose.connection.close();
     }
 }
+
+export const createMaterial = async (material) => {
+    try {
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' }).then(async () => {
+            try {
+                let error = {};
+                console.log('material: ', material);
+                const data = new Material(material);
+                // await data.save();
+                error = data.validateSync();
+                console.log('err: ', error.errors['name'].message);
+            } catch (error) {
+                console.log('check err: ', error.message);
+            }
+        })
+    } catch (error) {
+        console.error(error.message);
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+    return {
+        name: "Tuan Kiet",
+        age: 21,
+        sex: "Male",
+    }
+}
