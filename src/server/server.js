@@ -55,6 +55,10 @@ FurnitureRouter(app);
 //Classification routes
 ClassificationRouter(app);
 
+app.get('/', (req, res) => {
+    res.end(`Hello kiet`);
+});
+
 const port = process.env.PORT || 8888;
 
 app.listen(port, () => {
