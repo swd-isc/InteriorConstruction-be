@@ -1,8 +1,8 @@
-import { getColorByPage } from "../../services/color-services/colorServices";
+import { getClassificationByPage } from "../services/ClassificationServices";
 
-export const getColorData = async (req, res) => {
+export const getClassificationData = async (req, res) => {
 
-    let data = await getColorByPage(req.params.page);
+    let data = await getClassificationByPage(req.params.page);
     if (!data.error) {
         return res.status(200).json(
             {

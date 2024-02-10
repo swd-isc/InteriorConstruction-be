@@ -1,4 +1,4 @@
-import { createMaterial, getMaterialByPage } from "../../services/material-services/MaterialServices";
+import { createMaterial, getMaterialByPage } from "../services/MaterialServices";
 
 export const getMaterialData = async (req, res) => {
 

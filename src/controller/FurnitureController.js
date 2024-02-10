@@ -1,4 +1,4 @@
-import { getFurnitureByPage } from "../../services/furniture-services/FurnitureServices";
+import { getFurnitureByPage } from "../services/FurnitureServices";
 
 export const getFurnitureData = async (req, res) => {
 

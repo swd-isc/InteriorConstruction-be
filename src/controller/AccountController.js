@@ -1,4 +1,4 @@
-import accountRepository from "../../services/account-services/accountServices"
+import accountRepository from "../services/AccountServices"
 
 exports.getAccounts = async (req, res) => {
   let data = await accountRepository.getAccounts(req.params.page);

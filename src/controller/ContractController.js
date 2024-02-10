@@ -1,7 +1,7 @@
-import designRepository from "../../services/design-services/designServices"
+import contractRepository from "../services/ContractServices"
 
-exports.getDesigns = async (req, res) => {
-  let data = await designRepository.getDesigns(req.params.page);
+exports.getContracts = async (req, res) => {
+  let data = await contractRepository.getContracts(req.params.page);
   if (!data.error) {
     return res.status(200).json({
       status: 200,
@@ -16,8 +16,8 @@ exports.getDesigns = async (req, res) => {
   }
 };
 
-exports.getDesignById = async (req, res) => {
-  let data = await designRepository.getDesignById(req.params.id);
+exports.getContractById = async (req, res) => {
+  let data = await contractRepository.getContractById(req.params.id);
   if (!data.error) {
     return res.status(200).json({
       status: 200,

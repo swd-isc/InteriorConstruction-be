@@ -1,4 +1,4 @@
-import clientRepository from "../../services/client-services/clientServices"
+import clientRepository from "../services/ClientServices"
 
 exports.getClients = async (req, res) => {
   let data = await clientRepository.getClients(req.params.page);
