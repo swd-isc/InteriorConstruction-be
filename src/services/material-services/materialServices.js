@@ -25,7 +25,6 @@ export const getMaterialByPage = async (pageReq) => {
                 data: currentPageData,
                 pagination: {
                     page: page,
-                    itemsPerPage: itemsPerPage,
                     totalItems: totalMaterials,
                 },
             };
@@ -50,45 +49,45 @@ export const getMaterialByPage = async (pageReq) => {
 export const createMaterial = async (material) => {
     try {
         const url = process.env.URL_DB;
-        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' }).then(async () => {
-            let error = {};
-            console.log('material: ', material);
-            const data = new Material(material);
-            error = data.validateSync();
-            if (error) {
-                if (error.errors['name']?.message) {
-                    error = {
-                        errName: error.errors['name'].message
-                    }
-                }
-                if (error.errors['description']?.message) {
-                    error = {
-                        errName: error.errors['description'].message
-                    }
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' })
+        let error = {};
+        console.log('material: ', material);
+        const data = new Material(material);
+        let err = data.validateSync();
+        if (err) {
+            if (err.errors['name']?.message) {
+                error.errName = err.errors['name'].message;
+            }
+            if (err.errors['description']?.message) {
+                error.errDescription = err.errors['description'].message;
+            }
+
+            return {
+                status: 400,
+                error: error,
+            }
+        } else {
+            try {
+                await data.save();
+                return {
+                    status: 200,
+                    data: data,
+                };
+            } catch (error) {
+                error = {
+                    errDuplicate: error.message
                 }
                 return {
                     status: 400,
                     error: error,
                 }
-            } else {
-                console.log('ko loi');
-                try {
-                    await data.save();
-                    return {
-                        status: 200,
-                        data: data,
-                    };
-                } catch (error) {
-                    console.log('check err: ', error.message);
-                    return {
-                        status: 400,
-                        error: error.message,
-                    }
-                }
             }
-        })
+        }
     } catch (error) {
-        console.error(error.message);
+        return {
+            status: 500,
+            error: error,
+        }
     } finally {
         // Close the database connection
         mongoose.connection.close();

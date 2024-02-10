@@ -23,8 +23,9 @@ export const getMaterialData = async (req, res) => {
 
 export const postMaterial = async (req, res) => {
     let data = await createMaterial(req.body);
-    if (!data?.error) {
-        return res.status(200).json(
+    console.log('check: ', data);
+    if (!data.error) {
+        return res.status(data.status).json(
             {
                 status: 200,
                 data: data,

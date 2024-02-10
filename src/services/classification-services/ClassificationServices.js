@@ -25,7 +25,6 @@ export const getClassificationByPage = async (pageReq) => {
                 data: currentPageData,
                 pagination: {
                     page: page,
-                    itemsPerPage: itemsPerPage,
                     totalItems: totalClassifications,
                 },
             };

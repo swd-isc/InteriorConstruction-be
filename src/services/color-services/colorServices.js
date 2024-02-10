@@ -25,7 +25,6 @@ export const getColorByPage = async (pageReq) => {
                 data: currentPageData,
                 pagination: {
                     page: page,
-                    itemsPerPage: itemsPerPage,
                     totalItems: totalColors,
                 },
             };

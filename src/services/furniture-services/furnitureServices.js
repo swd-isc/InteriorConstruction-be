@@ -25,7 +25,6 @@ export const getFurnitureByPage = async (pageReq) => {
                 data: currentPageData,
                 pagination: {
                     page: page,
-                    itemsPerPage: itemsPerPage,
                     totalItems: totalFurnitures,
                 },
             };
