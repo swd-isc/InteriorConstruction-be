@@ -1,11 +1,13 @@
 import express from "express";
-import accountController from "../../controller/account-controller/AccountController";
+import accountService from "../../controller/account-controller/AccountController";
 
 const router = express.Router();
 
 const AccountRouter = (app) => {
-  router.get("/page/:page", accountController.getAccounts);
-  router.get("/:id", accountController.getAccountById)
+  router.get("/page/:page", accountService.getAccounts);
+  router.get("/:id", accountService.getAccountById);
+
+  router.post("/", accountService.createAccount);
 
   return app.use("/account", router);
 };

@@ -1,4 +1,4 @@
-const designRepository = require("../../services/design-services/designServices");
+import designRepository from "../../services/design-services/designServices"
 
 exports.getDesigns = async (req, res) => {
   let data = await designRepository.getDesigns(req.params.page);

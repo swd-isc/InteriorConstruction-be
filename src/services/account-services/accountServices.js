@@ -17,22 +17,27 @@ exports.getAccounts = async (pageReq) => {
     await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
 
     totalAccounts = await Account.countDocuments();
-
-    if (totalAccounts > 0) {
+    if (totalAccounts > 0)
       currentPageData = await Account.find({}).skip(startIndex).limit(endIndex);
-    }
 
-    return {
-      data: currentPageData,
-      pagination: {
-        page: page,
-        itemsPerPage: itemsPerPage,
-        totalItems: totalAccounts,
-      },
-    };
+    if (totalAccounts >= 0) {
+      return {
+        data: currentPageData,
+        pagination: {
+          page: page,
+          totalItems: totalAccounts,
+        },
+      };
+    } else {
+      return {
+        status: 400,
+        error: "No data",
+      };
+    }
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
     return {
+      status: 500,
       error: error,
     };
   } finally {
@@ -44,15 +49,67 @@ exports.getAccountById = async (id) => {
   try {
     const url = process.env.URL_DB;
     await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
-    console.log(id);
     const data = await Account.findById(id);
     return { data: data };
   } catch (error) {
     console.error(error.message);
     return {
+      status: 500,
       error: error,
     };
   } finally {
+    mongoose.connection.close();
+  }
+};
+
+exports.createAccount = async (account) => {
+  try {
+    const url = process.env.URL_DB;
+    await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
+
+    console.log("account: ", account);
+    const data = new Account(account);
+    const validationError = data.validateSync();
+
+    if (validationError) {
+      let error = {};
+
+      if (validationError.errors["email"]?.message)
+        error.errMail = validationError.errors["email"]?.message;
+
+      if (validationError.errors["password"]?.message)
+        error.errPassword = validationError.errors["password"]?.message;
+
+      if (validationError.errors["role"]?.message)
+        error.errRole = validationError.errors["role"]?.message;
+
+      if (validationError.errors["logInMethod"]?.message)
+        error.errLoginMethod = validationError.errors["logInMethod"]?.message;
+
+      return {
+        status: 400,
+        error: error,
+      };
+    } else {
+      console.log("ko loi");
+      try {
+        await data.save();
+        return {
+          status: 200,
+          data: data,
+        };
+      } catch (error) {
+        console.log("check err: ", error.message);
+        return {
+          status: 400,
+          error: error.message,
+        };
+      }
+    }
+  } catch (error) {
+    console.error(error.message);
+  } finally {
+    // Close the database connection
     mongoose.connection.close();
   }
 };

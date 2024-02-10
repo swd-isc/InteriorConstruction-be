@@ -1,4 +1,4 @@
-const accountRepository = require("../../services/account-services/accountServices");
+import accountRepository from "../../services/account-services/accountServices"
 
 exports.getAccounts = async (req, res) => {
   let data = await accountRepository.getAccounts(req.params.page);
@@ -9,8 +9,8 @@ exports.getAccounts = async (req, res) => {
       message: "OK",
     });
   } else {
-    return res.status(500).json({
-      status: 500,
+    return res.status(data.status).json({
+      status: data.status,
       messageError: data.error,
     });
   }
@@ -25,9 +25,25 @@ exports.getAccountById = async (req, res) => {
       message: "OK",
     });
   } else {
-    return res.status(500).json({
-      status: 500,
+    return res.status(data.status).json({
+      status: data.status,
       messageError: data.error,
+    });
+  }
+};
+
+exports.createAccount = async (req, res) => {
+  const data = await accountRepository.createAccount(req.body);
+  if (!data.error) {
+    return res.status(200).json({
+      status: 200,
+      data: data.data,
+      message: "OK",
+    });
+  } else {
+    return res.status(data.status).json({
+      status: data.status,
+      error: data.error,
     });
   }
 };
