@@ -1,4 +1,4 @@
-import Account from "../../models/Account";
+import Account from "../models/Account";
 import mongoose from "mongoose";
 
 exports.getAccounts = async (pageReq) => {

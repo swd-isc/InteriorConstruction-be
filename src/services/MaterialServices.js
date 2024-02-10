@@ -1,4 +1,4 @@
-import Material from '../../models/Material';
+import Material from '../models/Material';
 
 import mongoose from "mongoose";
 

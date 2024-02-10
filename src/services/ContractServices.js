@@ -1,12 +1,12 @@
-import Design from "../../models/Design";
+import Contract from "../models/Contract";
 import mongoose from "mongoose";
 
-exports.getDesigns = async (pageReq) => {
+exports.getContracts = async (pageReq) => {
   try {
     const itemsPerPage = 10;
     // Parse query parameters
     const page = parseInt(pageReq) || 1;
-    let totalDesigns = 0;
+    let totalContracts = 0;
     let currentPageData = [];
 
     // Calculate start and end indices for the current page
@@ -16,10 +16,10 @@ exports.getDesigns = async (pageReq) => {
     const url = process.env.URL_DB;
     await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
 
-    totalDesigns = await Design.countDocuments();
+    totalContracts = await Contract.countDocuments();
 
-    if (totalDesigns > 0) {
-      currentPageData = await Design.find({}).skip(startIndex).limit(endIndex);
+    if (totalContracts > 0) {
+      currentPageData = await Contract.find({}).skip(startIndex).limit(endIndex);
     }
 
     return {
@@ -27,7 +27,7 @@ exports.getDesigns = async (pageReq) => {
       pagination: {
         page: page,
         itemsPerPage: itemsPerPage,
-        totalItems: totalDesigns,
+        totalItems: totalContracts,
       },
     };
   } catch (error) {
@@ -40,12 +40,12 @@ exports.getDesigns = async (pageReq) => {
   }
 };
 
-exports.getDesignById = async (id) => {
+exports.getContractById = async (id) => {
   try {
     const url = process.env.URL_DB;
     await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
     console.log(id);
-    const data = await Design.findById(id);
+    const data = await Contract.findById(id);
     return { data: data };
   } catch (error) {
     console.error(error.message);

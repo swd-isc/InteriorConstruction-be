@@ -1,4 +1,4 @@
-import Client from "../../models/Client";
+import Client from "../models/Client";
 import mongoose from "mongoose";
 
 exports.getClients = async (pageReq) => {

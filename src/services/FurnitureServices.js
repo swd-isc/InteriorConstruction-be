@@ -1,13 +1,13 @@
-import Classification from '../../models/Classification';
+import Furniture from '../models/Furniture';
 
 import mongoose from "mongoose";
 
-export const getClassificationByPage = async (pageReq) => {
+export const getFurnitureByPage = async (pageReq) => {
     try {
         const itemsPerPage = 10;
         // Parse query parameters
         const page = parseInt(pageReq) || 1;
-        let totalClassifications = 0;
+        let totalFurnitures = 0;
         let currentPageData = [];
 
         // Calculate start and end indices for the current page
@@ -17,15 +17,15 @@ export const getClassificationByPage = async (pageReq) => {
         // Get the data for the current page
         const url = process.env.URL_DB;
         await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-        totalClassifications = await Classification.countDocuments();
+        totalFurnitures = await Furniture.countDocuments();
 
-        if (totalClassifications > 0) {
-            currentPageData = await Classification.find({}).skip(startIndex).limit(endIndex);
+        if (totalFurnitures > 0) {
+            currentPageData = await Furniture.find({}).populate('colors').populate('materials').populate('classifications').skip(startIndex).limit(endIndex);
             return {
                 data: currentPageData,
                 pagination: {
                     page: page,
-                    totalItems: totalClassifications,
+                    totalItems: totalFurnitures,
                 },
             };
         } else {
