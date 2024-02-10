@@ -1,5 +1,5 @@
 import express from "express";
-import designService from "../../controller/design-controller/DesignController";
+import designService from "../controller/DesignController";
 
 const router = express.Router();
 

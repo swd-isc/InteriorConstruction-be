@@ -1,5 +1,5 @@
 import express from 'express';
-import { getColorData } from '../../controller/color-controller/ColorController';
+import { getColorData } from '../controller/ColorController';
 
 const router = express.Router();
 

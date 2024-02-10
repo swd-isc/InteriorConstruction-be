@@ -1,5 +1,5 @@
 import express from 'express';
-import { getFurnitureData } from '../../controller/furniture-controller/FurnitureController';
+import { getFurnitureData } from '../controller/FurnitureController';
 
 const router = express.Router();
 

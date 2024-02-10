@@ -1,5 +1,5 @@
 import express from "express";
-import contractService from "../../controller/contract-controller/ContractController";
+import contractService from "../controller/ContractController";
 
 const router = express.Router();
 

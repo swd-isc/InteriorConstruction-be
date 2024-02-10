@@ -1,5 +1,5 @@
 import express from 'express';
-import { getClassificationData } from '../../controller/classification-controller/ClassificationController';
+import { getClassificationData } from '../controller/ClassificationController';
 
 const router = express.Router();
 
