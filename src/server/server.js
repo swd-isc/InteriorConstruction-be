@@ -3,17 +3,17 @@ import { configENV } from '../config/configENV';
 import express from 'express';
 import { configLog } from '../config/configLogServer';
 import { configStaticFiles } from '../config/configStaticFiles';
-import { UserRouter } from '../routes/user/UserAPI';
-import { AccountRouter } from '../routes/account/AccountAPI';
-import { ClientRouter } from '../routes/client/ClientAPI';
-import { ContractRouter } from '../routes/contract/ContractAPI';
-import { DesignRouter } from '../routes/design/DesignAPI';
 import { configBodyParse } from '../config/configBodyParse';
 import { configCORS } from '../config/configCORS';
-import { ColorRouter } from '../routes/color/ColorAPI';
-import { MaterialRouter } from '../routes/material/MaterialAPI';
-import { FurnitureRouter } from '../routes/furniture/FurnitureAPI';
-import { ClassificationRouter } from '../routes/classification/ClassificationAPI';
+
+import { AccountRouter } from '../routes/AccountAPI';
+import { ClientRouter } from '../routes/ClientAPI';
+import { ContractRouter } from '../routes/ContractAPI';
+import { DesignRouter } from '../routes/DesignAPI';
+import { ColorRouter } from '../routes/ColorAPI';
+import { MaterialRouter } from '../routes/MaterialAPI';
+import { FurnitureRouter } from '../routes/FurnitureAPI';
+import { ClassificationRouter } from '../routes/ClassificationAPI';
 const app = express();
 
 //Config .env
@@ -30,9 +30,6 @@ configBodyParse(app);
 
 //Config static files
 configStaticFiles(app);
-
-//User routes
-UserRouter(app);
 
 //Account routes
 AccountRouter(app);
