@@ -1,4 +1,4 @@
-const clientRepository = require("../../services/client-services/clientServices");
+import clientRepository from "../../services/client-services/clientServices"
 
 exports.getClients = async (req, res) => {
   let data = await clientRepository.getClients(req.params.page);
@@ -31,3 +31,19 @@ exports.getClientById = async (req, res) => {
     });
   }
 };
+
+exports.createClient = async (req, res) => {
+  const data = await clientRepository.createClient(req.body);
+  if (!data.error) {
+    return res.status(200).json({
+      status: 200,
+      data: data.data,
+      message: "OK",
+    });
+  } else {
+    return res.status(data.status).json({
+      status: data.status,
+      error: data.error,
+    });
+  }
+}

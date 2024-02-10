@@ -1,4 +1,4 @@
-const contractRepository = require("../../services/contract-services/contractServices");
+import contractRepository from "../../services/contract-services/contractServices"
 
 exports.getContracts = async (req, res) => {
   let data = await contractRepository.getContracts(req.params.page);

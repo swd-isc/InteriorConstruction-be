@@ -17,22 +17,27 @@ exports.getClients = async (pageReq) => {
     await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
 
     totalClients = await Client.countDocuments();
-
-    if (totalClients > 0) {
+    if (totalClients > 0)
       currentPageData = await Client.find({}).skip(startIndex).limit(endIndex);
-    }
 
-    return {
-      data: currentPageData,
-      pagination: {
-        page: page,
-        itemsPerPage: itemsPerPage,
-        totalItems: totalClients,
-      },
-    };
+    if (totalClients >= 0) {
+      return {
+        data: currentPageData,
+        pagination: {
+          page: page,
+          totalItems: totalClients,
+        },
+      };
+    } else {
+      return {
+        status: 400,
+        error: "No data",
+      };
+    }
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
     return {
+      status: 500,
       error: error,
     };
   } finally {
@@ -44,15 +49,76 @@ exports.getClientById = async (id) => {
   try {
     const url = process.env.URL_DB;
     await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
-    console.log(id);
     const data = await Client.findById(id);
     return { data: data };
   } catch (error) {
     console.error(error.message);
     return {
+      status: 500,
       error: error,
     };
   } finally {
+    mongoose.connection.close();
+  }
+};
+
+exports.createClient = async (client) => {
+  try {
+    const url = process.env.URL_DB;
+    await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
+
+    console.log("client: ", client);
+    const data = new Client(client);
+    const validationError = data.validateSync();
+
+    if (validationError) {
+      let error = {};
+
+      if (validationError.errors["firstName"]?.message)
+        error.errFirstName = validationError.errors["firstName"]?.message;
+
+      if (validationError.errors["lastName"]?.message)
+        error.errLastName = validationError.errors["lastName"]?.message;
+
+      if (validationError.errors["birthDate"]?.message)
+        error.errBirthDate = validationError.errors["birthDate"]?.message;
+
+      if (validationError.errors["phone"]?.message)
+        error.errPhone = validationError.errors["phone"]?.message;
+
+      if (validationError.errors["photoURL"]?.message)
+        error.errPhotoURL = validationError.errors["photoURL"]?.message;
+
+      if (validationError.errors["accountId"]?.message)
+        error.errAccountId = validationError.errors["accountId"]?.message;
+
+      if (validationError.errors["contracts"]?.message)
+        error.errContracts = validationError.errors["contracts"]?.message;
+
+      return {
+        status: 400,
+        error: error,
+      };
+    } else {
+      console.log("ko loi");
+      try {
+        await data.save();
+        return {
+          status: 200,
+          data: data,
+        };
+      } catch (error) {
+        console.log("check err: ", error.message);
+        return {
+          status: 400,
+          error: error.message,
+        };
+      }
+    }
+  } catch (error) {
+    console.error(error.message);
+  } finally {
+    // Close the database connection
     mongoose.connection.close();
   }
 };
