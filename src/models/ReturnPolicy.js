@@ -31,7 +31,7 @@ const returnPolicySchema = new Schema({
         required: [true, 'Non return exchange cases cannot be empty.'],
     },
     returnProcedure: {
-        type: String,
+        type: [String],
         required: [true, 'Return procedure required.'],
     },
 }, {
