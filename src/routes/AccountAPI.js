@@ -4,6 +4,8 @@ import accountService from "../controller/AccountController";
 const router = express.Router();
 
 const AccountRouter = (app) => {
+  router.get("/insert-sample-data", accountService.insertSampleData);
+
   router.get("/page/:page", accountService.getAccounts);
   router.get("/:id", accountService.getAccountById);
 

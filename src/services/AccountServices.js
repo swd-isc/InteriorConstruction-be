@@ -1,6 +1,35 @@
 import Account from "../models/Account";
 import mongoose from "mongoose";
 
+import DesignCard from "../models/DesignCard";
+import Design from "../models/Design";
+import designCardData from "../sample-data/DesignCardData";
+
+exports.insertSampleData = async () => {
+  try {
+    const url = process.env.URL_DB;
+    await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
+
+    const designs = await Design.find({});
+    const designcards = await DesignCard.find({});
+
+    // for (let i = 0; i < 43; i++) {
+    //   designs[i].designCard = designcards[i]._id;
+    //   await designs[i].save();
+    // }
+
+    return { data: "done" };
+  } catch (error) {
+    console.error(error.message);
+    return {
+      status: 500,
+      error: error,
+    };
+  } finally {
+    mongoose.connection.close();
+  }
+};
+
 exports.getAccounts = async (pageReq) => {
   try {
     const itemsPerPage = 10;
