@@ -24,15 +24,51 @@ const returnPolicySchema = new Schema({
     },
     returnExchangeCases: {
         type: [String],
-        required: [true, 'Return exchange cases cannot be empty.'],
+        validate: {
+            validator: async function (value) {
+                if (!Array.isArray(value)) {
+                    return false; // Not an array
+                } else {
+                    if (value.length == 0) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            message: "Return exchange cases required array.",
+        }
     },
     nonReturnExchangeCases: {
         type: [String],
-        required: [true, 'Non return exchange cases cannot be empty.'],
+        validate: {
+            validator: async function (value) {
+                if (!Array.isArray(value)) {
+                    return false; // Not an array
+                } else {
+                    if (value.length == 0) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            message: "Non return exchange cases required array.",
+        }
     },
     returnProcedure: {
         type: [String],
-        required: [true, 'Return procedure required.'],
+        validate: {
+            validator: async function (value) {
+                if (!Array.isArray(value)) {
+                    return false; // Not an array
+                } else {
+                    if (value.length == 0) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            message: "Return procedure required array.",
+        },
     },
 }, {
     collection: 'return_policy',
