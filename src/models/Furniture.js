@@ -7,8 +7,12 @@ export const furnitureSchema = new Schema({
         required: [true, 'Name required.'],
         unique: true
     },
-    imgURL: {
+    description: {
         type: String,
+        required: [true, 'Description required.'],
+    },
+    imgURL: {
+        type: [String],
         required: false,
     },
     materials: {
@@ -95,6 +99,35 @@ export const furnitureSchema = new Schema({
         type: Number,
         min: [0, 'Must be a positive number.'],
         required: [true, 'Price required.'],
+    },
+    returnExchangeCases: {
+        type: [String],
+        required: [true, 'Return exchange cases cannot be empty.'],
+    },
+    nonReturnExchangeCases: {
+        type: [String],
+        required: [true, 'Non return exchange cases cannot be empty.'],
+    },
+    delivery: {
+        type: Schema.Types.ObjectId,
+        required: [true, 'Delivery required.'],
+        ref: 'delivery',
+        validate: {
+            validator: async function (value) {
+                const Delivery = mongoose.model('delivery');
+
+                if (!value) {
+                    return false; // Value is required
+                }
+
+                const delivery = await Delivery.findById(value);
+                if (!delivery) {
+                    return false; // Invalid ObjectId reference in the array
+                }
+                return true; // Return true if delivery exists, otherwise false
+            },
+            message: props => `${props.value} is not a valid delivery ID.`
+        }
     },
     type: {
         type: String,

@@ -15,6 +15,27 @@ const designSchema = new Schema({
         type: String,
         required: [true, 'Design URL required.'],
     },
+    designCard: {
+        type: Schema.Types.ObjectId,
+        required: [true, 'Design card required.'],
+        ref: 'design_card',
+        validate: {
+            validator: async function (value) {
+                const DesignCard = mongoose.model('design_card');
+
+                if (!value) {
+                    return false; // Value is required
+                }
+
+                const designCard = await DesignCard.findById(value);
+                if (!designCard) {
+                    return false; // Invalid ObjectId reference in the array
+                }
+                return true; // Return true if designCard exists, otherwise false
+            },
+            message: props => `${props.value} is not a valid design card ID.`
+        }
+    },
     designPrice: {
         type: Number,
         min: [0, 'Must be a positive number.'],
