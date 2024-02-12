@@ -1,11 +1,13 @@
 import express from 'express';
-import { getFurniturePage, getFurnitureType } from '../controller/FurnitureController';
+import { furnitureByClassification, furnitureById, furnitureByPage, furnitureByType } from '../controller/FurnitureController';
 
 const router = express.Router();
 
 const FurnitureRouter = (app) => {
-    router.get('/page/:page', getFurniturePage);
-    router.get('/type/:type', getFurnitureType);
+    router.get('/:id', furnitureById);
+    router.get('/page/:page', furnitureByPage);
+    router.get('/type/:type', furnitureByType);
+    router.get('/classification/:classification', furnitureByClassification);
 
     return app.use('/furniture', router);
 }
