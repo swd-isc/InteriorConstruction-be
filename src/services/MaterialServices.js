@@ -7,38 +7,29 @@ export const getMaterialByPage = async (pageReq) => {
         const itemsPerPage = 10;
         // Parse query parameters
         const page = parseInt(pageReq) || 1;
-        let totalMaterials = 0;
+
         let currentPageData = [];
 
         // Calculate start and end indices for the current page
         const startIndex = (page - 1) * itemsPerPage;
-        const endIndex = page * itemsPerPage;
 
         // Get the data for the current page
         const url = process.env.URL_DB;
         await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-        totalMaterials = await Material.countDocuments();
 
-        if (totalMaterials > 0) {
-            currentPageData = await Material.find({}).skip(startIndex).limit(endIndex);
-            return {
-                data: currentPageData,
-                pagination: {
-                    page: page,
-                    totalItems: totalMaterials,
-                },
-            };
-        } else {
-            return {
-                status: 400,
-                error: 'No data',
-            }
-        }
+        currentPageData = await Material.find({}).sort({ name: 1 }).skip(startIndex).limit(itemsPerPage).explain('executionStats');
+        return {
+            status: 200,
+            data: currentPageData,
+            page: page,
+            message: currentPageData.length !== 0 ? "OK" : "No data"
+        };
+
     } catch (error) {
         console.error(error);
         return {
             status: 500,
-            error: error,
+            messageError: error,
         }
     } finally {
         // Close the database connection
@@ -64,7 +55,7 @@ export const createMaterial = async (material) => {
 
             return {
                 status: 400,
-                error: error,
+                messageError: error,
             }
         } else {
             try {
@@ -72,6 +63,7 @@ export const createMaterial = async (material) => {
                 return {
                     status: 200,
                     data: data,
+                    message: "OK"
                 };
             } catch (error) {
                 error = {
@@ -79,14 +71,14 @@ export const createMaterial = async (material) => {
                 }
                 return {
                     status: 400,
-                    error: error,
+                    messageError: error,
                 }
             }
         }
     } catch (error) {
         return {
             status: 500,
-            error: error,
+            messageError: error,
         }
     } finally {
         // Close the database connection

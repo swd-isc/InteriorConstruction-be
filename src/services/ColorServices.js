@@ -1,47 +1,42 @@
 import Color from '../models/Color';
+import ReturnPolicy from '../models/ReturnPolicy';
 import Delivery from '../models/Delivery';
+import Furniture from '../models/Furniture';
 
 import mongoose from "mongoose";
 import { returnPolicyData } from '../sample-data/ReturnPolicyData';
 import { deliveryData } from '../sample-data/DeliveryData';
+import { furnitureData } from '../sample-data/FurnitureData';
 
 export const getColorByPage = async (pageReq) => {
     try {
         const itemsPerPage = 10;
         // Parse query parameters
         const page = parseInt(pageReq) || 1;
-        let totalColors = 0;
+
         let currentPageData = [];
 
         // Calculate start and end indices for the current page
         const startIndex = (page - 1) * itemsPerPage;
-        const endIndex = page * itemsPerPage;
 
         // Get the data for the current page
         const url = process.env.URL_DB;
         await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-        totalColors = await Color.countDocuments();
 
-        if (totalColors > 0) {
-            currentPageData = await Color.find({}).skip(startIndex).limit(endIndex);
-            return {
-                data: currentPageData,
-                pagination: {
-                    page: page,
-                    totalItems: totalColors,
-                },
-            };
-        } else {
-            return {
-                status: 400,
-                error: 'No data',
-            }
-        }
+        currentPageData = await Color.find({}).sort({ name: 1 }).skip(startIndex).limit(itemsPerPage);
+
+        return {
+            status: 200,
+            data: currentPageData,
+            page: page,
+            message: currentPageData.length !== 0 ? "OK" : "No data"
+        };
+
     } catch (error) {
         console.error(error);
         return {
             status: 500,
-            error: error,
+            messageError: error,
         }
     } finally {
         // Close the database connection
@@ -51,9 +46,9 @@ export const getColorByPage = async (pageReq) => {
     //     const url = process.env.URL_DB;
     //     await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' }).then(async () => {
     //         // Iterate over the array of fake accounts and save each to the database
-    //         for (let i = 0; i < deliveryData.length; i++) {
+    //         for (let i = 0; i < returnPolicyData.length; i++) {
     //             try {
-    //                 const account = new Delivery(deliveryData[i]);
+    //                 const account = new ReturnPolicy(returnPolicyData[i]);
     //                 await account.save();
     //                 console.log('ok: ', i);
     //             } catch (error) {
@@ -74,9 +69,10 @@ export const getColorByPage = async (pageReq) => {
     //     const url = process.env.URL_DB;
     //     await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' }).then(async () => {
     //         // Iterate over the array of fake accounts and save each to the database
-    //         for (let i = 0; i < clientData.length; i++) {
+    //         for (let i = 0; i < furnitureData.length; i++) {
     //             try {
-    //                 let data = await Client.findOneAndUpdate({ firstName: clientData[i].firstName, lastName: clientData[i].lastName }, { contracts: clientData[i].contracts }).exec();
+    //                 await Material.find({}).sort({ name: 1 }).skip(startIndex).limit(itemsPerPage).explain('executionStats');
+    //                 let data = await Furniture.findOneAndUpdate({ name: furnitureData[i].name }, furnitureData[i]).exec();
     //                 console.log('ok: ', data);
     //             } catch (error) {
     //                 console.error('client', i, 'error:', error.message);
@@ -91,4 +87,40 @@ export const getColorByPage = async (pageReq) => {
     //     // Close the database connection
     //     mongoose.connection.close();
     // }
+}
+
+export const colorById = async (id) => {
+    if (id) {
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+        try {
+            const data = await Color.findById(id);
+            if (data) {
+                return {
+                    status: 200,
+                    data: data,
+                    message: "OK"
+                };
+            } else {
+                return {
+                    status: 200,
+                    data: {},
+                    message: "No data"
+                }
+            }
+        } catch (error) {
+            return {
+                status: 500,
+                messageError: error,
+            }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
+        }
+    } else {
+        return {
+            status: 400,
+            messageError: 'Missing required ID',
+        }
+    }
 }
