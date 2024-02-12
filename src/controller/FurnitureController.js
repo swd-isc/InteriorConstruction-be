@@ -1,22 +1,13 @@
-import { getFurnitureByPage } from "../services/FurnitureServices";
+import { getFurnitureByPage, getFurnitureByType } from "../services/FurnitureServices";
 
-export const getFurnitureData = async (req, res) => {
+export const getFurniturePage = async (req, res) => {
 
     let data = await getFurnitureByPage(req.params.page);
-    if (!data.error) {
-        return res.status(200).json(
-            {
-                status: 200,
-                data: data,
-                message: "OK",
-            }
-        )
-    } else {
-        return res.status(data.status).json(
-            {
-                status: data.status,
-                messageError: data.error,
-            }
-        )
-    }
+    return res.status(data.status).json(data);
+}
+
+export const getFurnitureType = async (req, res) => {
+
+    let data = await getFurnitureByType(req.params.type);
+    return res.status(data.status).json(data);
 }

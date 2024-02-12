@@ -3,20 +3,5 @@ import { getClassificationByPage } from "../services/ClassificationServices";
 export const getClassificationData = async (req, res) => {
 
     let data = await getClassificationByPage(req.params.page);
-    if (!data.error) {
-        return res.status(200).json(
-            {
-                status: 200,
-                data: data,
-                message: "OK",
-            }
-        )
-    } else {
-        return res.status(data.status).json(
-            {
-                status: data.status,
-                messageError: data.error,
-            }
-        )
-    }
+    return res.status(data.status).json(data);
 }

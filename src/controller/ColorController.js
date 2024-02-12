@@ -1,22 +1,13 @@
-import { getColorByPage } from "../services/ColorServices";
+import { colorById, getColorByPage } from "../services/ColorServices";
 
 export const getColorData = async (req, res) => {
 
     let data = await getColorByPage(req.params.page);
-    if (!data.error) {
-        return res.status(200).json(
-            {
-                status: 200,
-                data: data,
-                message: "OK",
-            }
-        )
-    } else {
-        return res.status(data.status).json(
-            {
-                status: data.status,
-                messageError: data.error,
-            }
-        )
-    }
+    return res.status(data.status).json(data);
+}
+
+export const getColorById = async (req, res) => {
+
+    let data = await colorById(req.params.id);
+    return res.status(data.status).json(data);
 }
