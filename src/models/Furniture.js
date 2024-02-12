@@ -13,7 +13,6 @@ export const furnitureSchema = new Schema({
     },
     imgURL: {
         type: [String],
-        required: false,
     },
     materials: {
         type: [{
@@ -102,11 +101,35 @@ export const furnitureSchema = new Schema({
     },
     returnExchangeCases: {
         type: [String],
-        required: [true, 'Return exchange cases cannot be empty.'],
+        validate: {
+            validator: async function (value) {
+                if (!Array.isArray(value)) {
+                    return false; // Not an array
+                } else {
+                    if (value.length == 0) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            message: "Return exchange cases cannot be empty.",
+        },
     },
     nonReturnExchangeCases: {
         type: [String],
-        required: [true, 'Non return exchange cases cannot be empty.'],
+        validate: {
+            validator: async function (value) {
+                if (!Array.isArray(value)) {
+                    return false; // Not an array
+                } else {
+                    if (value.length == 0) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            message: "Non return exchange cases cannot be empty.",
+        },
     },
     delivery: {
         type: Schema.Types.ObjectId,
@@ -180,6 +203,15 @@ export const furnitureSchema = new Schema({
     collection: 'furniture',
     versionKey: false
 });
+
+// Index for type: "DEFAULT"
+furnitureSchema.index({ type: 1 });
+
+// Define an index on the classifications field
+furnitureSchema.index({ classifications: 1 });
+
+// Define an index on the createdAt field
+furnitureSchema.index({ price: 1 });
 
 let Furniture = mongoose.model('furniture', furnitureSchema);
 
