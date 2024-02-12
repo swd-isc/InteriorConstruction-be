@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
-import ReturnPolicy from '../models/ReturnPolicy';
+import Delivery from '../models/Delivery';
 
-export const returnPolicyById = async (id) => {
+export const deliveryById = async (id) => {
     if (id) {
         const url = process.env.URL_DB;
         await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
         try {
-            const data = await ReturnPolicy.findById(id);
+            const data = await Delivery.findById(id);
             if (data) {
                 return {
                     status: 200,

@@ -14,6 +14,9 @@ import { ColorRouter } from '../routes/ColorAPI';
 import { MaterialRouter } from '../routes/MaterialAPI';
 import { FurnitureRouter } from '../routes/FurnitureAPI';
 import { ClassificationRouter } from '../routes/ClassificationAPI';
+import { ReturnPolicyRouter } from '../routes/ReturnPolicyAPI';
+import { DeliveryRouter } from '../routes/DeliveryAPI';
+import { DesignCardRouter } from '../routes/DesignCardAPI';
 const app = express();
 
 //Config .env
@@ -54,6 +57,15 @@ FurnitureRouter(app);
 
 //Classification routes
 ClassificationRouter(app);
+
+//ReturnPolicy routes
+ReturnPolicyRouter(app);
+
+//Delivery routes
+DeliveryRouter(app);
+
+//DesignCard routes
+DesignCardRouter(app);
 
 app.get('/', (req, res) => {
     res.end(`Hello kiet`);
