@@ -62,6 +62,9 @@ const designSchema = new Schema({
                     return false; // Not an array
                 }
 
+                // Get the classifications of the design
+                const designClassifications = this.classifications;
+
                 for (const furnitureId of value) {
                     const furniture = await Furniture.findById(furnitureId);
 
@@ -73,6 +76,15 @@ const designSchema = new Schema({
                     if (this.type === 'DEFAULT' && furniture.type !== 'DEFAULT') {
                         console.log('wrong type furniture: ', furniture._id);
                         return false; // Furniture type must be 'DEFAULT' for 'DEFAULT' Design
+                    }
+
+                    // Get the classifications of the furniture
+                    const furnitureClassifications = furniture.classifications;
+
+                    let hasCommon = designClassifications.some(item => furnitureClassifications.includes(item));
+                    if (!hasCommon) {
+                        console.log(`Don't have common classifications`);
+                        return false;
                     }
                 }
 

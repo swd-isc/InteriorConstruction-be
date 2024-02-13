@@ -174,6 +174,9 @@ export const furnitureSchema = new Schema({
                     return false; // Not an array
                 }
 
+                // Flag to track if at least one 'STYLE' classification is found
+                let foundStyleClassification = false;
+
                 for (const classificationId of value) {
                     const classification = await Classification.findById(classificationId);
                     if (!classification) {
@@ -183,6 +186,16 @@ export const furnitureSchema = new Schema({
                         console.log('check classification err: ', classification);
                         return false; // Invalid 'type' references in the classification array
                     }
+
+                    // Check if the classification type is 'STYLE'
+                    if (classification.type === 'STYLE') {
+                        foundStyleClassification = true;
+                    }
+                }
+                // Check if at least one 'STYLE' classification is found
+                if (!foundStyleClassification) {
+                    console.log('At least one classification must have the type "STYLE"');
+                    return false;
                 }
 
                 // Check for duplicate classification ObjectId in the array
