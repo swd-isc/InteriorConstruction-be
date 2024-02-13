@@ -4,6 +4,7 @@ import { getColorById, getColorData } from '../controller/ColorController';
 const router = express.Router();
 
 const ColorRouter = (app) => {
+    router.get('/page', getColorData);
     router.get('/page/:page', getColorData);
     router.get('/:id', getColorById);
 
