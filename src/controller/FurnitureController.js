@@ -1,8 +1,8 @@
-import { getFurnitureByClassification, getFurnitureById, getFurnitureByPage, getFurnitureByType } from "../services/FurnitureServices";
+import { findFurnitureSortedByPrice, getFurnitureByClassificationByName, getFurnitureByClassificationByType, getFurnitureByColor, getFurnitureById, getFurnitureByMaterial, getFurnitureByPage, getFurnitureByType } from "../services/FurnitureServices";
 
 export const furnitureByPage = async (req, res) => {
 
-    let data = await getFurnitureByPage(req.params.page);
+    let data = await getFurnitureByPage(req.params.asc, req.params.page);
     return res.status(data.status).json(data);
 }
 
@@ -18,8 +18,32 @@ export const furnitureByType = async (req, res) => {
     return res.status(data.status).json(data);
 }
 
-export const furnitureByClassification = async (req, res) => {
+export const furnitureByClassificationByType = async (req, res) => {
 
-    let data = await getFurnitureByClassification(req.params.classification);
+    let data = await getFurnitureByClassificationByType(req.params.type);
+    return res.status(data.status).json(data);
+}
+
+export const furnitureByClassificationByName = async (req, res) => {
+
+    let data = await getFurnitureByClassificationByName(req.params.name);
+    return res.status(data.status).json(data);
+}
+
+export const furnitureByMaterial = async (req, res) => {
+
+    let data = await getFurnitureByMaterial(req.params.materialName);
+    return res.status(data.status).json(data);
+}
+
+export const furnitureByColor = async (req, res) => {
+
+    let data = await getFurnitureByColor(req.params.colorName);
+    return res.status(data.status).json(data);
+}
+
+export const furnitureByPrice = async (req, res) => {
+
+    let data = await findFurnitureSortedByPrice(req.params.asc);
     return res.status(data.status).json(data);
 }
