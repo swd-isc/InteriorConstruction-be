@@ -1,13 +1,25 @@
 import express from 'express';
-import { furnitureByClassification, furnitureById, furnitureByPage, furnitureByType } from '../controller/FurnitureController';
+import { furnitureByClassificationByName, furnitureByClassificationByType, furnitureByColor, furnitureById, furnitureByMaterial, furnitureByPage, furnitureByType } from '../controller/FurnitureController';
 
 const router = express.Router();
 
 const FurnitureRouter = (app) => {
-    router.get('/:id', furnitureById);
+    router.get('/page/', furnitureByPage);
     router.get('/page/:page', furnitureByPage);
+    router.get('/price/', furnitureByPage);
+    router.get('/price/:page/:asc', furnitureByPage);
+    router.get('/price/:asc', furnitureByPage);
+    router.get('/type/', furnitureByType);
     router.get('/type/:type', furnitureByType);
-    router.get('/classification/:classification', furnitureByClassification);
+    router.get('/classification/type/', furnitureByClassificationByType);
+    router.get('/classification/type/:type', furnitureByClassificationByType);
+    router.get('/classification/name/', furnitureByClassificationByName);
+    router.get('/classification/name/:name', furnitureByClassificationByName);
+    router.get('/material/', furnitureByMaterial);
+    router.get('/material/:materialName', furnitureByMaterial);
+    router.get('/color/', furnitureByColor);
+    router.get('/color/:colorName', furnitureByColor);
+    router.get('/:id', furnitureById);
 
     return app.use('/furniture', router);
 }
