@@ -14,7 +14,7 @@ export const furnitureById = async (req, res) => {
 
 export const furnitureByClassificationId = async (req, res) => {
 
-    let data = await getFurnitureByClassificationId(req.query.classificationId);
+    let data = await getFurnitureByClassificationId(req.query.classificationId, req.query.page);
     return res.status(data.status).json(data);
 }
 
