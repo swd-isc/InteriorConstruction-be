@@ -2,7 +2,7 @@ import Classification from '../models/Classification';
 
 import mongoose from "mongoose";
 
-export const getClassificationByPage = async (pageReq) => {
+export const classificationByPage = async (pageReq) => {
     try {
         const itemsPerPage = 10;
         // Parse query parameters
@@ -34,5 +34,54 @@ export const getClassificationByPage = async (pageReq) => {
     } finally {
         // Close the database connection
         mongoose.connection.close();
+    }
+}
+
+export const classificationByType = async (classificationType) => {
+    try {
+        let data = [];
+
+        // Get the data for the current page
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+        const isValid = validateType(classificationType);
+        if (!isValid) {
+            return {
+                status: 400,
+                data: data,
+                messageError: "Type must be 'PRODUCT' | 'ROOM' | 'STYLE'"
+            }
+        }
+        data = await Classification.find({ type: classificationType.toUpperCase() })
+            .select("classificationName");
+        return {
+            status: 200,
+            data: data,
+            message: data.length !== 0 ? "OK" : "No data"
+        };
+
+    } catch (error) {
+        console.error(error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
+function validateType(input) {
+    if (!input) {
+        return false;
+    }
+    // Convert input to lowercase and compare
+    const lowerCaseInput = input.toUpperCase();
+
+    if (lowerCaseInput === "PRODUCT" || lowerCaseInput === "ROOM" || lowerCaseInput === "STYLE") {
+        return true;  // Input is valid
+    } else {
+        return false; // Input is not valid
     }
 }
