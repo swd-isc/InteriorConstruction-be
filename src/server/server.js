@@ -12,11 +12,12 @@ import { ContractRouter } from '../routes/ContractAPI';
 import { DesignRouter } from '../routes/DesignAPI';
 import { ColorRouter } from '../routes/ColorAPI';
 import { MaterialRouter } from '../routes/MaterialAPI';
-import { FurnitureRouter } from '../routes/FurnitureAPI';
+import { FurnitureCategoryRouter, FurnitureRouter, ShopRouter } from '../routes/FurnitureAPI';
 import { ClassificationRouter } from '../routes/ClassificationAPI';
 import { ReturnPolicyRouter } from '../routes/ReturnPolicyAPI';
 import { DeliveryRouter } from '../routes/DeliveryAPI';
 import { DesignCardRouter } from '../routes/DesignCardAPI';
+
 const app = express();
 
 //Config .env
@@ -52,8 +53,14 @@ ColorRouter(app);
 //Material routes
 MaterialRouter(app);
 
+//Shop routes
+ShopRouter(app);
+
 //Furniture routes
 FurnitureRouter(app);
+
+//Furniture category routes
+FurnitureCategoryRouter(app);
 
 //Classification routes
 ClassificationRouter(app);

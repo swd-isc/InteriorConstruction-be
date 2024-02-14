@@ -2,6 +2,7 @@ import Furniture from '../models/Furniture';
 import Classification from '../models/Classification';
 
 import mongoose from "mongoose";
+const ObjectId = mongoose.Types.ObjectId;
 
 export const getFurnitureByPage = async (mode, pageReq) => {
     try {
@@ -9,7 +10,6 @@ export const getFurnitureByPage = async (mode, pageReq) => {
         const itemsPerPage = 10;
         // Parse query parameters
         const page = parseInt(pageReq) || 1;
-
         let currentPageData = [];
 
         // Calculate start and end indices for the current page
@@ -19,11 +19,99 @@ export const getFurnitureByPage = async (mode, pageReq) => {
         const url = process.env.URL_DB;
         await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
-        currentPageData = await Furniture.find({}).sort({ price: sortAsc }).populate('colors').populate('materials').populate('delivery').populate('classifications').skip(startIndex).limit(itemsPerPage);
+        const totalItems = await Furniture.countDocuments();
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (pageReq > totalPages) {
+            return {
+                status: 400,
+                data: currentPageData,
+                page: page,
+                totalPages: totalPages,
+                messageError: "Your page is higher than expected"
+            };
+        }
+
+        const result = await Furniture.aggregate([
+            {
+                $skip: startIndex, // Skip documents based on the starting index
+            },
+            {
+                $limit: itemsPerPage, // Limit the number of documents per page
+            },
+            {
+                $lookup: {
+                    from: 'color', // Assuming your color schema collection is named 'colors'
+                    localField: 'colors',
+                    foreignField: '_id',
+                    as: 'colorsData',
+                },
+            },
+            {
+                $unwind: '$colorsData', // Unwind the colors array
+            },
+            {
+                $lookup: {
+                    from: 'material', // Assuming your color schema collection is named 'colors'
+                    localField: 'materials',
+                    foreignField: '_id',
+                    as: 'materialsData',
+                },
+            },
+            {
+                $unwind: '$materialsData', // Unwind the colors array
+            },
+            {
+                $group: {
+                    _id: null, // Group all documents together
+                    uniqueColors: { $addToSet: '$colorsData._id' }, // Add unique color IDs to the set
+                    totalColors: { $sum: 1 }, // Count the total number of colors
+                    uniqueMaterials: { $addToSet: '$materialsData._id' }, // Add unique material IDs to the set
+                    totalMaterials: { $sum: 1 }, // Count the total number of materials
+                    furnitureData: { $push: '$$ROOT' }, // Accumulate the furniture data
+                },
+            },
+            {
+                $project: {
+                    _id: 0, // Exclude _id field
+                    uniqueMaterials: { $size: '$uniqueMaterials' }, // Count the number of unique materials
+                    totalMaterials: 1, // Include totalMaterials
+                    uniqueColors: { $size: '$uniqueColors' }, // Count the number of unique colors
+                    totalColors: 1, // Include totalColors
+                    furnitures: {
+                        $map: {
+                            input: '$furnitureData',
+                            as: 'furniture',
+                            in: {
+                                _id: '$$furniture._id',
+                                name: '$$furniture.name',
+                                imgURL: '$$furniture.imgURL',
+                                price: '$$furniture.price',
+                            },
+                        },
+                    }, // Include furniture data
+                },
+            },
+        ]);
+
+        console.log(result);
+
+        currentPageData = await Furniture.find({}).sort({ price: sortAsc })
+            .skip(startIndex).limit(itemsPerPage)
+            .select('name imgURL price materials colors')
+            .populate({
+                path: "materials",
+                select: 'name',
+            })
+            .populate({
+                path: "colors",
+                select: 'name',
+            })
         return {
             status: 200,
-            data: currentPageData,
+            data: result,
             page: page,
+            totalPages: totalPages,
             message: currentPageData.length !== 0 ? "OK" : "No data"
         };
 
@@ -45,7 +133,31 @@ export const getFurnitureById = async (id) => {
     await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
     try {
-        const data = await Furniture.findById(id).populate('colors').populate('materials').populate('delivery').populate('classifications');
+        if (!id) {
+            return {
+                status: 400,
+                data: {},
+                messageError: "Required Id"
+            }
+        }
+        const data = await Furniture.findById(id)
+            .populate({
+                path: 'colors',
+                select: '-_id name',
+            })
+            .populate({
+                path: 'materials',
+                select: '-_id name',
+            })
+            .populate({
+                path: 'delivery',
+                select: '-_id', // Exclude the _id field
+            })
+            .populate({
+                path: 'classifications',
+                select: '-_id classificationName',
+            })
+        // .populate('classifications');
         if (data) {
             return {
                 status: 200,
@@ -104,6 +216,43 @@ export const getFurnitureByType = async (furType) => {
     }
 }
 
+export const getFurnitureByClassificationId = async (id) => {
+    try {
+        let data = [];
+
+        if (!id) {
+            return {
+                status: 400,
+                data: data,
+                messageError: "Required classification Id."
+            }
+        }
+        // Get the data for the current page
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        data = await Furniture.find({
+            classifications: new ObjectId(id),
+        })
+            .select('name imgURL price');
+        return {
+            status: 200,
+            data: data,
+            message: data.length !== 0 ? "OK" : "No data"
+        };
+
+    } catch (error) {
+        console.error(error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
 export const getFurnitureByClassificationByType = async (classificationType) => {
     try {
         let data = [];
@@ -116,7 +265,7 @@ export const getFurnitureByClassificationByType = async (classificationType) => 
             return {
                 status: 400,
                 data: data,
-                messageError: "Type must be 'DEFAULT' or 'CUSTOM' and cannot be empty."
+                messageError: "Type must be 'PRODUCT' || 'ROOM' || 'STYLE' and cannot be empty."
             }
         }
         //Mở code này ra chạy thử thì trên mongodb nó có chỉ dùng .type để truy cập cái field thì cách này cũng k dc luôn vì classifications là objectId

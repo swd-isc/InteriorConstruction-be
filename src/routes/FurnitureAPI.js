@@ -1,11 +1,9 @@
 import express from 'express';
-import { furnitureByClassificationByName, furnitureByClassificationByType, furnitureByColor, furnitureById, furnitureByMaterial, furnitureByPage, furnitureByType } from '../controller/FurnitureController';
-
-const router = express.Router();
+import { furnitureByClassificationByName, furnitureByClassificationByType, furnitureByClassificationId, furnitureByColor, furnitureById, furnitureByMaterial, furnitureByPage, furnitureByType } from '../controller/FurnitureController';
 
 const FurnitureRouter = (app) => {
-    router.get('/page/', furnitureByPage);
-    router.get('/page/:page', furnitureByPage);
+    const router = express.Router();
+
     router.get('/price/', furnitureByPage);
     router.get('/price/:page/:asc', furnitureByPage);
     router.get('/price/:asc', furnitureByPage);
@@ -19,11 +17,29 @@ const FurnitureRouter = (app) => {
     router.get('/material/:materialName', furnitureByMaterial);
     router.get('/color/', furnitureByColor);
     router.get('/color/:colorName', furnitureByColor);
-    router.get('/:id', furnitureById);
+    router.get('/', furnitureById);
 
-    return app.use('/furniture', router);
+    return app.use('/api/furniture', router);
+}
+
+const ShopRouter = (app) => {
+    const router = express.Router();
+
+    router.get('/', furnitureByPage);
+
+    return app.use('/api/shop', router);
+}
+
+const FurnitureCategoryRouter = (app) => {
+    const router = express.Router();
+
+    router.get('/', furnitureByClassificationId);
+
+    return app.use('/api/furniture-category', router);
 }
 
 export {
-    FurnitureRouter
+    FurnitureRouter,
+    ShopRouter,
+    FurnitureCategoryRouter
 }
