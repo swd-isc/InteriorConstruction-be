@@ -1,4 +1,4 @@
-import { getFurnitureByClassificationByName, getFurnitureByClassificationByType, getFurnitureByClassificationId, getFurnitureByColor, getFurnitureById, getFurnitureByMaterial, getFurnitureByPage, getFurnitureByType } from "../services/FurnitureServices";
+import { filterSessionService, getFurnitureByClassificationByName, getFurnitureByClassificationByType, getFurnitureByClassificationId, getFurnitureByColor, getFurnitureById, getFurnitureByMaterial, getFurnitureByPage, getFurnitureByType } from "../services/FurnitureServices";
 
 export const furnitureByPage = async (req, res) => {
 
@@ -15,6 +15,12 @@ export const furnitureById = async (req, res) => {
 export const furnitureByClassificationId = async (req, res) => {
 
     let data = await getFurnitureByClassificationId(req.query.classificationId, req.query.page, req.query.sort_by);
+    return res.status(data.status).json(data);
+}
+
+export const filterSession = async (req, res) => {
+
+    let data = await filterSessionService(req.query);
     return res.status(data.status).json(data);
 }
 
