@@ -8,6 +8,6 @@ export const getClassificationByPage = async (req, res) => {
 
 export const getClassificationByType = async (req, res) => {
 
-    let data = await classificationByType(req.query.type);
+    let data = await classificationByType(req.query.type, req.query.sort_by);
     return res.status(data.status).json(data);
 }
