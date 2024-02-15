@@ -5,10 +5,10 @@ import Delivery from '../models/Delivery';
 import Furniture from '../models/Furniture';
 
 import mongoose from "mongoose";
-import { returnPolicyData } from '../sample-data/ReturnPolicyData';
-import { deliveryData } from '../sample-data/DeliveryData';
-import { furnitureData } from '../sample-data/FurnitureData';
-import { designData } from '../sample-data/DesignData';
+// import { returnPolicyData } from '../sample-data/ReturnPolicyData';
+// import { deliveryData } from '../sample-data/DeliveryData';
+// import { furnitureData } from '../sample-data/FurnitureData';
+// import { designData } from '../sample-data/DesignData';
 
 export const getColorByPage = async (pageReq) => {
     try {
