@@ -1,5 +1,4 @@
 import Furniture from '../models/Furniture';
-import Classification from '../models/Classification';
 
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
@@ -42,9 +41,6 @@ export const getFurnitureByPage = async (mode, pageReq) => {
                 },
             },
             {
-                $unwind: '$colorsData', // Unwind the colors array
-            },
-            {
                 $lookup: {
                     from: 'material', // Assuming your material schema collection is named 'material'
                     localField: 'materials',
@@ -52,12 +48,12 @@ export const getFurnitureByPage = async (mode, pageReq) => {
                     as: 'materialsData',
                 },
             },
-            {
-                $unwind: '$materialsData', // Unwind the materials array
-            },
             { // Separate the groups for colors, materials and furnitures
                 $facet: {
                     colors: [
+                        {
+                            $unwind: '$colorsData', // Unwind the colors array
+                        },
                         {
                             $group: {
                                 _id: '$colorsData._id',
@@ -73,6 +69,9 @@ export const getFurnitureByPage = async (mode, pageReq) => {
                         },
                     ],
                     materials: [
+                        {
+                            $unwind: '$materialsData', // Unwind the materials array
+                        },
                         {
                             $group: {
                                 _id: '$materialsData._id',
@@ -201,40 +200,6 @@ export const getFurnitureById = async (id) => {
     }
 }
 
-export const getFurnitureByType = async (furType) => {
-    try {
-        let data = [];
-
-        // Get the data for the current page
-        const url = process.env.URL_DB;
-        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-        const isValid = validateType(furType);
-        if (!isValid) {
-            return {
-                status: 400,
-                data: data,
-                messageError: "Type must be 'DEFAULT' or 'CUSTOM'"
-            }
-        }
-        data = await Furniture.find({ type: furType.toUpperCase() }).populate('colors').populate('materials').populate('delivery').populate('classifications');
-        return {
-            status: 200,
-            data: data,
-            message: data.length !== 0 ? "OK" : "No data"
-        };
-
-    } catch (error) {
-        console.error(error);
-        return {
-            status: 500,
-            messageError: error,
-        }
-    } finally {
-        // Close the database connection
-        mongoose.connection.close();
-    }
-}
-
 export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
     try {
         let data = [];
@@ -272,33 +237,26 @@ export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
                 messageError: "Your page is higher than expected"
             };
         }
-
         data = await Furniture.aggregate([
             {
                 $lookup: {
-                    from: 'color', // Assuming your color schema collection is named 'color'
+                    from: 'color',
                     localField: 'colors',
                     foreignField: '_id',
                     as: 'colorsData',
                 },
             },
             {
-                $unwind: '$colorsData', // Unwind the colors array
-            },
-            {
                 $lookup: {
-                    from: 'material', // Assuming your material schema collection is named 'material'
+                    from: 'material',
                     localField: 'materials',
                     foreignField: '_id',
                     as: 'materialsData',
                 },
             },
             {
-                $unwind: '$materialsData', // Unwind the materials array
-            },
-            {
                 $lookup: {
-                    from: 'classification', // Assuming your classification schema collection is named 'classification'
+                    from: 'classification',
                     localField: 'classifications',
                     foreignField: '_id',
                     as: 'classificationsData',
@@ -308,17 +266,38 @@ export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
                 $unwind: '$classificationsData', // Unwind the classifications array
             },
             {
+                $group: {
+                    _id: '$classificationsData._id',
+                    colors: { $push: '$colorsData' },
+                    materials: { $push: '$materialsData' },
+                    furnitures: {
+                        $addToSet: {
+                            _id: '$_id',
+                            name: '$name',
+                            imgURL: '$imgURL',
+                            price: '$price',
+                        },
+                    },
+                },
+            },
+            {
                 $match: {
-                    'classificationsData._id': new ObjectId(id),
+                    '_id': new ObjectId(id),
                 },
             },
             { // Separate the groups for colors, materials and furnitures
                 $facet: {
                     colors: [
                         {
+                            $unwind: '$colors', // Unwind the colors array
+                        },
+                        {
+                            $unwind: '$colors', // Unwind the colors array
+                        },
+                        {
                             $group: {
-                                _id: '$colorsData._id',
-                                name: { $first: '$colorsData.name' },
+                                _id: '$colors._id',
+                                name: { $first: '$colors.name' },
                                 count: { $sum: 1 },
                             },
                         },
@@ -331,9 +310,15 @@ export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
                     ],
                     materials: [
                         {
+                            $unwind: '$materials', // Unwind the materials array
+                        },
+                        {
+                            $unwind: '$materials', // Unwind the materials array
+                        },
+                        {
                             $group: {
-                                _id: '$materialsData._id',
-                                name: { $first: '$materialsData.name' },
+                                _id: '$materials._id',
+                                name: { $first: '$materials.name' },
                                 count: { $sum: 1 },
                             },
                         },
@@ -346,11 +331,14 @@ export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
                     ],
                     furnitures: [
                         {
+                            $unwind: '$furnitures', // Unwind the materials array
+                        },
+                        {
                             $group: {
-                                _id: '$_id',
-                                name: { $first: '$name' },
-                                imgURL: { $first: '$imgURL' },
-                                price: { $first: '$price' },
+                                _id: '$furnitures._id',
+                                name: { $first: '$furnitures.name' },
+                                imgURL: { $first: '$furnitures.imgURL' },
+                                price: { $first: '$furnitures.price' },
                             },
                         },
                         {
@@ -375,6 +363,40 @@ export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
         //     .skip(startIndex).limit(itemsPerPage)
         //     .select('name classifications')
 
+        return {
+            status: 200,
+            data: data,
+            message: data.length !== 0 ? "OK" : "No data"
+        };
+
+    } catch (error) {
+        console.error(error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
+export const getFurnitureByType = async (furType) => {
+    try {
+        let data = [];
+
+        // Get the data for the current page
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+        const isValid = validateType(furType);
+        if (!isValid) {
+            return {
+                status: 400,
+                data: data,
+                messageError: "Type must be 'DEFAULT' or 'CUSTOM'"
+            }
+        }
+        data = await Furniture.find({ type: furType.toUpperCase() }).populate('colors').populate('materials').populate('delivery').populate('classifications');
         return {
             status: 200,
             data: data,
