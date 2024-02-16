@@ -36,6 +36,11 @@ export const getFurnitureByPage = async (mode, pageReq) => {
 
         currentPageData = await Furniture.aggregate([
             {
+                $match: {
+                    'type': 'DEFAULT',
+                },
+            },
+            {
                 $lookup: {
                     from: 'color', // Assuming your color schema collection is named 'color'
                     localField: 'colors',
@@ -242,6 +247,11 @@ export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
         }
         data = await Furniture.aggregate([
             {
+                $match: {
+                    'type': 'DEFAULT',
+                },
+            },
+            {
                 $lookup: {
                     from: 'color',
                     localField: 'colors',
@@ -386,80 +396,87 @@ export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
 
 export const filterSessionService = async (reqData) => {
     try {
-        let { classificationId, sort_by, colorId, materialId } = reqData;
-        let pageReq = reqData.page;
+        const { classificationId, sort_by, colorId, materialId } = reqData;
+        const pageReq = reqData.page;
         let data = {};
 
         //Validate classificationId
-        let idValid = await isIdValid(classificationId, 'classification');
-        if (!idValid.isValid) {
+        const idClassificationValid = await isIdValid(classificationId, 'classification');
+        if (!idClassificationValid.isValid && idClassificationValid.messageError === 'ObjectId classification required.') {
             return {
-                status: idValid.status,
+                status: idClassificationValid.status,
                 data: data,
-                messageError: idValid.messageError
+                messageError: idClassificationValid.messageError
             }
         }
 
         //Validate colorId
-        idValid = await isIdValid(colorId, 'color');
-        if (!idValid.isValid) {
+        const idColorValid = await isIdValid(colorId, 'color');
+        if (!idColorValid.isValid && idColorValid.messageError === 'ObjectId color required.') {
             return {
-                status: idValid.status,
+                status: idColorValid.status,
                 data: data,
-                messageError: idValid.messageError
+                messageError: idColorValid.messageError
             }
         }
 
         //Validate materialId
-        idValid = await isIdValid(materialId, 'material');
-        if (!idValid.isValid) {
+        const idMaterialValid = await isIdValid(materialId, 'material');
+        if (!idMaterialValid.isValid && idMaterialValid.messageError === 'ObjectId material required.') {
             return {
-                status: idValid.status,
+                status: idMaterialValid.status,
                 data: data,
-                messageError: idValid.messageError
+                messageError: idMaterialValid.messageError
             }
         }
 
         let sortAsc = sortByInput(sort_by);
 
-        const itemsPerPage = 10;
         // Parse query parameters
         const page = parseInt(pageReq) || 1;
 
-        // Calculate start and end indices for the current page
-        const startIndex = (page - 1) * itemsPerPage;
+        if (idClassificationValid.messageError === 'Not a valid classification ObjectId.'
+            && idColorValid.isValid && idMaterialValid.isValid) { //filter with no classificationId
+            console.log('Filter with colorId and materialId due to wrong classificationId.');
+            let returnData = await getFurnitureByColorIdAndMaterialId(colorId, materialId, page, sortAsc);
+            returnData.message = 'Filter with colorId and materialId due to wrong classificationId.'
+            return returnData;
+        } else if (idClassificationValid.messageError === 'Not a valid classification ObjectId.'
+            && idColorValid.messageError === 'Not a valid color ObjectId.'
+            && idMaterialValid.isValid) { //filter with just materialId
 
-        if (!classificationId) { //filter with no classificationId
+        } else if (idClassificationValid.messageError === 'Not a valid classification ObjectId.'
+            && idMaterialValid.messageError === 'Not a valid material ObjectId.'
+            && idColorValid.isValid) { //filter with just colorId
 
-        } else if (!colorId && !materialId) { //filter with just classificationId
+        } else if (idClassificationValid.isValid
+            && idColorValid.isValid
+            && idMaterialValid.messageError === 'Not a valid material ObjectId.') { //filter with classificationId, colorId
 
-        } else if (colorId && !materialId) { //filter with classificationId, colorId
+        } else if (idClassificationValid.isValid
+            && idMaterialValid.isValid
+            && idColorValid.messageError === 'Not a valid color ObjectId.') { //filter with classificationId, materialId
 
-        } else if (!colorId && materialId) { //filter with classificationId, materialId
+        } else if (idClassificationValid.isValid
+            && idMaterialValid.isValid
+            && idColorValid.isValid) { //filter with classificationId, colorId and materialId
 
-        } else { //filter with classificationId, colorId and materialId
-
-        }
-
-        // Get the data for the current page
-        const url = process.env.URL_DB;
-        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-
-        const totalItems = await Furniture.countDocuments();
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-        if (pageReq > totalPages) {
+        } else if (idClassificationValid.isValid
+            && idMaterialValid.messageError === 'Not a valid material ObjectId.'
+            && idColorValid.messageError === 'Not a valid color ObjectId.') { //filter with just classificationId
+            console.log('Filter with just classificationId due to wrong colorId and materialId.');
+            let returnData = await getFurnitureByClassificationId(classificationId, page, sort_by);
+            returnData.message = 'Filter with just classificationId due to wrong colorId and materialId.'
+            return returnData;
+        } else {
             return {
                 status: 400,
                 data: data,
-                page: page,
-                totalPages: totalPages,
-                messageError: "Your page is higher than expected"
+                messageError: "No filter for this data"
             };
         }
 
-
-
+        //TODO: Continuing here, use this to done the if else code above
         data = await Furniture.aggregate([
             {
                 $lookup: {
@@ -505,7 +522,7 @@ export const filterSessionService = async (reqData) => {
             },
             {
                 $match: {
-                    '_id': new ObjectId(id),
+                    '_id': new ObjectId(classificationId),
                 },
             },
             { // Separate the groups for colors, materials and furnitures
@@ -576,9 +593,161 @@ export const filterSessionService = async (reqData) => {
             {
                 $project: {
                     _id: 0,
-                    furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
+                    // furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
                     materials: 1,
                     colors: 1,
+                },
+            },
+        ]);
+
+        return {
+            status: 200,
+            data: data,
+            message: data.length !== 0 ? "OK" : "No data"
+        };
+
+    } catch (error) {
+        console.error(error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
+export const getFurnitureByColorIdAndMaterialId = async (colorId, materialId, page, sortAsc) => {
+    try {
+        // Get the data for the current page
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        let data = {}
+
+        const itemsPerPage = 10;
+        const totalItems = await Furniture.countDocuments();
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        // Calculate start and end indices for the current page
+        const startIndex = (page - 1) * itemsPerPage;
+
+        if (page > totalPages) {
+            return {
+                status: 400,
+                data: data,
+                page: page,
+                totalPages: totalPages,
+                messageError: "Your page is higher than expected"
+            };
+        }
+
+        data = await Furniture.aggregate([
+            {
+                $match: {
+                    'type': 'DEFAULT',
+                },
+            },
+            { // Separate the groups for colors, materials and furnitures
+                $facet: {
+                    colors: [
+                        {
+                            $lookup: {
+                                from: 'color',
+                                localField: 'colors',
+                                foreignField: '_id',
+                                as: 'colorsData',
+                            },
+                        },
+                        {
+                            $unwind: '$colorsData', // Unwind the colorsData array
+                        },
+                        {
+                            $group: {
+                                _id: '$colorsData._id',
+                                name: { $first: '$colorsData.name' },
+                                count: { $sum: 1 },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'name': 1,
+                            },
+                        },
+                    ],
+                    materials: [
+                        {
+                            $lookup: {
+                                from: 'material',
+                                localField: 'materials',
+                                foreignField: '_id',
+                                as: 'materialsData',
+                            },
+                        },
+                        {
+                            $unwind: '$materialsData', // Unwind the materialsData array
+                        },
+                        {
+                            $group: {
+                                _id: '$materialsData._id',
+                                name: { $first: '$materialsData.name' },
+                                count: { $sum: 1 },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'name': 1,
+                            },
+                        },
+                    ],
+                    furnitures: [
+                        {
+                            $match: {
+                                'colors': new ObjectId(colorId),
+                                'materials': new ObjectId(materialId),
+                            },
+                        },
+                        {
+                            $lookup: {
+                                from: 'color',
+                                localField: 'colors',
+                                foreignField: '_id',
+                                as: 'colorsData',
+                            },
+                        },
+                        {
+                            $lookup: {
+                                from: 'material',
+                                localField: 'materials',
+                                foreignField: '_id',
+                                as: 'materialsData',
+                            },
+                        },
+                        {
+                            $group: {
+                                _id: '$_id',
+                                name: { $first: '$name' },
+                                imgURL: { $first: '$imgURL' },
+                                price: { $first: '$price' },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'price': sortAsc,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $project: {
+                    colors: 1,
+                    materials: 1,
+                    furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
                 },
             },
         ]);
@@ -980,7 +1149,7 @@ async function isIdValid(id, model) {
         return {
             status: 400,
             isValid: false,
-            messageError: 'ObjectId required.'
+            messageError: `ObjectId ${model} required.`
         }
     }
     try {
@@ -994,7 +1163,7 @@ async function isIdValid(id, model) {
             return {
                 status: 400,
                 isValid: false,
-                messageError: 'Not a valid ObjectId.'
+                messageError: `Not a valid ${model} ObjectId.`
             }
         }
 
