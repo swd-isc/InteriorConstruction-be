@@ -12,7 +12,7 @@ export const getFurnitureByPage = async (mode, pageReq) => {
         const itemsPerPage = 10;
         // Parse query parameters
         const page = parseInt(pageReq) || 1;
-        let currentPageData = [];
+        let data = [];
 
         // Calculate start and end indices for the current page
         const startIndex = (page - 1) * itemsPerPage;
@@ -21,7 +21,7 @@ export const getFurnitureByPage = async (mode, pageReq) => {
         const url = process.env.URL_DB;
         await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
-        currentPageData = await Furniture.aggregate([
+        data = await Furniture.aggregate([
             {
                 $match: {
                     'type': 'DEFAULT',
@@ -115,7 +115,7 @@ export const getFurnitureByPage = async (mode, pageReq) => {
             },
         ]);
 
-        // currentPageData = await Furniture.find({}).sort({ price: sortAsc })
+        // data = await Furniture.find({}).sort({ price: sortAsc })
         //     .skip(startIndex).limit(itemsPerPage)
         //     .select('name imgURL price materials colors')
         //     .populate({
@@ -128,8 +128,8 @@ export const getFurnitureByPage = async (mode, pageReq) => {
         //     })
         return {
             status: 200,
-            data: currentPageData,
-            message: currentPageData.length !== 0 ? "OK" : "No data"
+            data: data[0],
+            message: data.length !== 0 ? "OK" : "No data"
         };
 
     } catch (error) {
@@ -201,7 +201,7 @@ export const getFurnitureById = async (id) => {
 
 export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
     try {
-        let data = {};
+        let data = [];
         const idValid = await isIdValid(id, 'classification');
 
         if (!idValid.isValid) {
@@ -387,33 +387,12 @@ export const filterSessionService = async (reqData) => {
 
         //Validate classificationId
         const idClassificationValid = await isIdValid(classificationId, 'classification');
-        if (!idClassificationValid.isValid && idClassificationValid.messageError === 'ObjectId classification required.') {
-            return {
-                status: idClassificationValid.status,
-                data: data,
-                messageError: idClassificationValid.messageError
-            }
-        }
 
         //Validate colorId
         const idColorValid = await isIdValid(colorId, 'color');
-        if (!idColorValid.isValid && idColorValid.messageError === 'ObjectId color required.') {
-            return {
-                status: idColorValid.status,
-                data: data,
-                messageError: idColorValid.messageError
-            }
-        }
 
         //Validate materialId
         const idMaterialValid = await isIdValid(materialId, 'material');
-        if (!idMaterialValid.isValid && idMaterialValid.messageError === 'ObjectId material required.') {
-            return {
-                status: idMaterialValid.status,
-                data: data,
-                messageError: idMaterialValid.messageError
-            }
-        }
 
         const sortAsc = sortByInput(sort_by);
 
@@ -464,9 +443,19 @@ export const filterSessionService = async (reqData) => {
             return returnData;
         } else {
             console.log('else');
+            let error = {};
+            if (!idClassificationValid.valid) {
+                error.errorClassificationId = idClassificationValid.messageError;
+            }
+            if (!idColorValid.valid) {
+                error.errorColorId = idColorValid.messageError;
+            }
+            if (!idMaterialValid.valid) {
+                error.errorMaterialId = idMaterialValid.messageError;
+            }
             return {
                 status: 400,
-                data: data,
+                data: error,
                 messageError: "No filter for this data"
             };
         }
