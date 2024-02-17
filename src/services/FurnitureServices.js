@@ -400,20 +400,21 @@ export const filterSessionService = async (reqData) => {
         const page = parseInt(pageReq) || 1;
 
         if (idClassificationValid.messageError === 'Not a valid classification ObjectId.'
-            && idColorValid.isValid && idMaterialValid.isValid) { //filter with no classificationId
+            && idColorValid.isValid
+            && idMaterialValid.isValid) { //filter with no classificationId
             console.log('Filter with colorId and materialId due to wrong classificationId.');
             let returnData = await getFurnitureByColorIdAndMaterialId(colorId, materialId, page, sortAsc);
             returnData.message = 'Filter with colorId and materialId due to wrong classificationId.'
             return returnData;
         } else if (idClassificationValid.messageError === 'Not a valid classification ObjectId.'
-            && idColorValid.messageError === 'Not a valid color ObjectId.'
+            && !idColorValid.isValid
             && idMaterialValid.isValid) { //filter with just materialId
             console.log('Filter with just materialId due to wrong classificationId and colorId.');
             let returnData = await getFurnitureByMaterialId(materialId, page, sortAsc);
             returnData.message = 'Filter with just materialId due to wrong classificationId and colorId.'
             return returnData;
         } else if (idClassificationValid.messageError === 'Not a valid classification ObjectId.'
-            && idMaterialValid.messageError === 'Not a valid material ObjectId.'
+            && !idMaterialValid.isValid
             && idColorValid.isValid) { //filter with just colorId
             console.log('Filter with just colorId due to wrong classificationId and materialId.');
             let returnData = await getFurnitureByColorId(colorId, page, sortAsc);
@@ -421,22 +422,22 @@ export const filterSessionService = async (reqData) => {
             return returnData;
         } else if (idClassificationValid.isValid
             && idColorValid.isValid
-            && idMaterialValid.messageError === 'Not a valid material ObjectId.') { //filter with classificationId, colorId
+            && !idMaterialValid.isValid) { //filter with classificationId, colorId
             console.log('Filter with classificationId and colorId due to wrong materialId.');
             let returnData = await getFurnitureByClassificationIdAndColorId(classificationId, colorId, page, sortAsc);
             returnData.message = 'Filter with classificationId and colorId due to wrong materialId.'
             return returnData;
         } else if (idClassificationValid.isValid
             && idMaterialValid.isValid
-            && idColorValid.messageError === 'Not a valid color ObjectId.') { //filter with classificationId, materialId
+            && !idColorValid.isValid) { //filter with classificationId, materialId
 
         } else if (idClassificationValid.isValid
             && idMaterialValid.isValid
             && idColorValid.isValid) { //filter with classificationId, colorId and materialId
 
         } else if (idClassificationValid.isValid
-            && idMaterialValid.messageError === 'Not a valid material ObjectId.'
-            && idColorValid.messageError === 'Not a valid color ObjectId.') { //filter with just classificationId
+            && !idMaterialValid.isValid
+            && !idColorValid.isValid) { //filter with just classificationId
             console.log('Filter with just classificationId due to wrong colorId and materialId.');
             let returnData = await getFurnitureByClassificationId(classificationId, page, sort_by);
             returnData.message = 'Filter with just classificationId due to wrong colorId and materialId.'
