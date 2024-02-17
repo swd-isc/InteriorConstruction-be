@@ -129,8 +129,6 @@ export const getFurnitureByPage = async (mode, pageReq) => {
         return {
             status: 200,
             data: currentPageData,
-            page: page,
-            totalPages: totalPages,
             message: currentPageData.length !== 0 ? "OK" : "No data"
         };
 
