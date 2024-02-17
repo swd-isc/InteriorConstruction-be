@@ -399,21 +399,21 @@ export const filterSessionService = async (reqData) => {
         // Parse query parameters
         const page = parseInt(pageReq) || 1;
 
-        if (idClassificationValid.messageError === 'Not a valid classification ObjectId.'
+        if (!idClassificationValid.isValid
             && idColorValid.isValid
             && idMaterialValid.isValid) { //filter with no classificationId
             console.log('Filter with colorId and materialId due to wrong classificationId.');
             let returnData = await getFurnitureByColorIdAndMaterialId(colorId, materialId, page, sortAsc);
             returnData.message = 'Filter with colorId and materialId due to wrong classificationId.'
             return returnData;
-        } else if (idClassificationValid.messageError === 'Not a valid classification ObjectId.'
+        } else if (!idClassificationValid.isValid
             && !idColorValid.isValid
             && idMaterialValid.isValid) { //filter with just materialId
             console.log('Filter with just materialId due to wrong classificationId and colorId.');
             let returnData = await getFurnitureByMaterialId(materialId, page, sortAsc);
             returnData.message = 'Filter with just materialId due to wrong classificationId and colorId.'
             return returnData;
-        } else if (idClassificationValid.messageError === 'Not a valid classification ObjectId.'
+        } else if (!idClassificationValid.isValid
             && !idMaterialValid.isValid
             && idColorValid.isValid) { //filter with just colorId
             console.log('Filter with just colorId due to wrong classificationId and materialId.');
@@ -456,8 +456,8 @@ export const filterSessionService = async (reqData) => {
             }
             return {
                 status: 400,
-                data: error,
-                messageError: "No filter for this data"
+                data: {},
+                messageError: error
             };
         }
 
