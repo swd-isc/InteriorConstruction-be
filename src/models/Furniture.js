@@ -23,34 +23,34 @@ export const furnitureSchema = new Schema({
                     const Material = mongoose.model('material');
 
                     if (!value) {
-                        return false; // Value is required
+                        throw new mongoose.Error(`Material required.`);
                     }
 
                     const material = await Material.findById(value);
                     if (!material) {
-                        return false; // Invalid ObjectId reference in the array
+                        throw new mongoose.Error(`${value} is not a valid material ID.`);
                     }
 
                     return true; // All elements are valid ObjectId references
-                },
-                message: props => `${props.value} is not a valid material ID.`
+                }
             },
         }],
         validate: {
             validator: async function (value) {
+                if (value.length == 0) { //empty array
+                    throw new mongoose.Error(`Empty materials array`);
+                }
                 // Check for duplicate material ObjectId in the array
                 for (let i = 0; i < value.length - 1; i++) {
                     for (let j = i + 1; j < value.length; j++) {
                         if (value[i].toString() === value[j].toString()) {
-                            return false;
+                            throw new mongoose.Error(`Duplicate materialId: ${value[i].toString()}`);
                         }
                     }
                 }
                 return true;
             },
-            message: 'Duplicate material ID in array'
         },
-        required: [true, 'Materials required.'],
     },
     colors: {
         type: [{
@@ -59,36 +59,33 @@ export const furnitureSchema = new Schema({
             validate: {
                 validator: async function (value) {
                     const Color = mongoose.model('color');
-
                     if (!value) {
-                        return false; // Value is required
+                        throw new mongoose.Error(`Color required.`);
                     }
-
                     const color = await Color.findById(value);
                     if (!color) {
-                        return false; // Invalid ObjectId reference in the array
+                        throw new mongoose.Error(`${value} is not a valid color ID.`);
                     }
 
                     return true; // All elements are valid ObjectId references
                 },
-                message: props => `${props.value} is not a valid color ID.`
             },
         }],
         validate: {
             validator: async function (value) {
+                if (value.length == 0) { //empty array
+                    throw new mongoose.Error(`Empty colors array`);
+                }
                 // Check for duplicate color ObjectId in the array
                 for (let i = 0; i < value.length - 1; i++) {
                     for (let j = i + 1; j < value.length; j++) {
                         if (value[i].toString() === value[j].toString()) {
-                            return false;
+                            throw new mongoose.Error(`Duplicate colorId: ${value[i].toString()}`);
                         }
                     }
                 }
-                return true;
             },
-            message: 'Duplicate color ID in array'
         },
-        required: [true, 'Colors required.'],
     },
     sizes: {
         type: String, //Example: D980 - R700 - C400/ D980 - R1880 - C400 mm
@@ -171,20 +168,30 @@ export const furnitureSchema = new Schema({
                 const Classification = mongoose.model('classification');
 
                 if (!Array.isArray(value)) {
-                    return false; // Not an array
+                    throw new mongoose.Error(`Classifications must be an array.`);
+                }
+
+                if (value.length == 0) { //empty array
+                    throw new mongoose.Error(`Empty classifications array`);
                 }
 
                 // Flag to track if at least one 'STYLE' classification is found
                 let foundStyleClassification = false;
+                let foundProductClassification = false;
 
                 for (const classificationId of value) {
                     const classification = await Classification.findById(classificationId);
                     if (!classification) {
-                        return false; // Invalid ObjectId reference in the array
+                        throw new mongoose.Error(`Invalid classificationId: ${classificationId}`);; // Invalid ObjectId reference in the array
                     }
                     if (classification.type != 'PRODUCT' && classification.type != 'STYLE') {
                         console.log('check classification err: ', classification);
-                        return false; // Invalid 'type' references in the classification array
+                        throw new mongoose.Error(`Invalid 'type' field of classificationId: ${classificationId}`);; // Invalid 'type' references in the classification array
+                    }
+
+                    // Check if the classification type is 'STYLE'
+                    if (classification.type === 'PRODUCT') {
+                        foundProductClassification = true;
                     }
 
                     // Check if the classification type is 'STYLE'
@@ -192,25 +199,28 @@ export const furnitureSchema = new Schema({
                         foundStyleClassification = true;
                     }
                 }
+
+                // Check if at least one 'PRODUCT' classification is found
+                if (!foundProductClassification) {
+                    throw new mongoose.Error(`At least one classification must have the type "PRODUCT"`);
+                }
+
                 // Check if at least one 'STYLE' classification is found
                 if (!foundStyleClassification) {
-                    console.log('At least one classification must have the type "STYLE"');
-                    return false;
+                    throw new mongoose.Error(`At least one classification must have the type "STYLE"`);
                 }
 
                 // Check for duplicate classification ObjectId in the array
                 for (let i = 0; i < value.length - 1; i++) {
                     for (let j = i + 1; j < value.length; j++) {
                         if (value[i].toString() === value[j].toString()) {
-                            return false;
+                            throw new mongoose.Error(`Duplicate classificationId: ${value[i].toString()}`);
                         }
                     }
                 }
                 return true;
-            },
-            message: "Invalid classification array",
-        },
-        required: [true, 'Classification required.'],
+            }
+        }
     }
 }, {
     collection: 'furniture',

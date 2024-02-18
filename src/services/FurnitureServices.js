@@ -1294,6 +1294,44 @@ export const getFurnitureByClassificationIdColorIdAndMaterialId = async (classif
     }
 }
 
+export const postFurniture = async (reqBody) => {
+    try {
+        let data = [];
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+        const furniture = new Furniture(reqBody);
+
+        try {
+            await furniture.validate();
+            data = await furniture.save();
+        } catch (error) {
+            return {
+                status: 400,
+                data: {},
+                messageError: error.message
+            }
+
+        }
+
+        return {
+            status: 200,
+            data: data,
+            message: data.length !== 0 ? "OK" : "No data"
+        };
+    } catch (error) {
+        console.error('error ne', error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
+
+
 export const getFurnitureByType = async (furType) => {
     try {
         let data = [];
