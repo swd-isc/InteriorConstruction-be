@@ -4,10 +4,10 @@ import designService from "../controller/DesignController";
 const router = express.Router();
 
 const DesignRouter = (app) => {
-  router.get("/page/:page", designService.getDesigns);
+  router.get("/", designService.getDesigns);
   router.get("/:id", designService.getDesignById)
 
-  return app.use("/design", router);
+  return app.use("/api/design", router);
 };
 
 export { DesignRouter };
