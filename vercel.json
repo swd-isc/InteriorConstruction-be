@@ -4,5 +4,8 @@
             "source": "/(.*)",
             "destination": "/api"
         }
+    ],
+    "regions": [
+        "hkg1"
     ]
 }
