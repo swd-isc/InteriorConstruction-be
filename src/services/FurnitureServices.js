@@ -430,11 +430,17 @@ export const filterSessionService = async (reqData) => {
         } else if (idClassificationValid.isValid
             && idMaterialValid.isValid
             && !idColorValid.isValid) { //filter with classificationId, materialId
-
+            console.log('Filter with classificationId and materialId due to wrong colorId.');
+            let returnData = await getFurnitureByClassificationIdAndMaterialId(classificationId, colorId, page, sortAsc);
+            returnData.message = 'Filter with classificationId and materialId due to wrong colorId.'
+            return returnData;
         } else if (idClassificationValid.isValid
             && idMaterialValid.isValid
             && idColorValid.isValid) { //filter with classificationId, colorId and materialId
-
+            console.log('Filter with classificationId, colorId and materialId.');
+            let returnData = await getFurnitureByClassificationIdColorIdAndMaterialId(classificationId, colorId, materialId, page, sortAsc);
+            returnData.message = 'Filter with classificationId, colorId and materialId.'
+            return returnData;
         } else if (idClassificationValid.isValid
             && !idMaterialValid.isValid
             && !idColorValid.isValid) { //filter with just classificationId
@@ -460,136 +466,6 @@ export const filterSessionService = async (reqData) => {
                 messageError: error
             };
         }
-
-        //TODO: Continuing here, use this to done the if else code above
-        data = await Furniture.aggregate([
-            {
-                $lookup: {
-                    from: 'color',
-                    localField: 'colors',
-                    foreignField: '_id',
-                    as: 'colorsData',
-                },
-            },
-            {
-                $lookup: {
-                    from: 'material',
-                    localField: 'materials',
-                    foreignField: '_id',
-                    as: 'materialsData',
-                },
-            },
-            {
-                $lookup: {
-                    from: 'classification',
-                    localField: 'classifications',
-                    foreignField: '_id',
-                    as: 'classificationsData',
-                },
-            },
-            {
-                $unwind: '$classificationsData', // Unwind the classifications array
-            },
-            {
-                $group: {
-                    _id: '$classificationsData._id',
-                    colors: { $push: '$colorsData' },
-                    materials: { $push: '$materialsData' },
-                    furnitures: {
-                        $addToSet: {
-                            _id: '$_id',
-                            name: '$name',
-                            imgURL: '$imgURL',
-                            price: '$price',
-                        },
-                    },
-                },
-            },
-            {
-                $match: {
-                    '_id': new ObjectId(classificationId),
-                },
-            },
-            { // Separate the groups for colors, materials and furnitures
-                $facet: {
-                    colors: [
-                        {
-                            $unwind: '$colors', // Unwind the colors array
-                        },
-                        {
-                            $unwind: '$colors', // Unwind the colors array
-                        },
-                        {
-                            $group: {
-                                _id: '$colors._id',
-                                name: { $first: '$colors.name' },
-                                count: { $sum: 1 },
-                            },
-                        },
-                        {
-                            $sort: {
-                                // Specify the field you want to use for sorting, e.g., '_id'
-                                'name': 1,
-                            },
-                        },
-                    ],
-                    materials: [
-                        {
-                            $unwind: '$materials', // Unwind the materials array
-                        },
-                        {
-                            $unwind: '$materials', // Unwind the materials array
-                        },
-                        {
-                            $group: {
-                                _id: '$materials._id',
-                                name: { $first: '$materials.name' },
-                                count: { $sum: 1 },
-                            },
-                        },
-                        {
-                            $sort: {
-                                // Specify the field you want to use for sorting, e.g., '_id'
-                                'name': 1,
-                            },
-                        },
-                    ],
-                    furnitures: [
-                        {
-                            $unwind: '$furnitures', // Unwind the materials array
-                        },
-                        {
-                            $group: {
-                                _id: '$furnitures._id',
-                                name: { $first: '$furnitures.name' },
-                                imgURL: { $first: '$furnitures.imgURL' },
-                                price: { $first: '$furnitures.price' },
-                            },
-                        },
-                        {
-                            $sort: {
-                                // Specify the field you want to use for sorting, e.g., '_id'
-                                'price': sortAsc,
-                            },
-                        },
-                    ],
-                },
-            },
-            {
-                $project: {
-                    _id: 0,
-                    // furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
-                    materials: 1,
-                    colors: 1,
-                },
-            },
-        ]);
-
-        return {
-            status: 200,
-            data: data,
-            message: data.length !== 0 ? "OK" : "No data"
-        };
 
     } catch (error) {
         console.error(error);
@@ -1058,6 +934,259 @@ export const getFurnitureByClassificationIdAndColorId = async (classificationId,
                     'type': 'DEFAULT',
                     'classifications': new ObjectId(classificationId),
                     'colors': new ObjectId(colorId),
+                },
+            },
+            {
+                $facet: {
+                    colors: [
+                        {
+                            $lookup: {
+                                from: 'color',
+                                localField: 'colors',
+                                foreignField: '_id',
+                                as: 'colorsData',
+                            },
+                        },
+                        {
+                            $unwind: '$colorsData', // Unwind the colorsData array
+                        },
+                        {
+                            $group: {
+                                _id: '$colorsData._id',
+                                name: { $first: '$colorsData.name' },
+                                count: { $sum: 1 },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'name': 1,
+                            },
+                        },
+                    ],
+                    materials: [
+                        {
+                            $lookup: {
+                                from: 'material',
+                                localField: 'materials',
+                                foreignField: '_id',
+                                as: 'materialsData',
+                            },
+                        },
+                        {
+                            $unwind: '$materialsData', // Unwind the materialsData array
+                        },
+                        {
+                            $group: {
+                                _id: '$materialsData._id',
+                                name: { $first: '$materialsData.name' },
+                                count: { $sum: 1 },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'name': 1,
+                            },
+                        },
+                    ],
+                    furnitures: [
+                        {
+                            $group: {
+                                _id: '$_id',
+                                name: { $first: '$name' },
+                                imgURL: { $first: '$imgURL' },
+                                price: { $first: '$price' },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'price': sortAsc,
+                            },
+                        },
+                    ]
+                }
+            },
+
+            {
+                $project: {
+                    _id: 0,
+                    furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
+                    page: `${page}`,
+                    totalPages: {
+                        $ceil: {
+                            $divide: [{ $size: "$furnitures" }, 10]
+                        }
+                    },
+                },
+            },
+        ]);
+
+        return {
+            status: 200,
+            data: data[0],
+            message: data.length !== 0 ? "OK" : "No data"
+        };
+
+    } catch (error) {
+        console.error(error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
+export const getFurnitureByClassificationIdAndMaterialId = async (classificationId, materialId, page, sortAsc) => {
+    try {
+        let data = {};
+
+        const itemsPerPage = 10;
+
+        // Calculate start and end indices for the current page
+        const startIndex = (page - 1) * itemsPerPage;
+
+        // Get the data for the current page
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        data = await Furniture.aggregate([
+            {
+                $match: {
+                    'type': 'DEFAULT',
+                    'classifications': new ObjectId(classificationId),
+                    'materials': new ObjectId(materialId),
+                },
+            },
+            {
+                $facet: {
+                    colors: [
+                        {
+                            $lookup: {
+                                from: 'color',
+                                localField: 'colors',
+                                foreignField: '_id',
+                                as: 'colorsData',
+                            },
+                        },
+                        {
+                            $unwind: '$colorsData', // Unwind the colorsData array
+                        },
+                        {
+                            $group: {
+                                _id: '$colorsData._id',
+                                name: { $first: '$colorsData.name' },
+                                count: { $sum: 1 },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'name': 1,
+                            },
+                        },
+                    ],
+                    materials: [
+                        {
+                            $lookup: {
+                                from: 'material',
+                                localField: 'materials',
+                                foreignField: '_id',
+                                as: 'materialsData',
+                            },
+                        },
+                        {
+                            $unwind: '$materialsData', // Unwind the materialsData array
+                        },
+                        {
+                            $group: {
+                                _id: '$materialsData._id',
+                                name: { $first: '$materialsData.name' },
+                                count: { $sum: 1 },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'name': 1,
+                            },
+                        },
+                    ],
+                    furnitures: [
+                        {
+                            $group: {
+                                _id: '$_id',
+                                name: { $first: '$name' },
+                                imgURL: { $first: '$imgURL' },
+                                price: { $first: '$price' },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'price': sortAsc,
+                            },
+                        },
+                    ]
+                }
+            },
+
+            {
+                $project: {
+                    _id: 0,
+                    furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
+                    page: `${page}`,
+                    totalPages: {
+                        $ceil: {
+                            $divide: [{ $size: "$furnitures" }, 10]
+                        }
+                    },
+                },
+            },
+        ]);
+
+        return {
+            status: 200,
+            data: data[0],
+            message: data.length !== 0 ? "OK" : "No data"
+        };
+
+    } catch (error) {
+        console.error(error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
+export const getFurnitureByClassificationIdColorIdAndMaterialId = async (classificationId, colorId, materialId, page, sortAsc) => {
+    try {
+        let data = {};
+
+        const itemsPerPage = 10;
+
+        // Calculate start and end indices for the current page
+        const startIndex = (page - 1) * itemsPerPage;
+
+        // Get the data for the current page
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        data = await Furniture.aggregate([
+            {
+                $match: {
+                    'type': 'DEFAULT',
+                    'classifications': new ObjectId(classificationId),
+                    'colors': new ObjectId(colorId),
+                    'materials': new ObjectId(materialId),
                 },
             },
             {
