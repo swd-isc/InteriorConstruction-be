@@ -31,16 +31,15 @@ const contractSchema = new Schema({
                 const Design = mongoose.model('design');
 
                 if (!value) {
-                    return false; // Value is required
+                    throw new mongoose.Error(`Design ID required.`); // Value is required
                 }
 
                 const design = await Design.findById(value);
                 if (!design) {
-                    return false; // Invalid ObjectId reference in the array
+                    throw new mongoose.Error(`${value} is not a valid design ID.`); // Invalid ObjectId reference in the array
                 }
                 return true; // Return true if design exists, otherwise false
-            },
-            message: props => `${props.value} is not a valid design ID.`
+            }
         },
         ref: 'design'
     },

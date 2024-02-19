@@ -24,16 +24,15 @@ const designSchema = new Schema({
                 const DesignCard = mongoose.model('design_card');
 
                 if (!value) {
-                    return false; // Value is required
+                    throw new mongoose.Error(`Design card ID required.`); // Value is required
                 }
 
                 const designCard = await DesignCard.findById(value);
                 if (!designCard) {
-                    return false; // Invalid ObjectId reference in the array
+                    throw new mongoose.Error(`${value} is not a valid design card ID.`); // Invalid ObjectId reference in the array
                 }
                 return true; // Return true if designCard exists, otherwise false
             },
-            message: props => `${props.value} is not a valid design card ID.`
         }
     },
     designPrice: {
@@ -59,7 +58,11 @@ const designSchema = new Schema({
                 const Furniture = mongoose.model('furniture');
 
                 if (!Array.isArray(value)) {
-                    return false; // Not an array
+                    throw new mongoose.Error(`Furnitures must be an array.`);
+                }
+
+                if (value.length == 0) { //empty array
+                    throw new mongoose.Error(`Empty furnitures array`);
                 }
 
                 // Get the classifications of the design
@@ -69,13 +72,12 @@ const designSchema = new Schema({
                     const furniture = await Furniture.findById(furnitureId);
 
                     if (!furniture) {
-                        return false; // Invalid ObjectId reference in the array
+                        throw new mongoose.Error(`Invalid furnitureId: ${furnitureId}`); // Invalid ObjectId reference in the array
                     }
 
                     // Check conditions based on the type of Design
                     if (this.type === 'DEFAULT' && furniture.type !== 'DEFAULT') {
-                        console.log('wrong type furniture: ', furniture._id);
-                        return false; // Furniture type must be 'DEFAULT' for 'DEFAULT' Design
+                        throw new mongoose.Error(`FurnitureId ${furnitureId} type must be 'DEFAULT'`); // Furniture type must be 'DEFAULT' for 'DEFAULT' Design
                     }
 
                     // Get the classifications of the furniture
@@ -83,8 +85,7 @@ const designSchema = new Schema({
 
                     let hasCommon = designClassifications.some(item => furnitureClassifications.includes(item));
                     if (!hasCommon) {
-                        console.log(`Don't have common classifications`);
-                        return false;
+                        throw new mongoose.Error(`Don't have common classifications`);
                     }
                 }
 
@@ -92,15 +93,13 @@ const designSchema = new Schema({
                 for (let i = 0; i < value.length - 1; i++) {
                     for (let j = i + 1; j < value.length; j++) {
                         if (value[i].toString() === value[j].toString()) {
-                            return false;
+                            throw new mongoose.Error(`Duplicate furnitureId: ${value[i].toString()}`);
                         }
                     }
                 }
                 return true;
-            },
-            message: "Invalid furnitures array",
-        },
-        required: [true, 'Furnitures required.'],
+            }
+        }
     },
     classifications: {
         type: [{
@@ -113,33 +112,58 @@ const designSchema = new Schema({
                 const Classification = mongoose.model('classification');
 
                 if (!Array.isArray(value)) {
-                    return false; // Not an array
+                    throw new mongoose.Error(`Classifications must be an array.`);
                 }
+
+                if (value.length == 0) { //empty array
+                    throw new mongoose.Error(`Empty classifications array`);
+                }
+
+                // Flag to track if at least one 'STYLE' classification is found
+                let foundStyleClassification = false;
+                let foundRoomClassification = false;
 
                 for (const classificationId of value) {
                     const classification = await Classification.findById(classificationId);
                     if (!classification) {
-                        return false; // Invalid ObjectId reference in the array
+                        throw new mongoose.Error(`Invalid classificationId: ${classificationId}`); // Invalid ObjectId reference in the array
                     }
                     if (classification.type != 'ROOM' && classification.type != 'STYLE') {
-                        console.log('wrong classification: ', classification);
-                        return false; // Invalid 'type' references in the classification array
+                        throw new mongoose.Error(`Invalid 'type' field of classificationId: ${classificationId}`); // Invalid 'type' references in the classification array
                     }
+
+                    // Check if the classification type is 'ROOM'
+                    if (classification.type === 'ROOM') {
+                        foundRoomClassification = true;
+                    }
+
+                    // Check if the classification type is 'STYLE'
+                    if (classification.type === 'STYLE') {
+                        foundStyleClassification = true;
+                    }
+                }
+
+                // Check if at least one 'ROOM' classification is found
+                if (!foundRoomClassification) {
+                    throw new mongoose.Error(`At least one classification must have the type "ROOM"`);
+                }
+
+                // Check if at least one 'STYLE' classification is found
+                if (!foundStyleClassification) {
+                    throw new mongoose.Error(`At least one classification must have the type "STYLE"`);
                 }
 
                 // Check for duplicate material ObjectId in the array
                 for (let i = 0; i < value.length - 1; i++) {
                     for (let j = i + 1; j < value.length; j++) {
                         if (value[i].toString() === value[j].toString()) {
-                            return false;
+                            throw new mongoose.Error(`Duplicate classificationId: ${value[i].toString()}`);
                         }
                     }
                 }
                 return true;
-            },
-            message: "Invalid classification array",
-        },
-        required: [true, 'Classifications required.'],
+            }
+        }
     }
 }, {
     collection: 'design',

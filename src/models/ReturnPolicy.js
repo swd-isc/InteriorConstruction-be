@@ -27,15 +27,13 @@ const returnPolicySchema = new Schema({
         validate: {
             validator: async function (value) {
                 if (!Array.isArray(value)) {
-                    return false; // Not an array
-                } else {
-                    if (value.length == 0) {
-                        return false;
-                    }
+                    throw new mongoose.Error(`Return exchange cases must be an array.`); // Not an array
+                }
+                if (value.length == 0) {
+                    throw new mongoose.Error(`Empty return exchange array`);
                 }
                 return true;
-            },
-            message: "Return exchange cases required array.",
+            }
         }
     },
     nonReturnExchangeCases: {
@@ -43,15 +41,13 @@ const returnPolicySchema = new Schema({
         validate: {
             validator: async function (value) {
                 if (!Array.isArray(value)) {
-                    return false; // Not an array
-                } else {
-                    if (value.length == 0) {
-                        return false;
-                    }
+                    throw new mongoose.Error(`Non return exchange cases must be an array.`); // Not an array
+                }
+                if (value.length == 0) {
+                    throw new mongoose.Error(`Empty non return exchange array`);
                 }
                 return true;
             },
-            message: "Non return exchange cases required array.",
         }
     },
     returnProcedure: {
@@ -59,15 +55,13 @@ const returnPolicySchema = new Schema({
         validate: {
             validator: async function (value) {
                 if (!Array.isArray(value)) {
-                    return false; // Not an array
-                } else {
-                    if (value.length == 0) {
-                        return false;
-                    }
+                    throw new mongoose.Error(`Return procedure must be an array.`); // Not an array
+                }
+                if (value.length == 0) {
+                    throw new mongoose.Error(`Empty non return procedure array`);
                 }
                 return true;
-            },
-            message: "Return procedure required array.",
+            }
         },
     },
 }, {

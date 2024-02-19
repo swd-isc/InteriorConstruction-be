@@ -44,12 +44,12 @@ const clientSchema = new Schema({
                 const Account = mongoose.model('account');
 
                 if (!value) {
-                    return false; // Value is required
+                    throw new mongoose.Error(`Account ID required.`); // Value is required
                 }
 
                 const account = await Account.findById(value);
                 if (!account) {
-                    return false; // Invalid ObjectId reference in the array
+                    throw new mongoose.Error(`${value} is not a valid account ID.`); // Invalid ObjectId reference in the array
                 }
                 return true; // Return true if account exists, otherwise false
             },
@@ -67,33 +67,36 @@ const clientSchema = new Schema({
                 const Contract = mongoose.model('contract');
 
                 if (!Array.isArray(value)) {
-                    return false; // Not an array
+                    throw new mongoose.Error(`Contracts must be an array.`);
+                }
+
+                if (value.length == 0) { //empty array
+                    throw new mongoose.Error(`Empty contracts array`);
                 }
 
                 for (const contractId of value) {
                     const contract = await Contract.findById(contractId);
 
                     if (!contract) {
-                        return false; // Invalid ObjectId reference in the array
+                        throw new mongoose.Error(`Invalid contractId: ${contractId}`); // Invalid ObjectId reference in the array
                     }
 
                     // Check if the clientId in the contract matches the _id of the client
                     if (contract.clientId.toString() !== this._id.toString()) {
-                        return false; // ClientId in the contract doesn't match the _id of the client
+                        throw new mongoose.Error(`ClientId in the contract ${contractId} doesn't match the clientId`); // ClientId in the contract doesn't match the _id of the client
                     }
                 }
 
                 // Check for duplicate contract ObjectId in the array
-                // for (let i = 0; i < value.length - 1; i++) {
-                //     for (let j = i + 1; j < value.length; j++) {
-                //         if (value[i].toString() === value[j].toString()) {
-                //             return false;
-                //         }
-                //     }
-                // }
+                for (let i = 0; i < value.length - 1; i++) {
+                    for (let j = i + 1; j < value.length; j++) {
+                        if (value[i].toString() === value[j].toString()) {
+                            throw new mongoose.Error(`Duplicate contractId: ${value[i]} in the array`);
+                        }
+                    }
+                }
                 return true;
             },
-            message: "Invalid contracts array",
         },
         required: false,
     }

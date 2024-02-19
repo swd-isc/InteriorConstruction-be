@@ -182,14 +182,13 @@ export const furnitureSchema = new Schema({
                 for (const classificationId of value) {
                     const classification = await Classification.findById(classificationId);
                     if (!classification) {
-                        throw new mongoose.Error(`Invalid classificationId: ${classificationId}`);; // Invalid ObjectId reference in the array
+                        throw new mongoose.Error(`Invalid classificationId: ${classificationId}`); // Invalid ObjectId reference in the array
                     }
                     if (classification.type != 'PRODUCT' && classification.type != 'STYLE') {
-                        console.log('check classification err: ', classification);
-                        throw new mongoose.Error(`Invalid 'type' field of classificationId: ${classificationId}`);; // Invalid 'type' references in the classification array
+                        throw new mongoose.Error(`Invalid 'type' field of classificationId: ${classificationId}`); // Invalid 'type' references in the classification array
                     }
 
-                    // Check if the classification type is 'STYLE'
+                    // Check if the classification type is 'PRODUCT'
                     if (classification.type === 'PRODUCT') {
                         foundProductClassification = true;
                     }
