@@ -37,6 +37,73 @@ export const classificationByPage = async (pageReq) => {
     }
 }
 
+export const postClassification = async (reqBody) => {
+    try {
+        let data = [];
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+        const classification = new Classification(reqBody);
+
+        try {
+            data = await classification.save();
+        } catch (error) {
+            return {
+                status: 400,
+                data: {},
+                messageError: error.message
+            }
+        }
+
+        //Code for insert data
+        // const classificationDocuments = [
+        //     { classificationName: 'Test Classification', type: "ROOM" },
+        //     { classificationName: 'Test Classification', type: "ROOM" },
+        //     // Add more documents as needed
+        // ];
+
+        // let isError = false
+        // for (let i = 0; i < classificationDocuments.length; i++) {
+        //     try {
+        //         const classification = new Classification(classificationDocuments[i]);
+        //         await classification.validate();
+        //     } catch (error) {
+        //         console.error('classification', i, 'error:', error.message);
+        //         isError = true;
+        //     }
+        // }
+        // isError = await checkDupName(classificationDocuments);
+
+        // if (!isError) {
+        //     for (let i = 0; i < classificationDocuments.length; i++) {
+        //         try {
+        //             const classification = new Classification(classificationDocuments[i]);
+        //             await classification.save();
+        //         } catch (error) {
+        //             console.error('classification', i, 'error:', error.message);
+        //         }
+        //     }
+        // }
+
+        return {
+            status: 200,
+            data: data,
+            message: data.length !== 0 ? "OK" : "No data"
+        };
+    } catch (error) {
+        console.error('error ne', error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
+
+
+
 export const classificationByType = async (classificationType, mode) => {
     try {
         let sortAsc = sortByInput(mode);
@@ -100,4 +167,18 @@ function sortByInput(mode) {
     } else {
         return 1; // Ascending
     }
+}
+
+async function checkDupName(arrays) {
+    const uniqueNames = new Set();
+
+    for (const item of arrays) {
+        if (uniqueNames.has(item.classificationName)) {
+            console.log('Dup:', item.classificationName);
+            return true; // Duplicate classificationName found
+        }
+        uniqueNames.add(item.classificationName);
+    }
+
+    return false; // All item classificationNames are unique
 }

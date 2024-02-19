@@ -1,5 +1,5 @@
 import express from 'express';
-import { createFurController, filterSession, furnitureByClassificationByName, furnitureByClassificationByType, furnitureByClassificationId, furnitureByColor, furnitureById, furnitureByMaterial, furnitureByPage, furnitureByType } from '../controller/FurnitureController';
+import { createFurController, filterSession, furnitureByClassificationByName, furnitureByClassificationByType, furnitureByClassificationId, furnitureByColor, furnitureById, furnitureByMaterial, furnitureByPage, furnitureByType, searchFurController } from '../controller/FurnitureController';
 
 const FurnitureRouter = (app) => {
     const router = express.Router();
@@ -27,6 +27,7 @@ const FurnitureRouter = (app) => {
 const ShopRouter = (app) => {
     const router = express.Router();
     router.get('/filter-session', filterSession);
+    router.get('/search', searchFurController);
     router.get('/', furnitureByPage);
 
     return app.use('/api/shop', router);

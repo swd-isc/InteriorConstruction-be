@@ -8,7 +8,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 export const getFurnitureByPage = async (mode, pageReq) => {
     try {
-        let sortAsc = sortByInput(mode);
+        const sortAsc = sortByInput(mode);
         const itemsPerPage = 10;
         // Parse query parameters
         const page = parseInt(pageReq) || 1;
@@ -211,7 +211,7 @@ export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
                 messageError: idValid.messageError
             }
         }
-        let sortAsc = sortByInput(mode);
+        const sortAsc = sortByInput(mode);
 
         const itemsPerPage = 10;
         // Parse query parameters
@@ -272,11 +272,6 @@ export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
                     },
                 },
             },
-            {
-                $match: {
-                    '_id': new ObjectId(id),
-                },
-            },
             { // Separate the groups for colors, materials and furnitures
                 $facet: {
                     colors: [
@@ -322,6 +317,11 @@ export const getFurnitureByClassificationId = async (id, pageReq, mode) => {
                         },
                     ],
                     furnitures: [
+                        {
+                            $match: {
+                                '_id': new ObjectId(id),
+                            },
+                        },
                         {
                             $unwind: '$furnitures', // Unwind the materials array
                         },
@@ -931,9 +931,7 @@ export const getFurnitureByClassificationIdAndColorId = async (classificationId,
         data = await Furniture.aggregate([
             {
                 $match: {
-                    'type': 'DEFAULT',
-                    'classifications': new ObjectId(classificationId),
-                    'colors': new ObjectId(colorId),
+                    'type': 'DEFAULT'
                 },
             },
             {
@@ -992,6 +990,12 @@ export const getFurnitureByClassificationIdAndColorId = async (classificationId,
                     ],
                     furnitures: [
                         {
+                            $match: {
+                                'classifications': new ObjectId(classificationId),
+                                'colors': new ObjectId(colorId),
+                            },
+                        },
+                        {
                             $group: {
                                 _id: '$_id',
                                 name: { $first: '$name' },
@@ -1012,6 +1016,8 @@ export const getFurnitureByClassificationIdAndColorId = async (classificationId,
             {
                 $project: {
                     _id: 0,
+                    colors: 1,
+                    materials: 1,
                     furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
                     page: `${page}`,
                     totalPages: {
@@ -1057,9 +1063,7 @@ export const getFurnitureByClassificationIdAndMaterialId = async (classification
         data = await Furniture.aggregate([
             {
                 $match: {
-                    'type': 'DEFAULT',
-                    'classifications': new ObjectId(classificationId),
-                    'materials': new ObjectId(materialId),
+                    'type': 'DEFAULT'
                 },
             },
             {
@@ -1118,6 +1122,12 @@ export const getFurnitureByClassificationIdAndMaterialId = async (classification
                     ],
                     furnitures: [
                         {
+                            $match: {
+                                'classifications': new ObjectId(classificationId),
+                                'materials': new ObjectId(materialId),
+                            },
+                        },
+                        {
                             $group: {
                                 _id: '$_id',
                                 name: { $first: '$name' },
@@ -1138,6 +1148,8 @@ export const getFurnitureByClassificationIdAndMaterialId = async (classification
             {
                 $project: {
                     _id: 0,
+                    colors: 1,
+                    materials: 1,
                     furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
                     page: `${page}`,
                     totalPages: {
@@ -1183,10 +1195,7 @@ export const getFurnitureByClassificationIdColorIdAndMaterialId = async (classif
         data = await Furniture.aggregate([
             {
                 $match: {
-                    'type': 'DEFAULT',
-                    'classifications': new ObjectId(classificationId),
-                    'colors': new ObjectId(colorId),
-                    'materials': new ObjectId(materialId),
+                    'type': 'DEFAULT'
                 },
             },
             {
@@ -1244,6 +1253,13 @@ export const getFurnitureByClassificationIdColorIdAndMaterialId = async (classif
                         },
                     ],
                     furnitures: [
+                        {
+                            $match: {
+                                'classifications': new ObjectId(classificationId),
+                                'colors': new ObjectId(colorId),
+                                'materials': new ObjectId(materialId),
+                            },
+                        },
                         {
                             $group: {
                                 _id: '$_id',
@@ -1345,7 +1361,7 @@ export const postFurniture = async (reqBody) => {
         //             "The product does not have InteriorConstruction's warranty card."
         //         ],
         //         "delivery": "65c90357db6eeb89cdbe26aa",
-        //         "type": "CUSTOM",
+        //         "type": "DEFAULT",
         //         "classifications": [
         //             "65c3adc0b735ad08cd044340",
         //             "65c3adc0b735ad08cd044335"
@@ -1382,7 +1398,7 @@ export const postFurniture = async (reqBody) => {
         //             "The product does not have InteriorConstruction's warranty card."
         //         ],
         //         "delivery": "65c90357db6eeb89cdbe26aa",
-        //         "type": "CUSTOM",
+        //         "type": "DEFAULT",
         //         "classifications": [
         //             "65c3adc0b735ad08cd044340",
         //             "65c3adc0b735ad08cd044335"
@@ -1421,6 +1437,156 @@ export const postFurniture = async (reqBody) => {
         };
     } catch (error) {
         console.error('error ne', error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
+export const getFurnitureByName = async (furName, pageReq, mode) => {
+    try {
+        // Get the data for the current page
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+        const regexPattern = new RegExp(furName, 'i'); // 'i' flag for case-insensitive search
+
+        let data = {}
+
+        const sortAsc = sortByInput(mode);
+
+        const itemsPerPage = 10;
+
+        const page = parseInt(pageReq) || 1;
+
+        // Calculate start and end indices for the current page
+        const startIndex = (page - 1) * itemsPerPage;
+
+        data = await Furniture.aggregate([
+            {
+                $match: {
+                    'type': 'DEFAULT',
+                },
+            },
+            { // Separate the groups for colors, materials and furnitures
+                $facet: {
+                    colors: [
+                        {
+                            $lookup: {
+                                from: 'color',
+                                localField: 'colors',
+                                foreignField: '_id',
+                                as: 'colorsData',
+                            },
+                        },
+                        {
+                            $unwind: '$colorsData', // Unwind the colorsData array
+                        },
+                        {
+                            $group: {
+                                _id: '$colorsData._id',
+                                name: { $first: '$colorsData.name' },
+                                count: { $sum: 1 },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'name': 1,
+                            },
+                        },
+                    ],
+                    materials: [
+                        {
+                            $lookup: {
+                                from: 'material',
+                                localField: 'materials',
+                                foreignField: '_id',
+                                as: 'materialsData',
+                            },
+                        },
+                        {
+                            $unwind: '$materialsData', // Unwind the materialsData array
+                        },
+                        {
+                            $group: {
+                                _id: '$materialsData._id',
+                                name: { $first: '$materialsData.name' },
+                                count: { $sum: 1 },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'name': 1,
+                            },
+                        },
+                    ],
+                    furnitures: [
+                        {
+                            $match: {
+                                'name': { $regex: regexPattern },
+                            },
+                        },
+                        {
+                            $lookup: {
+                                from: 'color',
+                                localField: 'colors',
+                                foreignField: '_id',
+                                as: 'colorsData',
+                            },
+                        },
+                        {
+                            $lookup: {
+                                from: 'material',
+                                localField: 'materials',
+                                foreignField: '_id',
+                                as: 'materialsData',
+                            },
+                        },
+                        {
+                            $group: {
+                                _id: '$_id',
+                                name: { $first: '$name' },
+                                imgURL: { $first: '$imgURL' },
+                                price: { $first: '$price' },
+                            },
+                        },
+                        {
+                            $sort: {
+                                // Specify the field you want to use for sorting, e.g., '_id'
+                                'price': sortAsc,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $project: {
+                    colors: 1,
+                    materials: 1,
+                    furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
+                    page: `${page}`,
+                    totalPages: {
+                        $ceil: {
+                            $divide: [{ $size: "$furnitures" }, 10]
+                        }
+                    },
+                },
+            },
+        ]);
+
+        return {
+            status: 200,
+            data: data[0],
+            message: data.length !== 0 ? "OK" : "No data"
+        };
+
+    } catch (error) {
+        console.error(error);
         return {
             status: 500,
             messageError: error,

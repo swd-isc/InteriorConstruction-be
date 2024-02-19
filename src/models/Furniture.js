@@ -130,19 +130,19 @@ export const furnitureSchema = new Schema({
     },
     delivery: {
         type: Schema.Types.ObjectId,
-        required: [true, 'Delivery required.'],
+        required: [true, 'Delivery ID required.'],
         ref: 'delivery',
         validate: {
             validator: async function (value) {
                 const Delivery = mongoose.model('delivery');
 
                 if (!value) {
-                    return false; // Value is required
+                    throw new mongoose.Error(`Delivery ID required.`); // Value is required
                 }
 
                 const delivery = await Delivery.findById(value);
                 if (!delivery) {
-                    return false; // Invalid ObjectId reference in the array
+                    throw new mongoose.Error(`${value} is not a valid delivery ID.`); // Invalid ObjectId reference in the array
                 }
                 return true; // Return true if delivery exists, otherwise false
             },
@@ -155,7 +155,34 @@ export const furnitureSchema = new Schema({
             values: ['DEFAULT', 'CUSTOM'],
             message: '{VALUE} is not supported.'
         },
+        validate: {
+            validator: async function (value) {
+                if (!this.customBy && value === "CUSTOM") {
+                    throw new mongoose.Error(`Type ${value} required client ID.`); // Custom furnitures required clientId
+                }
+                if (this.customBy && value === "DEFAULT") {
+                    throw new mongoose.Error(`Type ${value} required client ID.`); // Default furnitures do not have clientId
+                }
+                return true; // Return true if delivery exists, otherwise false
+            }
+        },
         required: [true, 'Type required.'],
+    },
+    customBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'client',
+        validate: {
+            validator: async function (value) {
+                const Client = mongoose.model('client');
+
+                const delivery = await Client.findById(value);
+                if (!delivery) {
+                    throw new mongoose.Error(`${value} is not a valid client ID.`); // Invalid ObjectId reference in the array
+                }
+                return true; // Return true if delivery exists, otherwise false
+            },
+            message: props => `${props.value} is not a valid delivery ID.`
+        }
     },
     classifications: {
         type: [{
