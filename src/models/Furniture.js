@@ -145,8 +145,7 @@ export const furnitureSchema = new Schema({
                     throw new mongoose.Error(`${value} is not a valid delivery ID.`); // Invalid ObjectId reference in the array
                 }
                 return true; // Return true if delivery exists, otherwise false
-            },
-            message: props => `${props.value} is not a valid delivery ID.`
+            }
         }
     },
     type: {
@@ -161,7 +160,7 @@ export const furnitureSchema = new Schema({
                     throw new mongoose.Error(`Type ${value} required client ID.`); // Custom furnitures required clientId
                 }
                 if (this.customBy && value === "DEFAULT") {
-                    throw new mongoose.Error(`Type ${value} required client ID.`); // Default furnitures do not have clientId
+                    throw new mongoose.Error(`Type ${value} do not have client ID.`); // Default furnitures do not have clientId
                 }
                 return true; // Return true if delivery exists, otherwise false
             }
@@ -180,8 +179,7 @@ export const furnitureSchema = new Schema({
                     throw new mongoose.Error(`${value} is not a valid client ID.`); // Invalid ObjectId reference in the array
                 }
                 return true; // Return true if delivery exists, otherwise false
-            },
-            message: props => `${props.value} is not a valid delivery ID.`
+            }
         }
     },
     classifications: {
