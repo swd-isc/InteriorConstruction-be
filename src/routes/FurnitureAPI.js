@@ -17,6 +17,7 @@ const FurnitureRouter = (app) => {
     router.get('/material/:materialName', furnitureByMaterial);
     router.get('/color/', furnitureByColor);
     router.get('/color/:colorName', furnitureByColor);
+    router.get('/:id', furnitureById);
     router.get('/', furnitureById);
     router.post('/', createFurController);
 

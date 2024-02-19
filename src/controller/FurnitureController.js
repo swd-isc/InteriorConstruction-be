@@ -8,7 +8,7 @@ export const furnitureByPage = async (req, res) => {
 
 export const furnitureById = async (req, res) => {
 
-    let data = await getFurnitureById(req.query.id);
+    let data = await getFurnitureById(req.params.id);
     return res.status(data.status).json(data);
 }
 

@@ -1302,7 +1302,6 @@ export const postFurniture = async (reqBody) => {
         const furniture = new Furniture(reqBody);
 
         try {
-            await furniture.validate();
             data = await furniture.save();
         } catch (error) {
             return {
