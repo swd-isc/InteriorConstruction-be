@@ -431,7 +431,7 @@ export const filterSessionService = async (reqData) => {
             && idMaterialValid.isValid
             && !idColorValid.isValid) { //filter with classificationId, materialId
             console.log('Filter with classificationId and materialId due to wrong colorId.');
-            let returnData = await getFurnitureByClassificationIdAndMaterialId(classificationId, colorId, page, sortAsc);
+            let returnData = await getFurnitureByClassificationIdAndMaterialId(classificationId, materialId, page, sortAsc);
             returnData.message = 'Filter with classificationId and materialId due to wrong colorId.'
             return returnData;
         } else if (idClassificationValid.isValid
