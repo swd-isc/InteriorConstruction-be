@@ -1281,6 +1281,8 @@ export const getFurnitureByClassificationIdColorIdAndMaterialId = async (classif
             {
                 $project: {
                     _id: 0,
+                    colors: 1,
+                    materials: 1,
                     furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
                     page: `${page}`,
                     totalPages: {
