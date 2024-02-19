@@ -37,45 +37,60 @@ export const getMaterialByPage = async (pageReq) => {
     }
 }
 
-export const createMaterial = async (material) => {
+export const createMaterial = async (reqBody) => {
     try {
+        let data = [];
         const url = process.env.URL_DB;
-        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' })
-        let error = {};
-        console.log('material: ', material);
-        const data = new Material(material);
-        let err = data.validateSync();
-        if (err) {
-            if (err.errors['name']?.message) {
-                error.errName = err.errors['name'].message;
-            }
-            if (err.errors['description']?.message) {
-                error.errDescription = err.errors['description'].message;
-            }
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+        const material = new Material(reqBody);
 
+        try {
+            data = await material.save();
+        } catch (error) {
             return {
                 status: 400,
-                messageError: error,
-            }
-        } else {
-            try {
-                await data.save();
-                return {
-                    status: 200,
-                    data: data,
-                    message: "OK"
-                };
-            } catch (error) {
-                error = {
-                    errDuplicate: error.message
-                }
-                return {
-                    status: 400,
-                    messageError: error,
-                }
+                data: {},
+                messageError: error.message
             }
         }
+
+        //Code for insert data
+        // const materialDocuments = [
+        //     { name: 'Test Material', description: "test" },
+        //     { name: 'Test Material', description: "test" },
+        //     // Add more documents as needed
+        // ];
+
+        // let isError = false
+        // for (let i = 0; i < materialDocuments.length; i++) {
+        //     try {
+        //         const material = new Material(materialDocuments[i]);
+        //         await material.validate();
+        //     } catch (error) {
+        //         console.error('material', i, 'error:', error.message);
+        //         isError = true;
+        //     }
+        // }
+        // isError = await checkDupName(materialDocuments);
+
+        // if (!isError) {
+        //     for (let i = 0; i < materialDocuments.length; i++) {
+        //         try {
+        //             const material = new Material(materialDocuments[i]);
+        //             await material.save();
+        //         } catch (error) {
+        //             console.error('material', i, 'error:', error.message);
+        //         }
+        //     }
+        // }
+
+        return {
+            status: 200,
+            data: data,
+            message: data.length !== 0 ? "OK" : "No data"
+        };
     } catch (error) {
+        console.error('error ne', error);
         return {
             status: 500,
             messageError: error,
@@ -84,4 +99,18 @@ export const createMaterial = async (material) => {
         // Close the database connection
         mongoose.connection.close();
     }
+}
+
+async function checkDupName(arrays) {
+    const uniqueNames = new Set();
+
+    for (const item of arrays) {
+        if (uniqueNames.has(item.name)) {
+            console.log('Dup:', item.name);
+            return true; // Duplicate name found
+        }
+        uniqueNames.add(item.name);
+    }
+
+    return false; // All item names are unique
 }

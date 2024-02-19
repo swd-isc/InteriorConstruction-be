@@ -1312,6 +1312,108 @@ export const postFurniture = async (reqBody) => {
 
         }
 
+        //Code for insert data
+        // const furnitureDocuments = [
+        //     {
+        //         "name": "Test",
+        //         "imgURL": [
+        //             "https://example.com/images/custom-velvet-sofa1.jpg",
+        //             "https://example.com/images/custom-velvet-sofa2.jpg",
+        //             "https://example.com/images/custom-velvet-sofa3.jpg"
+        //         ],
+        //         "description": "A luxurious velvet sofa customized for elegance and comfort.",
+        //         "colors": [
+        //             "65c3adaa88d6e0ef97d61309",
+        //             "65c3adac88d6e0ef97d6131c"
+        //         ],
+        //         "materials": [
+        //             "65c3ad92a62194b93e53221e",
+        //             "65c3ad91a62194b93e532212"
+        //         ],
+        //         "sizes": "D2000 - R900 - C800 mm",
+        //         "price": 2500,
+        //         "returnExchangeCases": [
+        //             "InteriorConstruction's products are warranted for one year for technical defects during production or installation.",
+        //             "Customers should not attempt to repair the product themselves. Instead, contact InteriorConstruction immediately through the hotline: 0388415317.",
+        //             "If the customer has any further questions or requests, please contact InteriorConstruction for guidance and problem-solving service."
+        //         ],
+        //         "nonReturnExchangeCases": [
+        //             "The customer repairs the product themselves without any contact with InteriorConstruction.",
+        //             "The product is not used in accordance with the warranty book (given when you buy the product), causing scratches, dents, dirt, or discoloration.",
+        //             "The product is deformed due to abnormal external conditions (too humid, too dry, termites, or due to the impact of electrical equipment, chemicals, or solvents used by customers).",
+        //             "The product’s warranty has expired.",
+        //             "The product does not have InteriorConstruction's warranty card."
+        //         ],
+        //         "delivery": "65c90357db6eeb89cdbe26aa",
+        //         "type": "CUSTOM",
+        //         "classifications": [
+        //             "65c3adc0b735ad08cd044340",
+        //             "65c3adc0b735ad08cd044335"
+        //         ]
+        //     },
+        //     {
+        //         "name": "Test2",
+        //         "imgURL": [
+        //             "https://example.com/images/custom-velvet-sofa1.jpg",
+        //             "https://example.com/images/custom-velvet-sofa2.jpg",
+        //             "https://example.com/images/custom-velvet-sofa3.jpg"
+        //         ],
+        //         "description": "A luxurious velvet sofa customized for elegance and comfort.",
+        //         "colors": [
+        //             "65c3adaa88d6e0ef97d61309",
+        //             "65c3adac88d6e0ef97d6131c"
+        //         ],
+        //         "materials": [
+        //             "65c3ad92a62194b93e53221e",
+        //             "65c3ad91a62194b93e532212"
+        //         ],
+        //         "sizes": "D2000 - R900 - C800 mm",
+        //         "price": 2500,
+        //         "returnExchangeCases": [
+        //             "InteriorConstruction's products are warranted for one year for technical defects during production or installation.",
+        //             "Customers should not attempt to repair the product themselves. Instead, contact InteriorConstruction immediately through the hotline: 0388415317.",
+        //             "If the customer has any further questions or requests, please contact InteriorConstruction for guidance and problem-solving service."
+        //         ],
+        //         "nonReturnExchangeCases": [
+        //             "The customer repairs the product themselves without any contact with InteriorConstruction.",
+        //             "The product is not used in accordance with the warranty book (given when you buy the product), causing scratches, dents, dirt, or discoloration.",
+        //             "The product is deformed due to abnormal external conditions (too humid, too dry, termites, or due to the impact of electrical equipment, chemicals, or solvents used by customers).",
+        //             "The product’s warranty has expired.",
+        //             "The product does not have InteriorConstruction's warranty card."
+        //         ],
+        //         "delivery": "65c90357db6eeb89cdbe26aa",
+        //         "type": "CUSTOM",
+        //         "classifications": [
+        //             "65c3adc0b735ad08cd044340",
+        //             "65c3adc0b735ad08cd044335"
+        //         ]
+        //     },
+        //     // Add more documents as needed
+        // ];
+
+        // let isError = false
+        // for (let i = 0; i < furnitureDocuments.length; i++) {
+        //     try {
+        //         const furniture = new Furniture(furnitureDocuments[i]);
+        //         await furniture.validate();
+        //     } catch (error) {
+        //         console.error('furniture', i, 'error:', error.message);
+        //         isError = true;
+        //     }
+        // }
+        // isError = await checkDupName(furnitureDocuments);
+
+        // if (!isError) {
+        //     for (let i = 0; i < furnitureDocuments.length; i++) {
+        //         try {
+        //             const furniture = new Furniture(furnitureDocuments[i]);
+        //             await furniture.save();
+        //         } catch (error) {
+        //             console.error('furniture', i, 'error:', error.message);
+        //         }
+        //     }
+        // }
+
         return {
             status: 200,
             data: data,
@@ -1774,4 +1876,18 @@ async function isIdValid(id, model) {
         // Close the database connection
         mongoose.connection.close();
     }
+}
+
+async function checkDupName(arrays) {
+    const uniqueNames = new Set();
+
+    for (const item of arrays) {
+        if (uniqueNames.has(item.name)) {
+            console.log('Dup:', item.name);
+            return true; // Duplicate name found
+        }
+        uniqueNames.add(item.name);
+    }
+
+    return false; // All item names are unique
 }

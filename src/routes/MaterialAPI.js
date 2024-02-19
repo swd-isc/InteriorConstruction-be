@@ -7,7 +7,7 @@ const MaterialRouter = (app) => {
     router.get('/page/:page', getMaterialData);
     router.post('/', postMaterial);
 
-    return app.use('/material', router);
+    return app.use('/api/material', router);
 }
 
 export {

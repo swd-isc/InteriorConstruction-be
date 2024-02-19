@@ -108,23 +108,35 @@ export const postColor = async (reqBody) => {
             }
         }
 
-        try {
+        //Code for insert data
+        // const colorDocuments = [
+        //     { name: 'Test Color', description: "test" },
+        //     { name: 'Test Color', description: "test" },
+        //     // Add more documents as needed
+        // ];
 
-            const furnitureDocuments = [
-                { name: 'Chair' },
-                { name: 'Table' },
-                // Add more documents as needed
-            ];
+        // let isError = false
+        // for (let i = 0; i < colorDocuments.length; i++) {
+        //     try {
+        //         const color = new Color(colorDocuments[i]);
+        //         await color.validate();
+        //     } catch (error) {
+        //         console.error('color', i, 'error:', error.message);
+        //         isError = true;
+        //     }
+        // }
+        // isError = await checkDupName(colorDocuments);
 
-            // Insert documents using insertMany
-            data = await Color.insertMany(furnitureDocuments)
-        } catch (error) {
-            return {
-                status: 400,
-                data: {},
-                messageError: error.message
-            }
-        }
+        // if (!isError) {
+        //     for (let i = 0; i < colorDocuments.length; i++) {
+        //         try {
+        //             const color = new Color(colorDocuments[i]);
+        //             await color.save();
+        //         } catch (error) {
+        //             console.error('color', i, 'error:', error.message);
+        //         }
+        //     }
+        // }
 
         return {
             status: 200,
@@ -177,4 +189,18 @@ export const colorById = async (id) => {
             messageError: 'Missing required ID',
         }
     }
+}
+
+async function checkDupName(arrays) {
+    const uniqueNames = new Set();
+
+    for (const item of arrays) {
+        if (uniqueNames.has(item.name)) {
+            console.log('Dup:', item.name);
+            return true; // Duplicate name found
+        }
+        uniqueNames.add(item.name);
+    }
+
+    return false; // All item names are unique
 }
