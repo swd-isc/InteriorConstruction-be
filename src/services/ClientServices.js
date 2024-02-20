@@ -67,7 +67,19 @@ exports.getClientById = async (id) => {
     const url = process.env.URL_DB;
     await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
 
-    const data = await Client.findById(id);
+    const data = await Client.findById(id)
+      .populate({
+        path: "accountId",
+        select: "-_id email role password refreshToken", // Select only the fields you need
+      })
+      .populate({
+        path: "contracts",
+        select: "-_id designId contractPrice status", // Select the desired fields from the contract document
+        populate: {
+          path: "designId",
+          select: "designName", // Select the desired fields from the design document
+        },
+      });
 
     return {
       status: 200,
