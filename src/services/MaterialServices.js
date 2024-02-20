@@ -1,6 +1,7 @@
 import Material from '../models/Material';
 
 import mongoose from "mongoose";
+const ObjectId = mongoose.Types.ObjectId;
 
 export const getMaterialByPage = async (pageReq) => {
     try {
