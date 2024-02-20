@@ -293,21 +293,9 @@ async function isIdValid(id, model) {
         let data = null;
 
         switch (model) {
-            case 'color':
-                // Check if the color with the given ObjectId exists in the database
-                data = await Color.findById(id);
-                break;
-            case 'material':
-                // Check if the material with the given ObjectId exists in the database
-                data = await Material.findById(id);
-                break;
             case 'classification':
                 // Check if the classification with the given ObjectId exists in the database
                 data = await Classification.findById(id);
-                break;
-            case 'furniture':
-                // Check if the classification with the given ObjectId exists in the database
-                data = await Furniture.findById(id);
                 break;
             default:
                 break;
@@ -315,7 +303,7 @@ async function isIdValid(id, model) {
 
         if (data !== null) {
             return {
-                isValid: true,
+                isValid: true,// Returns true if data exists, false otherwise
             }
         } else {
             return {
@@ -324,7 +312,6 @@ async function isIdValid(id, model) {
                 messageError: 'ObjectId not found.'
             }
         }
-        return data !== null; // Returns true if data exists, false otherwise
     } catch (error) {
         console.error('Error checking ObjectId:', error);
         return {
