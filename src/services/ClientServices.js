@@ -1,6 +1,8 @@
 import Client from "../models/Client";
 import mongoose from "mongoose";
 
+const ObjectId = mongoose.Types.ObjectId;
+
 exports.getClients = async (mode, pageReq) => {
   try {
     let sortAsc = sortByInput(mode);
@@ -132,6 +134,50 @@ exports.updateClient = async (clientId, reqBody) => {
         runValidators: true,
         new: true,
       });
+    } catch (error) {
+      return {
+        status: 400,
+        data: {},
+        messageError: error.message,
+      };
+    }
+
+    return {
+      status: 200,
+      data: data !== null ? data : {},
+      message: data !== null ? "OK" : "No data",
+    };
+  } catch (error) {
+    console.error("error ne", error);
+    return {
+      status: 500,
+      messageError: error,
+    };
+  } finally {
+    // Close the database connection
+    mongoose.connection.close();
+  }
+};
+
+export const deleteClient = async (clientId) => {
+  try {
+    let data = {};
+    //Validate classificationId
+    const idClientValid = await isIdValid(clientId, "client");
+
+    if (!idClientValid.isValid) {
+      return {
+        status: idClientValid.status,
+        data: {},
+        messageError: idClientValid.messageError,
+      };
+    }
+
+    const url = process.env.URL_DB;
+    await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
+
+    try {
+      data = await Client.findOneAndDelete({ _id: new ObjectId(clientId) });
     } catch (error) {
       return {
         status: 400,
