@@ -1613,6 +1613,14 @@ export const putFurniture = async (furId, reqBody) => {
             }
         }
 
+        if (!reqBody) {
+            return {
+                status: 400,
+                data: {},
+                messageError: "Required body"
+            }
+        }
+
         const url = process.env.URL_DB;
         await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
