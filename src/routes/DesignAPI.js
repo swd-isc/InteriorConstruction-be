@@ -7,6 +7,8 @@ const DesignRouter = (app) => {
   router.get("/", designService.getDesigns);
   router.get("/:id", designService.getDesignById)
 
+  router.post("/",designService.createDesign);
+
   return app.use("/api/design", router);
 };
 

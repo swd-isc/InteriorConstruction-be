@@ -1,4 +1,8 @@
 import Design from "../models/Design";
+import Furniture from "../models/Furniture";
+import Color from "../models/Color";
+import Material from "../models/Material";
+import Classification from "../models/Classification";
 import mongoose from "mongoose";
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -142,7 +146,7 @@ exports.getDesignById = async (id) => {
       },
       {
         $project: {
-          classifications: 0, 
+          classifications: 0,
           type: 0,
         },
       },
@@ -165,6 +169,87 @@ exports.getDesignById = async (id) => {
   }
 };
 
+exports.createDesign = async (reqBody) => {
+  try {
+    let data = [];
+    const url = process.env.URL_DB;
+    await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
+    const design = new Design(reqBody);
+
+    try {
+      data = await design.save();
+    } catch (error) {
+      return {
+        status: 400,
+        data: {},
+        messageError: error.message,
+      };
+    }
+
+    return {
+      status: 200,
+      data: data,
+      message: data.length !== 0 ? "OK" : "No data",
+    };
+  } catch (error) {
+    console.error("error ne", error);
+    return {
+      status: 500,
+      messageError: error,
+    };
+  } finally {
+    // Close the database connection
+    mongoose.connection.close();
+  }
+};
+
+exports.updateDesign = async (reqBody) => {
+  try {
+    let data = {};
+    //Validate classificationId
+    const idDesginValid = await isIdValid(reqBody.furId, "furniture");
+
+    if (!idDesginValid.isValid) {
+      return {
+        status: idDesginValid.status,
+        data: {},
+        messageError: idDesginValid.messageError,
+      };
+    }
+
+    const url = process.env.URL_DB;
+    await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
+
+    try {
+      data = await Desgin.findByIdAndUpdate(reqBody.furId, reqBody, {
+        runValidators: true,
+        new: true,
+      });
+    } catch (error) {
+      return {
+        status: 400,
+        data: {},
+        messageError: error.message,
+      };
+    }
+
+    return {
+      status: 200,
+      data: data !== null ? data : {},
+      message: data !== null ? "OK" : "No data",
+    };
+  } catch (error) {
+    console.error("error ne", error);
+    return {
+      status: 500,
+      messageError: error,
+    };
+  } finally {
+    // Close the database connection
+    mongoose.connection.close();
+  }
+};
+
 function sortByInput(mode) {
   if (!mode) {
     //No input => Ascending
@@ -177,5 +262,80 @@ function sortByInput(mode) {
     return -1; // Descending
   } else {
     return 1; // Ascending
+  }
+}
+
+async function isIdValid(id, model) {
+  if (id === null || id === undefined) {
+    return {
+      status: 400,
+      isValid: false,
+      messageError: `ObjectId ${model} required.`,
+    };
+  }
+  try {
+    const url = process.env.URL_DB;
+    await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
+
+    const isValidObjectId = mongoose.Types.ObjectId.isValid(id);
+
+    if (!isValidObjectId) {
+      // The provided id is not a valid ObjectId
+      return {
+        status: 400,
+        isValid: false,
+        messageError: `Not a valid ${model} ObjectId.`,
+      };
+    }
+
+    let data = null;
+
+    switch (model) {
+      case "color":
+        // Check if the color with the given ObjectId exists in the database
+        data = await Color.findById(id);
+        break;
+      case "material":
+        // Check if the material with the given ObjectId exists in the database
+        data = await Material.findById(id);
+        break;
+      case "classification":
+        // Check if the classification with the given ObjectId exists in the database
+        data = await Classification.findById(id);
+        break;
+      case "furniture":
+        // Check if the classification with the given ObjectId exists in the database
+        data = await Furniture.findById(id);
+        break;
+      case "design":
+        // Check if the classification with the given ObjectId exists in the database
+        data = await Design.findById(id);
+        break;
+      default:
+        break;
+    }
+
+    if (data !== null) {
+      return {
+        isValid: true,
+      };
+    } else {
+      return {
+        status: 400,
+        isValid: false,
+        messageError: "ObjectId not found.",
+      };
+    }
+    return data !== null; // Returns true if data exists, false otherwise
+  } catch (error) {
+    console.error("Error checking ObjectId:", error);
+    return {
+      status: 500,
+      isValid: false,
+      messageError: error,
+    };
+  } finally {
+    // Close the database connection
+    mongoose.connection.close();
   }
 }
