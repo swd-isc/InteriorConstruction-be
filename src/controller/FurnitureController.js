@@ -35,7 +35,7 @@ export const searchFurController = async (req, res) => {
 }
 
 export const updateFurController = async (req, res) => {
-    let data = await putFurniture(req.body, req.query.page, req.query.sort_by);
+    let data = await putFurniture(req.params.id, req.body);
     return res.status(data.status).json(data);
 }
 

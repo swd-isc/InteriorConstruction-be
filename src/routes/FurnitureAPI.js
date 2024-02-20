@@ -21,6 +21,7 @@ const FurnitureRouter = (app) => {
     router.get('/', furnitureById);
     router.post('/', createFurController);
     router.put('/', updateFurController);
+    router.put('/:id', updateFurController);
 
     return app.use('/api/furniture', router);
 }
