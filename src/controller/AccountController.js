@@ -38,3 +38,8 @@ exports.updateAccount = async (req, res) => {
   let data = await accountRepository.updateAccount(req.params.id, req.body);
   return res.status(data.status).json(data);
 };
+
+exports.deleteAccount = async (req, res) => {
+  let data = await accountRepository.deleteAccount(req.params.id);
+  return res.status(data.status).json(data);
+};
