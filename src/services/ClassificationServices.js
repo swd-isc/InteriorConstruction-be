@@ -1,6 +1,7 @@
 import Classification from '../models/Classification';
 
 import mongoose from "mongoose";
+const ObjectId = mongoose.Types.ObjectId;
 
 export const classificationByPage = async (pageReq) => {
     try {
@@ -177,7 +178,7 @@ export const deleteClassification = async (classificationId) => {
             return {
                 status: 400,
                 data: {},
-                messageError: error.message
+                messageError: 'error day ' + error.message
             }
 
         }

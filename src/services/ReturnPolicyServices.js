@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+const ObjectId = mongoose.Types.ObjectId;
+
 import ReturnPolicy from '../models/ReturnPolicy';
 
 export const returnPolicyById = async (id) => {
