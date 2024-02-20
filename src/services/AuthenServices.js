@@ -38,8 +38,8 @@ export const testConnect = async (req, res) => {
 }
 
 //Login
-export const loginUser = async (req, res) => {
-    const { usermail, password } = req.body;
+export const loginUser = async (reqBody) => {
+    const { usermail, password } = reqBody;
     let user
     let query = "select empID, empName, password, dob, gender, idCard, address, phone, email, major, active, role, imageURL, contractURL from Account where email like '" + usermail + "'";
     mongoose.query(connectionString, query, async (err, rows) => {
