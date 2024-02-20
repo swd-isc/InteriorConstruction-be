@@ -1,4 +1,4 @@
-import { filterSessionService, getFurnitureByClassificationByName, getFurnitureByClassificationByType, getFurnitureByClassificationId, getFurnitureByColor, getFurnitureById, getFurnitureByMaterial, getFurnitureByName, getFurnitureByPage, getFurnitureByType, postFurniture, putFurniture } from "../services/FurnitureServices";
+import { deleteFurniture, filterSessionService, getFurnitureByClassificationByName, getFurnitureByClassificationByType, getFurnitureByClassificationId, getFurnitureByColor, getFurnitureById, getFurnitureByMaterial, getFurnitureByName, getFurnitureByPage, getFurnitureByType, postFurniture, putFurniture } from "../services/FurnitureServices";
 
 export const furnitureByPage = async (req, res) => {
 
@@ -38,6 +38,13 @@ export const updateFurController = async (req, res) => {
     let data = await putFurniture(req.params.id, req.body);
     return res.status(data.status).json(data);
 }
+
+export const deleteFurController = async (req, res) => {
+    let data = await deleteFurniture(req.params.id);
+    return res.status(data.status).json(data);
+}
+
+
 
 
 export const furnitureByType = async (req, res) => {

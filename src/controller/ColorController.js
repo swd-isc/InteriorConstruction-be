@@ -1,4 +1,4 @@
-import { colorById, getColorByPage, postColor, putColor } from "../services/ColorServices";
+import { colorById, deleteColor, getColorByPage, postColor, putColor } from "../services/ColorServices";
 
 export const getColorData = async (req, res) => {
 
@@ -19,5 +19,10 @@ export const postColorController = async (req, res) => {
 
 export const putColorController = async (req, res) => {
     let data = await putColor(req.params.id, req.body);
+    return res.status(data.status).json(data);
+}
+
+export const deleteColorController = async (req, res) => {
+    let data = await deleteColor(req.params.id);
     return res.status(data.status).json(data);
 }

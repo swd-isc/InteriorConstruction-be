@@ -5,6 +5,7 @@ import Delivery from '../models/Delivery';
 import Furniture from '../models/Furniture';
 
 import mongoose from "mongoose";
+const ObjectId = mongoose.Types.ObjectId;
 // import { returnPolicyData } from '../sample-data/ReturnPolicyData';
 // import { deliveryData } from '../sample-data/DeliveryData';
 // import { furnitureData } from '../sample-data/FurnitureData';
@@ -244,6 +245,51 @@ export const colorById = async (id) => {
     }
 }
 
+export const deleteColor = async (colorId) => {
+    try {
+        let data = {};
+        //Validate classificationId
+        const idColorValid = await isIdValid(colorId, 'color');
+
+        if (!idColorValid.isValid) {
+            return {
+                status: idColorValid.status,
+                data: {},
+                messageError: idColorValid.messageError
+            }
+        }
+
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        try {
+            data = await Color.findOneAndDelete({ _id: new ObjectId(colorId) });
+        } catch (error) {
+            return {
+                status: 400,
+                data: {},
+                messageError: error.message
+            }
+
+        }
+
+        return {
+            status: 200,
+            data: data !== null ? data : {},
+            message: data !== null ? "OK" : "No data"
+        };
+    } catch (error) {
+        console.error('error ne', error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
 async function isIdValid(id, model) {
     if (id === null || id === undefined) {
         return {
@@ -274,25 +320,13 @@ async function isIdValid(id, model) {
                 // Check if the color with the given ObjectId exists in the database
                 data = await Color.findById(id);
                 break;
-            case 'material':
-                // Check if the material with the given ObjectId exists in the database
-                data = await Material.findById(id);
-                break;
-            case 'classification':
-                // Check if the classification with the given ObjectId exists in the database
-                data = await Classification.findById(id);
-                break;
-            case 'furniture':
-                // Check if the classification with the given ObjectId exists in the database
-                data = await Furniture.findById(id);
-                break;
             default:
                 break;
         }
 
         if (data !== null) {
             return {
-                isValid: true,
+                isValid: true,// Returns true if data exists, false otherwise
             }
         } else {
             return {
@@ -301,7 +335,6 @@ async function isIdValid(id, model) {
                 messageError: 'ObjectId not found.'
             }
         }
-        return data !== null; // Returns true if data exists, false otherwise
     } catch (error) {
         console.error('Error checking ObjectId:', error);
         return {

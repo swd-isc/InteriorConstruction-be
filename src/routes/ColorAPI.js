@@ -1,5 +1,5 @@
 import express from 'express';
-import { getColorById, getColorData, postColorController, putColorController } from '../controller/ColorController';
+import { deleteColorController, getColorById, getColorData, postColorController, putColorController } from '../controller/ColorController';
 
 const router = express.Router();
 
@@ -11,6 +11,8 @@ const ColorRouter = (app) => {
     router.post('/', postColorController);
     router.put('/', putColorController);
     router.put('/:id', putColorController);
+    router.delete('/:id', deleteColorController);
+    router.delete('/', deleteColorController);
 
     return app.use('/api/color', router);
 }
