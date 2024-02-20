@@ -33,6 +33,9 @@ const accountSchema = new Schema({
             message: '{VALUE} is not supported.'
         },
         required: [true, 'Login method required.'],
+    },
+    refreshToken: {
+        type: String,
     }
 }, {
     collection: 'account',
