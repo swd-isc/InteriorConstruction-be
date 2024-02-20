@@ -1,14 +1,21 @@
-import express from 'express';
-import { getDeliveryById } from '../controller/DeliveryController';
+import express from "express";
+// import { getDeliveryById } from '../controller/DeliveryController';
+import deliveryService from "../controller/DeliveryController";
 
 const router = express.Router();
 
 const DeliveryRouter = (app) => {
-    router.get('/:id', getDeliveryById);
+  // router.get('/:id', getDeliveryById);
 
-    return app.use('/delivery', router);
-}
+  router.get("/", deliveryService.getDeliveries);
+  router.get("/:id", deliveryService.getDeliveryById);
 
-export {
-    DeliveryRouter
-}
+  router.post("/", deliveryService.createDelivery);
+
+  router.put("/:id", deliveryService.updateDelivery);
+  router.put("/", deliveryService.updateDelivery);
+
+  return app.use("/api/delivery", router);
+};
+
+export { DeliveryRouter };

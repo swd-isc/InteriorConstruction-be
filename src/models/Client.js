@@ -70,9 +70,7 @@ const clientSchema = new Schema({
                     throw new mongoose.Error(`Contracts must be an array.`);
                 }
 
-                if (value.length == 0) { //empty array
-                    throw new mongoose.Error(`Empty contracts array`);
-                }
+                
 
                 for (const contractId of value) {
                     const contract = await Contract.findById(contractId);

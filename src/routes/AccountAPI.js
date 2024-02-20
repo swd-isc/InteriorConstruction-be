@@ -4,14 +4,17 @@ import accountService from "../controller/AccountController";
 const router = express.Router();
 
 const AccountRouter = (app) => {
-  router.get("/insert-sample-data", accountService.insertSampleData);
+  // router.get("/insert-sample-data", accountService.insertSampleData);
 
-  router.get("/page/:page", accountService.getAccounts);
+  router.get("/", accountService.getAccounts);
   router.get("/:id", accountService.getAccountById);
 
   router.post("/", accountService.createAccount);
 
-  return app.use("/account", router);
+  router.put("/:id", accountService.updateAccount);
+  router.put("/", accountService.updateAccount);
+
+  return app.use("/api/account", router);
 };
 
 export { AccountRouter };

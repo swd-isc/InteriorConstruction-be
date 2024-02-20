@@ -10,6 +10,7 @@ const DesignRouter = (app) => {
   router.post("/", designService.createDesign);
 
   router.put("/:id", designService.updateDesign);
+  router.put("/", designService.updateDesign);
 
   return app.use("/api/design", router);
 };
