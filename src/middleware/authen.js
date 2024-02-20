@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const verifyToken = (req, res, next) => {
+export const verifyToken = (req, res, next) => {
     const authHeader = req.header('Authorization')
     const token = authHeader && authHeader.split(' ')[1]
     if (!token) {
@@ -17,4 +17,3 @@ const verifyToken = (req, res, next) => {
         return res.status(403).json('Invalid token') //forbidden(Invalid token)
     }
 }
-module.exports = verifyToken
