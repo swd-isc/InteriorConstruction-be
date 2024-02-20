@@ -17,3 +17,8 @@ exports.createDesign = async (req, res) => {
   let data = await designRepository.createDesign(req.body);
   return res.status(data.status).json(data);
 };
+
+exports.updateDesign = async (req, res) => {
+  let data = await designRepository.updateDesign(req.params.id, req.body);
+  return res.status(data.status).json(data);
+}

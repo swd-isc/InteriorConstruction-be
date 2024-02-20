@@ -5,9 +5,11 @@ const router = express.Router();
 
 const DesignRouter = (app) => {
   router.get("/", designService.getDesigns);
-  router.get("/:id", designService.getDesignById)
+  router.get("/:id", designService.getDesignById);
 
-  router.post("/",designService.createDesign);
+  router.post("/", designService.createDesign);
+
+  router.put("/:id", designService.updateDesign);
 
   return app.use("/api/design", router);
 };

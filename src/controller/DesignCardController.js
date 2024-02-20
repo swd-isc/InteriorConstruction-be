@@ -10,3 +10,8 @@ exports.createDesignCard = async (req, res) => {
   let data = await designCardRepository.createDesignCard(req.body);
   return res.status(data.status).json(data);
 };
+
+exports.updateDesignCard = async (req, res) => {
+  let data = await designCardRepository.updateDesignCard(req.params.id, req.body);
+  return res.status(data.status).json(data);
+}

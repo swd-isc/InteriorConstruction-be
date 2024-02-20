@@ -9,6 +9,8 @@ const DesignCardRouter = (app) => {
 
   router.post("/", designCardSerivce.createDesignCard);
 
+  router.put("/:id", designCardSerivce.updateDesignCard);
+
   return app.use("/api/design-card", router);
 };
 

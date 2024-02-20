@@ -1,8 +1,4 @@
 import Design from "../models/Design";
-import Furniture from "../models/Furniture";
-import Color from "../models/Color";
-import Material from "../models/Material";
-import Classification from "../models/Classification";
 import mongoose from "mongoose";
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -203,17 +199,25 @@ exports.createDesign = async (reqBody) => {
   }
 };
 
-exports.updateDesign = async (reqBody) => {
+exports.updateDesign = async (designId, reqBody) => {
   try {
     let data = {};
-    //Validate classificationId
-    const idDesginValid = await isIdValid(reqBody.furId, "furniture");
 
-    if (!idDesginValid.isValid) {
+    const idDesignValid = await isIdValid(designId, "design");
+
+    if (!idDesignValid.isValid) {
       return {
-        status: idDesginValid.status,
+        status: idDesignValid.status,
         data: {},
-        messageError: idDesginValid.messageError,
+        messageError: idDesignValid.messageError,
+      };
+    }
+
+    if (!reqBody) {
+      return {
+        status: 400,
+        data: {},
+        messageError: "Required body",
       };
     }
 
@@ -221,7 +225,7 @@ exports.updateDesign = async (reqBody) => {
     await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
 
     try {
-      data = await Desgin.findByIdAndUpdate(reqBody.furId, reqBody, {
+      data = await Design.findByIdAndUpdate(designId, reqBody, {
         runValidators: true,
         new: true,
       });
@@ -291,22 +295,6 @@ async function isIdValid(id, model) {
     let data = null;
 
     switch (model) {
-      case "color":
-        // Check if the color with the given ObjectId exists in the database
-        data = await Color.findById(id);
-        break;
-      case "material":
-        // Check if the material with the given ObjectId exists in the database
-        data = await Material.findById(id);
-        break;
-      case "classification":
-        // Check if the classification with the given ObjectId exists in the database
-        data = await Classification.findById(id);
-        break;
-      case "furniture":
-        // Check if the classification with the given ObjectId exists in the database
-        data = await Furniture.findById(id);
-        break;
       case "design":
         // Check if the classification with the given ObjectId exists in the database
         data = await Design.findById(id);
