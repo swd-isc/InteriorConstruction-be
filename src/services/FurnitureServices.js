@@ -1599,6 +1599,51 @@ export const getFurnitureByName = async (furName, pageReq, mode) => {
     }
 }
 
+export const putFurniture = async (reqBody) => {
+    try {
+        let data = {};
+        //Validate classificationId
+        const idFurnitureValid = await isIdValid(reqBody.furId, 'furniture');
+
+        if (!idFurnitureValid.isValid) {
+            return {
+                status: idFurnitureValid.status,
+                data: {},
+                messageError: idFurnitureValid.messageError
+            }
+        }
+
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        try {
+            data = await Furniture.findByIdAndUpdate(reqBody.furId, reqBody, { runValidators: true, new: true });
+        } catch (error) {
+            return {
+                status: 400,
+                data: {},
+                messageError: error.message
+            }
+
+        }
+
+        return {
+            status: 200,
+            data: data !== null ? data : {},
+            message: data !== null ? "OK" : "No data"
+        };
+    } catch (error) {
+        console.error('error ne', error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
 
 
 export const getFurnitureByType = async (furType) => {
