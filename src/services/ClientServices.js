@@ -159,7 +159,7 @@ exports.updateClient = async (clientId, reqBody) => {
   }
 };
 
-export const deleteClient = async (clientId) => {
+exports.deleteClient = async (clientId) => {
   try {
     let data = {};
     //Validate classificationId

@@ -22,3 +22,8 @@ exports.updateClient = async (req, res) => {
   let data = await clientRepository.updateClient(req.params.id, req.body);
   return res.status(data.status).json(data);
 };
+
+exports.deleteClient = async (req, res) => {
+  let data = await deleteClient(req.params.id);
+  return res.status(data.status).json(data);
+};

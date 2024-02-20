@@ -12,6 +12,9 @@ const ClientRouter = (app) => {
   router.put("/:id", clientService.updateClient);
   router.put("/", clientService.updateClient);
 
+  router.delete("/:id", clientService.deleteClient);
+  router.delete("/", clientService.deleteClient);
+
   return app.use("/api/client", router);
 };
 
