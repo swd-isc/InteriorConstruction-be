@@ -1,5 +1,5 @@
 import express from 'express';
-import { getMaterialData, postMaterial, putMaterialController } from '../controller/MaterialController';
+import { deleteMaterialController, getMaterialData, postMaterial, putMaterialController } from '../controller/MaterialController';
 
 const router = express.Router();
 
@@ -8,6 +8,8 @@ const MaterialRouter = (app) => {
     router.post('/', postMaterial);
     router.put('/', putMaterialController);
     router.put('/:id', putMaterialController);
+    router.delete('/:id', deleteMaterialController);
+    router.delete('/', deleteMaterialController);
 
     return app.use('/api/material', router);
 }

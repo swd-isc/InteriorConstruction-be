@@ -154,6 +154,51 @@ export const putClassification = async (classificationId, reqBody) => {
     }
 }
 
+export const deleteClassification = async (classificationId) => {
+    try {
+        let data = {};
+        //Validate classificationId
+        const idClassificationValid = await isIdValid(classificationId, 'classification');
+
+        if (!idClassificationValid.isValid) {
+            return {
+                status: idClassificationValid.status,
+                data: {},
+                messageError: idClassificationValid.messageError
+            }
+        }
+
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        try {
+            data = await Classification.findOneAndDelete({ _id: new ObjectId(classificationId) });
+        } catch (error) {
+            return {
+                status: 400,
+                data: {},
+                messageError: error.message
+            }
+
+        }
+
+        return {
+            status: 200,
+            data: data !== null ? data : {},
+            message: data !== null ? "OK" : "No data"
+        };
+    } catch (error) {
+        console.error('error ne', error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
 
 
 

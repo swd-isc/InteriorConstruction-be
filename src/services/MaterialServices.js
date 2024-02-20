@@ -154,6 +154,51 @@ export const putMaterial = async (materialId, reqBody) => {
     }
 }
 
+export const deleteMaterial = async (materialId) => {
+    try {
+        let data = {};
+        //Validate classificationId
+        const idMaterialValid = await isIdValid(materialId, 'material');
+
+        if (!idMaterialValid.isValid) {
+            return {
+                status: idMaterialValid.status,
+                data: {},
+                messageError: idMaterialValid.messageError
+            }
+        }
+
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        try {
+            data = await Material.findOneAndDelete({ _id: new ObjectId(materialId) });
+        } catch (error) {
+            return {
+                status: 400,
+                data: {},
+                messageError: error.message
+            }
+
+        }
+
+        return {
+            status: 200,
+            data: data !== null ? data : {},
+            message: data !== null ? "OK" : "No data"
+        };
+    } catch (error) {
+        console.error('error ne', error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
 async function isIdValid(id, model) {
     if (id === null || id === undefined) {
         return {

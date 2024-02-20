@@ -1652,6 +1652,67 @@ export const putFurniture = async (furId, reqBody) => {
     }
 }
 
+export const deleteFurniture = async (furId) => {
+    try {
+        let data = {};
+        //Validate classificationId
+        const idFurnitureValid = await isIdValid(furId, 'furniture');
+
+        if (!idFurnitureValid.isValid) {
+            return {
+                status: idFurnitureValid.status,
+                data: {},
+                messageError: idFurnitureValid.messageError
+            }
+        }
+
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        try {
+            data = await Furniture.findOneAndDelete({ _id: new ObjectId(furId) })
+                .populate({
+                    path: 'colors',
+                    select: '-_id name'
+                })
+                .populate({
+                    path: 'materials',
+                    select: '-_id name'
+                })
+                .populate({
+                    path: 'delivery',
+                    select: '-_id'
+                })
+                .populate({
+                    path: 'classifications',
+                    select: '-_id classificationName'
+                });
+        } catch (error) {
+            return {
+                status: 400,
+                data: {},
+                messageError: error.message
+            }
+
+        }
+
+        return {
+            status: 200,
+            data: data !== null ? data : {},
+            message: data !== null ? "OK" : "No data"
+        };
+    } catch (error) {
+        console.error('error ne', error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
 
 
 export const getFurnitureByType = async (furType) => {

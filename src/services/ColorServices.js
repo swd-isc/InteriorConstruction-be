@@ -244,6 +244,51 @@ export const colorById = async (id) => {
     }
 }
 
+export const deleteColor = async (colorId) => {
+    try {
+        let data = {};
+        //Validate classificationId
+        const idColorValid = await isIdValid(colorId, 'color');
+
+        if (!idColorValid.isValid) {
+            return {
+                status: idColorValid.status,
+                data: {},
+                messageError: idColorValid.messageError
+            }
+        }
+
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        try {
+            data = await Color.findOneAndDelete({ _id: new ObjectId(colorId) });
+        } catch (error) {
+            return {
+                status: 400,
+                data: {},
+                messageError: error.message
+            }
+
+        }
+
+        return {
+            status: 200,
+            data: data !== null ? data : {},
+            message: data !== null ? "OK" : "No data"
+        };
+    } catch (error) {
+        console.error('error ne', error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
 async function isIdValid(id, model) {
     if (id === null || id === undefined) {
         return {
