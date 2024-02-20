@@ -1,4 +1,4 @@
-import { classificationByPage, classificationByType, postClassification } from "../services/ClassificationServices";
+import { classificationByPage, classificationByType, postClassification, putClassification } from "../services/ClassificationServices";
 
 export const getClassificationByPage = async (req, res) => {
 
@@ -15,5 +15,10 @@ export const getClassificationByType = async (req, res) => {
 export const postClassificationController = async (req, res) => {
 
     let data = await postClassification(req.body);
+    return res.status(data.status).json(data);
+}
+
+export const putClassificationController = async (req, res) => {
+    let data = await putClassification(req.params.id, req.body);
     return res.status(data.status).json(data);
 }

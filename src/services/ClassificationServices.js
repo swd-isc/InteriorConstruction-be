@@ -101,6 +101,59 @@ export const postClassification = async (reqBody) => {
     }
 }
 
+export const putClassification = async (classificationId, reqBody) => {
+    try {
+        let data = {};
+        //Validate classificationId
+        const idClassificationValid = await isIdValid(classificationId, 'classification');
+
+        if (!idClassificationValid.isValid) {
+            return {
+                status: idClassificationValid.status,
+                data: {},
+                messageError: idClassificationValid.messageError
+            }
+        }
+
+        if (!reqBody) {
+            return {
+                status: 400,
+                data: {},
+                messageError: "Required body"
+            }
+        }
+
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        try {
+            data = await Classification.findByIdAndUpdate(classificationId, reqBody, { runValidators: true, new: true });
+        } catch (error) {
+            return {
+                status: 400,
+                data: {},
+                messageError: error.message
+            }
+
+        }
+
+        return {
+            status: 200,
+            data: data !== null ? data : {},
+            message: data !== null ? "OK" : "No data"
+        };
+    } catch (error) {
+        console.error('error ne', error);
+        return {
+            status: 500,
+            messageError: error,
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
 
 
 
@@ -166,6 +219,77 @@ function sortByInput(mode) {
         return -1;  // Descending
     } else {
         return 1; // Ascending
+    }
+}
+
+async function isIdValid(id, model) {
+    if (id === null || id === undefined) {
+        return {
+            status: 400,
+            isValid: false,
+            messageError: `ObjectId ${model} required.`
+        }
+    }
+    try {
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        const isValidObjectId = mongoose.Types.ObjectId.isValid(id);
+
+        if (!isValidObjectId) {
+            // The provided id is not a valid ObjectId
+            return {
+                status: 400,
+                isValid: false,
+                messageError: `Not a valid ${model} ObjectId.`
+            }
+        }
+
+        let data = null;
+
+        switch (model) {
+            case 'color':
+                // Check if the color with the given ObjectId exists in the database
+                data = await Color.findById(id);
+                break;
+            case 'material':
+                // Check if the material with the given ObjectId exists in the database
+                data = await Material.findById(id);
+                break;
+            case 'classification':
+                // Check if the classification with the given ObjectId exists in the database
+                data = await Classification.findById(id);
+                break;
+            case 'furniture':
+                // Check if the classification with the given ObjectId exists in the database
+                data = await Furniture.findById(id);
+                break;
+            default:
+                break;
+        }
+
+        if (data !== null) {
+            return {
+                isValid: true,
+            }
+        } else {
+            return {
+                status: 400,
+                isValid: false,
+                messageError: 'ObjectId not found.'
+            }
+        }
+        return data !== null; // Returns true if data exists, false otherwise
+    } catch (error) {
+        console.error('Error checking ObjectId:', error);
+        return {
+            status: 500,
+            isValid: false,
+            messageError: error
+        }
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
     }
 }
 
