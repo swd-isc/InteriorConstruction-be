@@ -1599,11 +1599,11 @@ export const getFurnitureByName = async (furName, pageReq, mode) => {
     }
 }
 
-export const putFurniture = async (reqBody) => {
+export const putFurniture = async (furId, reqBody) => {
     try {
         let data = {};
         //Validate classificationId
-        const idFurnitureValid = await isIdValid(reqBody.furId, 'furniture');
+        const idFurnitureValid = await isIdValid(furId, 'furniture');
 
         if (!idFurnitureValid.isValid) {
             return {
@@ -1617,7 +1617,7 @@ export const putFurniture = async (reqBody) => {
         await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
         try {
-            data = await Furniture.findByIdAndUpdate(reqBody.furId, reqBody, { runValidators: true, new: true });
+            data = await Furniture.findByIdAndUpdate(furId, reqBody, { runValidators: true, new: true });
         } catch (error) {
             return {
                 status: 400,

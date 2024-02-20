@@ -1,5 +1,5 @@
 import express from 'express';
-import { getColorById, getColorData, postColorController } from '../controller/ColorController';
+import { getColorById, getColorData, postColorController, putColorController } from '../controller/ColorController';
 
 const router = express.Router();
 
@@ -9,6 +9,8 @@ const ColorRouter = (app) => {
     router.get('/:id', getColorById);
     router.get('/', getColorById);
     router.post('/', postColorController);
+    router.put('/', putColorController);
+    router.put('/:id', putColorController);
 
     return app.use('/api/color', router);
 }
