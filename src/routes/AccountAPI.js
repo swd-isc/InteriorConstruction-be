@@ -14,6 +14,9 @@ const AccountRouter = (app) => {
   router.put("/:id", accountService.updateAccount);
   router.put("/", accountService.updateAccount);
 
+  router.delete("/:id", accountService.deleteAccount);
+  router.delete("/", accountService.deleteAccount);
+
   return app.use("/api/account", router);
 };
 

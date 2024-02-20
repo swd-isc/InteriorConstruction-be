@@ -24,7 +24,23 @@ exports.getClients = async (mode, pageReq) => {
     // Calculate total pages
     const totalPages = Math.ceil(totalDocuments / itemsPerPage);
 
-    data.clients = await Client.find().skip(startIndex).limit(itemsPerPage);
+    // data.clients = await Client.find().skip(startIndex).limit(itemsPerPage);
+
+    data.clients = await Client.find()
+      .skip(startIndex)
+      .limit(itemsPerPage)
+      .populate({
+        path: "accountId",
+        select: "-_id email role password", // Select only the fields you need
+      })
+      .populate({
+        path: "contracts",
+        select: "-_id designId contractPrice status", // Select the desired fields from the contract document
+        populate: {
+          path: "designId",
+          select: "designName", // Select the desired fields from the design document
+        },
+      });
 
     data.page = page;
     data.totalPages = totalPages;

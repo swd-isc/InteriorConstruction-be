@@ -5,6 +5,8 @@ import DesignCard from "../models/DesignCard";
 import Design from "../models/Design";
 import designCardData from "../sample-data/DesignCardData";
 
+const ObjectId = mongoose.Types.ObjectId;
+
 exports.insertSampleData = async () => {
   try {
     const url = process.env.URL_DB;
@@ -166,6 +168,51 @@ exports.updateAccount = async (accountId, reqBody) => {
         runValidators: true,
         new: true,
       });
+    } catch (error) {
+      return {
+        status: 400,
+        data: {},
+        messageError: error.message,
+      };
+    }
+
+    return {
+      status: 200,
+      data: data !== null ? data : {},
+      message: data !== null ? "OK" : "No data",
+    };
+  } catch (error) {
+    console.error("error ne", error);
+    return {
+      status: 500,
+      messageError: error,
+    };
+  } finally {
+    // Close the database connection
+    mongoose.connection.close();
+  }
+};
+
+exports.deleteAccount = async (accountId) => {
+  try {
+    let data = {};
+    //Validate classificationId
+    console.log(accountId);
+    const idAccountValid = await isIdValid(accountId, "account");
+
+    if (!idAccountValid.isValid) {
+      return {
+        status: idAccountValid.status,
+        data: {},
+        messageError: idAccountValid.messageError,
+      };
+    }
+
+    const url = process.env.URL_DB;
+    await mongoose.connect(url, { family: 4, dbName: "interiorConstruction" });
+
+    try {
+      data = await Account.findOneAndDelete({ _id: new ObjectId(accountId) });
     } catch (error) {
       return {
         status: 400,
