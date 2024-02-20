@@ -4,11 +4,15 @@ import clientService from "../controller/ClientController";
 const router = express.Router();
 
 const ClientRouter = (app) => {
-  router.get("/page/:page", clientService.getClients);
+  router.get("/", clientService.getClients);
   router.get("/:id", clientService.getClientById);
 
   router.post("/", clientService.createClient);
-  return app.use("/client", router);
+
+  router.put("/:id", clientService.updateClient);
+  router.put("/", clientService.updateClient);
+
+  return app.use("/api/client", router);
 };
 
 export { ClientRouter };
