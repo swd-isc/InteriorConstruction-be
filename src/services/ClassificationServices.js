@@ -3,240 +3,241 @@ import Classification from '../models/Classification';
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
 
-export const classificationByPage = async (pageReq) => {
-    try {
-        const itemsPerPage = 10;
-        // Parse query parameters
-        const page = parseInt(pageReq) || 1;
-
-        let currentPageData = [];
-
-        // Calculate start and end indices for the current page
-        const startIndex = (page - 1) * itemsPerPage;
-
-        // Get the data for the current page
-        const url = process.env.URL_DB;
-        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-
-        currentPageData = await Classification.find({}).sort({ classificationName: 1 }).skip(startIndex).limit(itemsPerPage).explain('executionStats');
-        return {
-            status: 200,
-            data: currentPageData,
-            page: page,
-            message: currentPageData.length !== 0 ? "OK" : "No data"
-        };
-
-    } catch (error) {
-        console.error(error);
-        return {
-            status: 500,
-            messageError: error,
-        }
-    } finally {
-        // Close the database connection
-        mongoose.connection.close();
-    }
-}
-
-export const postClassification = async (reqBody) => {
-    try {
-        let data = [];
-        const url = process.env.URL_DB;
-        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-        const classification = new Classification(reqBody);
-
+export const classificationServices = {
+    classificationByPage: async (pageReq) => {
         try {
-            data = await classification.save();
+            const itemsPerPage = 10;
+            // Parse query parameters
+            const page = parseInt(pageReq) || 1;
+
+            let currentPageData = [];
+
+            // Calculate start and end indices for the current page
+            const startIndex = (page - 1) * itemsPerPage;
+
+            // Get the data for the current page
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+            currentPageData = await Classification.find({}).sort({ classificationName: 1 }).skip(startIndex).limit(itemsPerPage).explain('executionStats');
+            return {
+                status: 200,
+                data: currentPageData,
+                page: page,
+                message: currentPageData.length !== 0 ? "OK" : "No data"
+            };
+
         } catch (error) {
+            console.error(error);
             return {
-                status: 400,
-                data: {},
-                messageError: error.message
+                status: 500,
+                messageError: error,
             }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
         }
+    },
 
-        //Code for insert data
-        // const classificationDocuments = [
-        //     { classificationName: 'Test Classification', type: "ROOM" },
-        //     { classificationName: 'Test Classification', type: "ROOM" },
-        //     // Add more documents as needed
-        // ];
-
-        // let isError = false
-        // for (let i = 0; i < classificationDocuments.length; i++) {
-        //     try {
-        //         const classification = new Classification(classificationDocuments[i]);
-        //         await classification.validate();
-        //     } catch (error) {
-        //         console.error('classification', i, 'error:', error.message);
-        //         isError = true;
-        //     }
-        // }
-        // isError = await checkDupName(classificationDocuments);
-
-        // if (!isError) {
-        //     for (let i = 0; i < classificationDocuments.length; i++) {
-        //         try {
-        //             const classification = new Classification(classificationDocuments[i]);
-        //             await classification.save();
-        //         } catch (error) {
-        //             console.error('classification', i, 'error:', error.message);
-        //         }
-        //     }
-        // }
-
-        return {
-            status: 200,
-            data: data,
-            message: data.length !== 0 ? "OK" : "No data"
-        };
-    } catch (error) {
-        console.error('error ne', error);
-        return {
-            status: 500,
-            messageError: error,
-        }
-    } finally {
-        // Close the database connection
-        mongoose.connection.close();
-    }
-}
-
-export const putClassification = async (classificationId, reqBody) => {
-    try {
-        let data = {};
-        //Validate classificationId
-        const idClassificationValid = await isIdValid(classificationId, 'classification');
-
-        if (!idClassificationValid.isValid) {
-            return {
-                status: idClassificationValid.status,
-                data: {},
-                messageError: idClassificationValid.messageError
-            }
-        }
-
-        if (!reqBody) {
-            return {
-                status: 400,
-                data: {},
-                messageError: "Required body"
-            }
-        }
-
-        const url = process.env.URL_DB;
-        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-
+    postClassification: async (reqBody) => {
         try {
-            data = await Classification.findByIdAndUpdate(classificationId, reqBody, { runValidators: true, new: true });
-        } catch (error) {
-            return {
-                status: 400,
-                data: {},
-                messageError: error.message
+            let data = [];
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+            const classification = new Classification(reqBody);
+
+            try {
+                data = await classification.save();
+            } catch (error) {
+                return {
+                    status: 400,
+                    data: {},
+                    messageError: error.message
+                }
             }
 
-        }
+            //Code for insert data
+            // const classificationDocuments = [
+            //     { classificationName: 'Test Classification', type: "ROOM" },
+            //     { classificationName: 'Test Classification', type: "ROOM" },
+            //     // Add more documents as needed
+            // ];
 
-        return {
-            status: 200,
-            data: data !== null ? data : {},
-            message: data !== null ? "OK" : "No data"
-        };
-    } catch (error) {
-        console.error('error ne', error);
-        return {
-            status: 500,
-            messageError: error,
-        }
-    } finally {
-        // Close the database connection
-        mongoose.connection.close();
-    }
-}
+            // let isError = false
+            // for (let i = 0; i < classificationDocuments.length; i++) {
+            //     try {
+            //         const classification = new Classification(classificationDocuments[i]);
+            //         await classification.validate();
+            //     } catch (error) {
+            //         console.error('classification', i, 'error:', error.message);
+            //         isError = true;
+            //     }
+            // }
+            // isError = await checkDupName(classificationDocuments);
 
-export const deleteClassification = async (classificationId) => {
-    try {
-        let data = {};
-        //Validate classificationId
-        const idClassificationValid = await isIdValid(classificationId, 'classification');
+            // if (!isError) {
+            //     for (let i = 0; i < classificationDocuments.length; i++) {
+            //         try {
+            //             const classification = new Classification(classificationDocuments[i]);
+            //             await classification.save();
+            //         } catch (error) {
+            //             console.error('classification', i, 'error:', error.message);
+            //         }
+            //     }
+            // }
 
-        if (!idClassificationValid.isValid) {
             return {
-                status: idClassificationValid.status,
-                data: {},
-                messageError: idClassificationValid.messageError
-            }
-        }
-
-        const url = process.env.URL_DB;
-        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-
-        try {
-            data = await Classification.findOneAndDelete({ _id: new ObjectId(classificationId) });
-        } catch (error) {
-            return {
-                status: 400,
-                data: {},
-                messageError: 'error day ' + error.message
-            }
-
-        }
-
-        return {
-            status: 200,
-            data: data !== null ? data : {},
-            message: data !== null ? "OK" : "No data"
-        };
-    } catch (error) {
-        console.error('error ne', error);
-        return {
-            status: 500,
-            messageError: error,
-        }
-    } finally {
-        // Close the database connection
-        mongoose.connection.close();
-    }
-}
-
-
-
-
-export const classificationByType = async (classificationType, mode) => {
-    try {
-        let sortAsc = sortByInput(mode);
-        let data = [];
-
-        // Get the data for the current page
-        const url = process.env.URL_DB;
-        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-        const isValid = validateType(classificationType);
-        if (!isValid) {
-            return {
-                status: 400,
+                status: 200,
                 data: data,
-                messageError: "Type must be 'PRODUCT' | 'ROOM' | 'STYLE'"
+                message: data.length !== 0 ? "OK" : "No data"
+            };
+        } catch (error) {
+            console.error('error ne', error);
+            return {
+                status: 500,
+                messageError: error,
             }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
         }
-        data = await Classification.find({ type: classificationType.toUpperCase() })
-            .select("classificationName")
-            .sort({ classificationName: sortAsc }); // 1 for ascending order, -1 for descending order
-        return {
-            status: 200,
-            data: data,
-            message: data.length !== 0 ? "OK" : "No data"
-        };
+    },
 
-    } catch (error) {
-        console.error(error);
-        return {
-            status: 500,
-            messageError: error,
+    putClassification: async (classificationId, reqBody) => {
+        try {
+            let data = {};
+            //Validate classificationId
+            const idClassificationValid = await isIdValid(classificationId, 'classification');
+
+            if (!idClassificationValid.isValid) {
+                return {
+                    status: idClassificationValid.status,
+                    data: {},
+                    messageError: idClassificationValid.messageError
+                }
+            }
+
+            if (!reqBody) {
+                return {
+                    status: 400,
+                    data: {},
+                    messageError: "Required body"
+                }
+            }
+
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+            try {
+                data = await Classification.findByIdAndUpdate(classificationId, reqBody, { runValidators: true, new: true });
+            } catch (error) {
+                return {
+                    status: 400,
+                    data: {},
+                    messageError: error.message
+                }
+
+            }
+
+            return {
+                status: 200,
+                data: data !== null ? data : {},
+                message: data !== null ? "OK" : "No data"
+            };
+        } catch (error) {
+            console.error('error ne', error);
+            return {
+                status: 500,
+                messageError: error,
+            }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
         }
-    } finally {
-        // Close the database connection
-        mongoose.connection.close();
+    },
+
+    deleteClassification: async (classificationId) => {
+        try {
+            let data = {};
+            //Validate classificationId
+            const idClassificationValid = await isIdValid(classificationId, 'classification');
+
+            if (!idClassificationValid.isValid) {
+                return {
+                    status: idClassificationValid.status,
+                    data: {},
+                    messageError: idClassificationValid.messageError
+                }
+            }
+
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+            try {
+                data = await Classification.findOneAndDelete({ _id: new ObjectId(classificationId) });
+            } catch (error) {
+                return {
+                    status: 400,
+                    data: {},
+                    messageError: 'error day ' + error.message
+                }
+
+            }
+
+            return {
+                status: 200,
+                data: data !== null ? data : {},
+                message: data !== null ? "OK" : "No data"
+            };
+        } catch (error) {
+            console.error('error ne', error);
+            return {
+                status: 500,
+                messageError: error,
+            }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
+        }
+    },
+
+
+
+    classificationByType: async (classificationType, mode) => {
+        try {
+            let sortAsc = sortByInput(mode);
+            let data = [];
+
+            // Get the data for the current page
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+            const isValid = validateType(classificationType);
+            if (!isValid) {
+                return {
+                    status: 400,
+                    data: data,
+                    messageError: "Type must be 'PRODUCT' | 'ROOM' | 'STYLE'"
+                }
+            }
+            data = await Classification.find({ type: classificationType.toUpperCase() })
+                .select("classificationName")
+                .sort({ classificationName: sortAsc }); // 1 for ascending order, -1 for descending order
+            return {
+                status: 200,
+                data: data,
+                message: data.length !== 0 ? "OK" : "No data"
+            };
+
+        } catch (error) {
+            console.error(error);
+            return {
+                status: 500,
+                messageError: error,
+            }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
+        }
     }
 }
 
