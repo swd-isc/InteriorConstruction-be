@@ -116,3 +116,7 @@ export const logoutUser = async (user) => {
         }
     });
 }
+
+export const registerAccount = async (reqBody) => {
+
+}
