@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+import Client from '../models/Client';
 
-export const verifyToken = (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
     const authHeader = req.header('Authorization')
     const token = authHeader && authHeader.split(' ')[1]
     if (!token) {
@@ -8,10 +10,20 @@ export const verifyToken = (req, res, next) => {
     }
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-        console.log(decoded)
+
         //Write your validation code here. Example:
-        req.params.id = decoded._id
-        next()
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+        let data = await Client.findById(decoded._id);
+
+        if (data) {
+            next()
+        } else {
+            return res.status(403).json({
+                messageError: "Invalid token."
+            }) //forbidden(Invalid token)
+        }
     } catch (err) {
         return res.status(403).json({
             error: err.name,
