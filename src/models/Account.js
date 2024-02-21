@@ -34,6 +34,14 @@ const accountSchema = new Schema({
         },
         required: [true, 'Login method required.'],
     },
+    status: {
+        type: String,
+        enum: {
+            values: ['ACTIVE', 'INACTIVE'],
+            message: '{VALUE} is not supported.'
+        },
+        required: [true, 'Status required.'],
+    },
     refreshToken: {
         type: String,
     }

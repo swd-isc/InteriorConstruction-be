@@ -7,7 +7,7 @@ const router = require("express").Router();
 router.get('/', verifyToken, getTestAuthen);
 
 //Login
-router.post('/login', logInController);
+router.get('/login', logInController);
 
 //Create Account
 // router.post('/createAcc', authController.createUser);

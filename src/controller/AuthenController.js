@@ -8,7 +8,7 @@ export const getTestAuthen = async (req, res) => {
 
 export const logInController = async (req, res) => {
 
-    let data = await loginUser();
+    let data = await loginUser(req.body);
     return res.status(data.status).json(data);
 }
 
