@@ -3,7 +3,7 @@ import { authenServices } from "../services/AuthenServices";
 export const authenController = {
     getTestAuthen: async (req, res) => {
 
-        let data = await authenServices.testConnect(req.params.id);
+        let data = await authenServices.testConnect();
         return res.status(data.status).json(data);
     },
 
