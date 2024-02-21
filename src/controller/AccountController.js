@@ -1,6 +1,6 @@
-import accountRepository from "../services/AccountServices";
+import { accountRepository } from "../services/AccountServices";
 
-exports.insertSampleData = async (req, res) => {
+const insertSampleData = async (req, res) => {
   let data = await accountRepository.insertSampleData();
   if (!data.error) {
     return res.status(200).json({
@@ -16,30 +16,32 @@ exports.insertSampleData = async (req, res) => {
   }
 };
 
-exports.getAccounts = async (req, res) => {
-  let data = await accountRepository.getAccounts(
-    req.query.sort_by,
-    req.query.page
-  );
-  return res.status(data.status).json(data);
-};
+export const accountService = {
+  getAccounts: async (req, res) => {
+    let data = await accountRepository.getAccounts(
+      req.query.sort_by,
+      req.query.page
+    );
+    return res.status(data.status).json(data);
+  },
 
-exports.getAccountById = async (req, res) => {
-  let data = await accountRepository.getAccountById(req.params.id);
-  return res.status(data.status).json(data);
-};
+  getAccountById: async (req, res) => {
+    let data = await accountRepository.getAccountById(req.params.id);
+    return res.status(data.status).json(data);
+  },
 
-exports.createAccount = async (req, res) => {
-  let data = await accountRepository.createAccount(req.body);
-  return res.status(data.status).json(data);
-};
+  createAccount: async (req, res) => {
+    let data = await accountRepository.createAccount(req.body);
+    return res.status(data.status).json(data);
+  },
 
-exports.updateAccount = async (req, res) => {
-  let data = await accountRepository.updateAccount(req.params.id, req.body);
-  return res.status(data.status).json(data);
-};
+  updateAccount: async (req, res) => {
+    let data = await accountRepository.updateAccount(req.params.id, req.body);
+    return res.status(data.status).json(data);
+  },
 
-exports.deleteAccount = async (req, res) => {
-  let data = await accountRepository.deleteAccount(req.params.id);
-  return res.status(data.status).json(data);
+  deleteAccount: async (req, res) => {
+    let data = await accountRepository.deleteAccount(req.params.id);
+    return res.status(data.status).json(data);
+  },
 };
