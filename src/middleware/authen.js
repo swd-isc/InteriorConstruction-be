@@ -10,10 +10,12 @@ export const verifyToken = (req, res, next) => {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
         console.log(decoded)
         //Write your validation code here. Example:
-        // req.empID = decoded.empID
+        req.params.id = decoded._id
         next()
     } catch (err) {
-        console.log(err)
-        return res.status(403).json('Invalid token') //forbidden(Invalid token)
+        return res.status(403).json({
+            error: err.name,
+            messageError: err.message
+        }) //forbidden(Invalid token)
     }
 }

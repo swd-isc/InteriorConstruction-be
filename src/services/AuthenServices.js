@@ -12,28 +12,23 @@ const connectionString = process.env.CONNECTION_STRING_TO_DB;
 
 export const authenServices = {
     //Test Connection
-    testConnect: async (req, res) => {
-        let query = "select * from Account where empID like '" + req.empID + "'";
-        mongoose.query(connectionString, query, (err, rows) => {
-            const data = rows[0]
-            return res.status(200).json(data)
-        })
+    testConnect: async (clientId) => {
+        return await clientRepository.getClientById(clientId);
     },
 
     //Login
     loginUser: async (reqBody) => {
         const { email, password } = reqBody;
 
-        const account = await Account.find({ email: email })
-            .select('_id email password status');
-        if (!account) {
+        const account = await accountRepository.getAccountByEmail(email);
+        if (account.status !== 200) {
             return {
-                status: 401,
-                messageError: "Wrong email",
+                status: account.status,
+                messageError: account.messageError
             };
         }
         const validPassword = await bcrypt.compare(
-            password, account.password
+            password, account.data.password
         );
         if (!validPassword) {
             return {
@@ -41,17 +36,16 @@ export const authenServices = {
                 messageError: "Wrong password",
             };
         }
-        if (account.status === "INACTIVE") {
+        if (account.data.status === "INACTIVE") {
             return {
                 status: 401,
                 messageError: "Your account has been inactive",
             };
         }
         if (account && validPassword) {
-            const client = await Client.find({ accountId: account._id })
-                .select('firstName lastName')
-            const tokens = generateToken(client)
-            updateRefreshToken(account._id, tokens.refreshToken)
+            const client = await clientRepository.getClientByAccountId(account.data._id);
+            const tokens = generateToken(client.data)
+            updateRefreshToken(account.data._id, tokens.refreshToken)
             return {
                 status: 200,
                 data: tokens,
@@ -62,7 +56,10 @@ export const authenServices = {
 
     registerAccount: async (reqBody) => {
         const accountRes = await accountRepository.createAccount(reqBody);
-        let client = {
+        if (accountRes.status !== 200) {
+            return accountRes;
+        }
+        const client = {
             firstName: "Anonymous",
             lastName: "Human",
             birthDate: "2000-01-01T00:00:00.000+00:00",
@@ -76,7 +73,7 @@ export const authenServices = {
     },
 
     //Update Token Expired
-    updateToken: async (refreshToken, res) => {
+    updateToken: async (refreshToken) => {
         if (!refreshToken) {
             return {
                 status: 401,
@@ -106,15 +103,9 @@ export const authenServices = {
     },
 
     //Logout
-    logoutUser: async (user) => {
-        let query = `UPDATE Account SET refreshToken=NULL WHERE empID like '${user.empID}'`;
-        mongoose.query(connectionString, query, (err, rows) => {
-            if (err) {
-                return res.status(401).json("Logout Fail: " + err);
-            } else {
-                return res.status(200).json("Logout Success");
-            }
-        });
+    logoutUser: async (clientId) => {
+        const responseData = await clientRepository.getAccountIdByClientId(clientId);
+        return responseData;
     },
 }
 

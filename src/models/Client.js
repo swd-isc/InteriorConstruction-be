@@ -22,12 +22,12 @@ const clientSchema = new Schema({
     },
     phone: {
         type: String,
-        validate: {
-            validator: function (value) {
-                return /((^(\+84|84|0){1})(3|5|7|8|9))+([0-9]{8})$/.test(value);
-            },
-            message: props => `${props.value} is not a valid VN phone number.`
-        },
+        // validate: {
+        //     validator: function (value) {
+        //         return /((^(\+84|84|0){1})(3|5|7|8|9))+([0-9]{8})$/.test(value);
+        //     },
+        //     message: props => `${props.value} is not a valid VN phone number.`
+        // },
         required: false,
         unique: true
     },
