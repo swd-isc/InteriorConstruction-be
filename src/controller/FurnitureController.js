@@ -1,78 +1,158 @@
 import { deleteFurniture, filterSessionService, getFurnitureByClassificationByName, getFurnitureByClassificationByType, getFurnitureByClassificationId, getFurnitureByColor, getFurnitureById, getFurnitureByMaterial, getFurnitureByName, getFurnitureByPage, getFurnitureByType, postFurniture, putFurniture } from "../services/FurnitureServices";
 
-export const furnitureByPage = async (req, res) => {
+// export const furnitureByPage = async (req, res) => {
 
-    let data = await getFurnitureByPage(req.query.sort_by, req.query.page);
-    return res.status(data.status).json(data);
-}
+//     let data = await getFurnitureByPage(req.query.sort_by, req.query.page);
+//     return res.status(data.status).json(data);
+// }
 
-export const furnitureById = async (req, res) => {
+// export const furnitureById = async (req, res) => {
 
-    let data = await getFurnitureById(req.params.id);
-    return res.status(data.status).json(data);
-}
+//     let data = await getFurnitureById(req.params.id);
+//     return res.status(data.status).json(data);
+// }
 
-export const furnitureByClassificationId = async (req, res) => {
+// export const furnitureByClassificationId = async (req, res) => {
 
-    let data = await getFurnitureByClassificationId(req.query.classificationId, req.query.page, req.query.sort_by);
-    return res.status(data.status).json(data);
-}
+//     let data = await getFurnitureByClassificationId(req.query.classificationId, req.query.page, req.query.sort_by);
+//     return res.status(data.status).json(data);
+// }
 
-export const filterSession = async (req, res) => {
+// export const filterSession = async (req, res) => {
 
-    let data = await filterSessionService(req.query);
-    return res.status(data.status).json(data);
-}
+//     let data = await filterSessionService(req.query);
+//     return res.status(data.status).json(data);
+// }
 
-export const createFurController = async (req, res) => {
-    let data = await postFurniture(req.body);
-    return res.status(data.status).json(data);
-}
+// export const createFurController = async (req, res) => {
+//     let data = await postFurniture(req.body);
+//     return res.status(data.status).json(data);
+// }
 
-export const searchFurController = async (req, res) => {
-    let data = await getFurnitureByName(req.query.furName, req.query.page, req.query.sort_by);
-    return res.status(data.status).json(data);
-}
+// export const searchFurController = async (req, res) => {
+//     let data = await getFurnitureByName(req.query.furName, req.query.page, req.query.sort_by);
+//     return res.status(data.status).json(data);
+// }
 
-export const updateFurController = async (req, res) => {
-    let data = await putFurniture(req.params.id, req.body);
-    return res.status(data.status).json(data);
-}
+// export const updateFurController = async (req, res) => {
+//     let data = await putFurniture(req.params.id, req.body);
+//     return res.status(data.status).json(data);
+// }
 
-export const deleteFurController = async (req, res) => {
-    let data = await deleteFurniture(req.params.id);
-    return res.status(data.status).json(data);
-}
-
-
+// export const deleteFurController = async (req, res) => {
+//     let data = await deleteFurniture(req.params.id);
+//     return res.status(data.status).json(data);
+// }
 
 
-export const furnitureByType = async (req, res) => {
 
-    let data = await getFurnitureByType(req.params.type);
-    return res.status(data.status).json(data);
-}
 
-export const furnitureByClassificationByType = async (req, res) => {
+// export const furnitureByType = async (req, res) => {
 
-    let data = await getFurnitureByClassificationByType(req.params.type);
-    return res.status(data.status).json(data);
-}
+//     let data = await getFurnitureByType(req.params.type);
+//     return res.status(data.status).json(data);
+// }
 
-export const furnitureByClassificationByName = async (req, res) => {
+// export const furnitureByClassificationByType = async (req, res) => {
 
-    let data = await getFurnitureByClassificationByName(req.params.name);
-    return res.status(data.status).json(data);
-}
+//     let data = await getFurnitureByClassificationByType(req.params.type);
+//     return res.status(data.status).json(data);
+// }
 
-export const furnitureByMaterial = async (req, res) => {
+// export const furnitureByClassificationByName = async (req, res) => {
 
-    let data = await getFurnitureByMaterial(req.params.materialName);
-    return res.status(data.status).json(data);
-}
+//     let data = await getFurnitureByClassificationByName(req.params.name);
+//     return res.status(data.status).json(data);
+// }
 
-export const furnitureByColor = async (req, res) => {
+// export const furnitureByMaterial = async (req, res) => {
 
-    let data = await getFurnitureByColor(req.params.colorName);
-    return res.status(data.status).json(data);
+//     let data = await getFurnitureByMaterial(req.params.materialName);
+//     return res.status(data.status).json(data);
+// }
+
+// export const furnitureByColor = async (req, res) => {
+
+//     let data = await getFurnitureByColor(req.params.colorName);
+//     return res.status(data.status).json(data);
+// }
+
+
+export const furnitureController = {
+    furnitureByPage: async (req, res) => {
+
+        let data = await getFurnitureByPage(req.query.sort_by, req.query.page);
+        return res.status(data.status).json(data);
+    },
+
+    furnitureById: async (req, res) => {
+
+        let data = await getFurnitureById(req.params.id);
+        return res.status(data.status).json(data);
+    },
+
+    furnitureByClassificationId: async (req, res) => {
+
+        let data = await getFurnitureByClassificationId(req.query.classificationId, req.query.page, req.query.sort_by);
+        return res.status(data.status).json(data);
+    },
+
+    filterSession: async (req, res) => {
+
+        let data = await filterSessionService(req.query);
+        return res.status(data.status).json(data);
+    },
+
+    createFurController: async (req, res) => {
+        let data = await postFurniture(req.body);
+        return res.status(data.status).json(data);
+    },
+
+    searchFurController: async (req, res) => {
+        let data = await getFurnitureByName(req.query.furName, req.query.page, req.query.sort_by);
+        return res.status(data.status).json(data);
+    },
+
+    updateFurController: async (req, res) => {
+        let data = await putFurniture(req.params.id, req.body);
+        return res.status(data.status).json(data);
+    },
+
+    deleteFurController: async (req, res) => {
+        let data = await deleteFurniture(req.params.id);
+        return res.status(data.status).json(data);
+    },
+
+
+
+
+    furnitureByType: async (req, res) => {
+
+        let data = await getFurnitureByType(req.params.type);
+        return res.status(data.status).json(data);
+    },
+
+    furnitureByClassificationByType: async (req, res) => {
+
+        let data = await getFurnitureByClassificationByType(req.params.type);
+        return res.status(data.status).json(data);
+    },
+
+    furnitureByClassificationByName: async (req, res) => {
+
+        let data = await getFurnitureByClassificationByName(req.params.name);
+        return res.status(data.status).json(data);
+    },
+
+    furnitureByMaterial: async (req, res) => {
+
+        let data = await getFurnitureByMaterial(req.params.materialName);
+        return res.status(data.status).json(data);
+    },
+
+    furnitureByColor: async (req, res) => {
+
+        let data = await getFurnitureByColor(req.params.colorName);
+        return res.status(data.status).json(data);
+    }
 }
