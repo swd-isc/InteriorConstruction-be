@@ -266,6 +266,55 @@ export const designRepository = {
       mongoose.connection.close();
     }
   },
+
+  deleteDesign: async (designId) => {
+    try {
+      let data = {};
+      //Validate classificationId
+      const idDesignValid = await isIdValid(designId, "design");
+
+      if (!idDesignValid.isValid) {
+        return {
+          status: idDesignValid.status,
+          data: {},
+          messageError: idDesignValid.messageError,
+        };
+      }
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      try {
+        data = await Design.findOneAndDelete({
+          _id: new ObjectId(designId),
+        });
+      } catch (error) {
+        return {
+          status: 400,
+          data: {},
+          messageError: error.message,
+        };
+      }
+
+      return {
+        status: 200,
+        data: data !== null ? data : {},
+        message: data !== null ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error("error ne", error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
 };
 
 function sortByInput(mode) {

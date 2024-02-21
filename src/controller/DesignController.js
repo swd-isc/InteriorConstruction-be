@@ -23,4 +23,9 @@ export const designService = {
     let data = await designRepository.updateDesign(req.params.id, req.body);
     return res.status(data.status).json(data);
   },
+
+  deleteDesign: async (req, res) => {
+    let data = await designRepository.deleteDesign(req.params.id);
+    return res.status(data.status).json(data);
+  },
 };

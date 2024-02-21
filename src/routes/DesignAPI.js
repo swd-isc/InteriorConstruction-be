@@ -12,6 +12,9 @@ const DesignRouter = (app) => {
   router.put("/:id", designService.updateDesign);
   router.put("/", designService.updateDesign);
 
+  router.delete("/:id", designService.deleteDesign);
+  router.delete("/", designService.deleteDesign);
+
   return app.use("/api/design", router);
 };
 
