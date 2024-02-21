@@ -21,13 +21,13 @@ export const authenController = {
 
     updateTokenController: async (req, res) => {
 
-        let data = await authenServices.updateToken();
+        let data = await authenServices.updateToken(req.body.refreshToken);
         return res.status(data.status).json(data);
     },
 
     logOutController: async (req, res) => {
 
-        let data = await authenServices.logoutUser(req.body);
+        let data = await authenServices.logoutUser(req.body.clientId);
         return res.status(data.status).json(data);
     },
 }

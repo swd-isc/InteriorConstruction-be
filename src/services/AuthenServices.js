@@ -44,8 +44,11 @@ export const authenServices = {
         }
         if (account && validPassword) {
             const client = await clientRepository.getClientByAccountId(account.data._id);
-            const tokens = generateToken(client.data)
-            updateRefreshToken(account.data._id, tokens.refreshToken)
+            const tokens = await generateToken(client.data)
+            const updateRes = await updateRefreshToken(account.data._id, tokens.refreshToken);
+            if (updateRes.status !== 200) {
+                return updateRes
+            }
             return {
                 status: 200,
                 data: tokens,
@@ -82,10 +85,17 @@ export const authenServices = {
         }
         try {
             const decodedData = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
-            console.log('check decoded data: ', decodedData);
+            // console.log('check decoded data: ', decodedData);
             if (decodedData) {
                 const tokens = await generateToken(decodedData)
-                await updateRefreshToken(decodedData._id, tokens.refreshToken)
+                const clientRes = await clientRepository.getAccountIdByClientId(decodedData._id);
+                if (clientRes.status !== 200) {
+                    return clientRes
+                }
+                const updateRes = await updateRefreshToken(clientRes.data.accountId, tokens.refreshToken);
+                if (updateRes.status !== 200) {
+                    return updateRes
+                }
                 return {
                     status: 200,
                     data: tokens,
@@ -105,7 +115,7 @@ export const authenServices = {
     //Logout
     logoutUser: async (clientId) => {
         const responseData = await clientRepository.getAccountIdByClientId(clientId);
-        return responseData;
+        return await accountRepository.updateAccount(responseData.data.accountId, { refreshToken: '' });
     },
 }
 
@@ -121,12 +131,5 @@ const generateToken = async (data) => {
 }
 
 const updateRefreshToken = async (accountId, refreshToken) => {
-    let query = "update Account set refreshToken='" + refreshToken + "' where empID='" + accountId + "'";
-    mongoose.query(connectionString, query, (err, result) => {
-        if (err) {
-            return console.log("Something wrong with db: " + err)
-        } else {
-            return console.log('Updated refreshToken Success')
-        }
-    })
+    return await accountRepository.updateAccount(accountId, { refreshToken: refreshToken })
 }

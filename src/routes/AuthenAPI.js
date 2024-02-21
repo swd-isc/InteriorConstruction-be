@@ -3,8 +3,6 @@ import { verifyToken } from "../middleware/authen";
 
 const AuthenRouter = (app) => {
     const router = require("express").Router();
-    //Test
-    router.get('/:id', verifyToken, authenController.getTestAuthen);
 
     //Login
     router.post('/register', authenController.registerController);
@@ -21,6 +19,8 @@ const AuthenRouter = (app) => {
     //Logout
     router.get('/logout', authenController.logOutController);
 
+    //Test
+    router.get('/:id', verifyToken, authenController.getTestAuthen);
     return app.use('/api/authen', router);
 }
 
