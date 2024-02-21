@@ -1,6 +1,8 @@
 import Contract from "../models/Contract";
 import mongoose from "mongoose";
 
+const ObjectId = mongoose.Types.ObjectId;
+
 export const contractRepository = {
   getContracts: async (mode, pageReq) => {
     try {
@@ -147,6 +149,55 @@ export const contractRepository = {
         data = await Contract.findByIdAndUpdate(contractId, reqBody, {
           runValidators: true,
           new: true,
+        });
+      } catch (error) {
+        return {
+          status: 400,
+          data: {},
+          messageError: error.message,
+        };
+      }
+
+      return {
+        status: 200,
+        data: data !== null ? data : {},
+        message: data !== null ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error("error ne", error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
+  deleteContract: async (contractId) => {
+    try {
+      let data = {};
+      //Validate classificationId
+      const idContractValid = await isIdValid(contractId, "contract");
+
+      if (!idContractValid.isValid) {
+        return {
+          status: idContractValid.status,
+          data: {},
+          messageError: idContractValid.messageError,
+        };
+      }
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      try {
+        data = await Contract.findOneAndDelete({
+          _id: new ObjectId(contractId),
         });
       } catch (error) {
         return {
