@@ -10,9 +10,6 @@ const AuthenRouter = (app) => {
     //Login
     router.get('/login', authenController.logInController);
 
-    //Create Account
-    // router.post('/createAcc', authenController.createUser);
-
     //Update Token Expired
     router.get('/token', authenController.updateTokenController);
 

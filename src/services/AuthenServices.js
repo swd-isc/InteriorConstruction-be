@@ -20,6 +20,12 @@ export const authenServices = {
     loginUser: async (reqBody) => {
         const { email, password } = reqBody;
 
+        if (!email || !password) {
+            return {
+                status: 400,
+                messageError: "Email and password required."
+            };
+        }
         const account = await accountRepository.getAccountByEmail(email);
         if (account.status !== 200) {
             return {
