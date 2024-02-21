@@ -1,6 +1,8 @@
 import Contract from "../models/Contract";
 import mongoose from "mongoose";
 
+const ObjectId = mongoose.Types.ObjectId;
+
 export const contractRepository = {
   getContracts: async (mode, pageReq) => {
     try {
@@ -173,75 +175,47 @@ export const contractRepository = {
     }
   },
 
-  sortByInput(mode) {
-    if (!mode) {
-      //No input => Ascending
-      return 1;
-    }
-    // Convert input to lowercase and compare
-    const lowerCaseInput = mode.toUpperCase();
-
-    if (lowerCaseInput === "DESC") {
-      return -1; // Descending
-    } else {
-      return 1; // Ascending
-    }
-  },
-
-  async isIdValid(id, model) {
-    if (id === null || id === undefined) {
-      return {
-        status: 400,
-        isValid: false,
-        messageError: `ObjectId ${model} required.`,
-      };
-    }
+  deleteContract: async (contractId) => {
     try {
+      let data = {};
+      //Validate classificationId
+      const idContractValid = await isIdValid(contractId, "contract");
+
+      if (!idContractValid.isValid) {
+        return {
+          status: idContractValid.status,
+          data: {},
+          messageError: idContractValid.messageError,
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
         dbName: "interiorConstruction",
       });
 
-      const isValidObjectId = mongoose.Types.ObjectId.isValid(id);
-
-      if (!isValidObjectId) {
-        // The provided id is not a valid ObjectId
+      try {
+        data = await Contract.findOneAndDelete({
+          _id: new ObjectId(contractId),
+        });
+      } catch (error) {
         return {
           status: 400,
-          isValid: false,
-          messageError: `Not a valid ${model} ObjectId.`,
+          data: {},
+          messageError: error.message,
         };
       }
 
-      let data = null;
-
-      switch (model) {
-        case "contract":
-          // Check if the classification with the given ObjectId exists in the database
-          data = await Contract.findById(id);
-          break;
-        default:
-          break;
-      }
-
-      if (data !== null) {
-        return {
-          isValid: true,
-        };
-      } else {
-        return {
-          status: 400,
-          isValid: false,
-          messageError: "ObjectId not found.",
-        };
-      }
-      return data !== null; // Returns true if data exists, false otherwise
+      return {
+        status: 200,
+        data: data !== null ? data : {},
+        message: data !== null ? "OK" : "No data",
+      };
     } catch (error) {
-      console.error("Error checking ObjectId:", error);
+      console.error("error ne", error);
       return {
         status: 500,
-        isValid: false,
         messageError: error,
       };
     } finally {
@@ -250,3 +224,80 @@ export const contractRepository = {
     }
   },
 };
+
+function sortByInput(mode) {
+  if (!mode) {
+    //No input => Ascending
+    return 1;
+  }
+  // Convert input to lowercase and compare
+  const lowerCaseInput = mode.toUpperCase();
+
+  if (lowerCaseInput === "DESC") {
+    return -1; // Descending
+  } else {
+    return 1; // Ascending
+  }
+}
+
+async function isIdValid(id, model) {
+  if (id === null || id === undefined) {
+    return {
+      status: 400,
+      isValid: false,
+      messageError: `ObjectId ${model} required.`,
+    };
+  }
+  try {
+    const url = process.env.URL_DB;
+    await mongoose.connect(url, {
+      family: 4,
+      dbName: "interiorConstruction",
+    });
+
+    const isValidObjectId = mongoose.Types.ObjectId.isValid(id);
+
+    if (!isValidObjectId) {
+      // The provided id is not a valid ObjectId
+      return {
+        status: 400,
+        isValid: false,
+        messageError: `Not a valid ${model} ObjectId.`,
+      };
+    }
+
+    let data = null;
+
+    switch (model) {
+      case "contract":
+        // Check if the classification with the given ObjectId exists in the database
+        data = await Contract.findById(id);
+        break;
+      default:
+        break;
+    }
+
+    if (data !== null) {
+      return {
+        isValid: true,
+      };
+    } else {
+      return {
+        status: 400,
+        isValid: false,
+        messageError: "ObjectId not found.",
+      };
+    }
+    return data !== null; // Returns true if data exists, false otherwise
+  } catch (error) {
+    console.error("Error checking ObjectId:", error);
+    return {
+      status: 500,
+      isValid: false,
+      messageError: error,
+    };
+  } finally {
+    // Close the database connection
+    mongoose.connection.close();
+  }
+}

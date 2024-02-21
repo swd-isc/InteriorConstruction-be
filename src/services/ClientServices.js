@@ -246,81 +246,81 @@ export const clientRepository = {
       mongoose.connection.close();
     }
   },
+};
 
-  sortByInput(mode) {
-    if (!mode) {
-      //No input => Ascending
-      return 1;
-    }
-    // Convert input to lowercase and compare
-    const lowerCaseInput = mode.toUpperCase();
+function sortByInput(mode) {
+  if (!mode) {
+    //No input => Ascending
+    return 1;
+  }
+  // Convert input to lowercase and compare
+  const lowerCaseInput = mode.toUpperCase();
 
-    if (lowerCaseInput === "DESC") {
-      return -1; // Descending
-    } else {
-      return 1; // Ascending
-    }
-  },
+  if (lowerCaseInput === "DESC") {
+    return -1; // Descending
+  } else {
+    return 1; // Ascending
+  }
+}
 
-  async isIdValid(id, model) {
-    if (id === null || id === undefined) {
+async function isIdValid(id, model) {
+  if (id === null || id === undefined) {
+    return {
+      status: 400,
+      isValid: false,
+      messageError: `ObjectId ${model} required.`,
+    };
+  }
+  try {
+    const url = process.env.URL_DB;
+    await mongoose.connect(url, {
+      family: 4,
+      dbName: "interiorConstruction",
+    });
+
+    const isValidObjectId = mongoose.Types.ObjectId.isValid(id);
+
+    if (!isValidObjectId) {
+      // The provided id is not a valid ObjectId
       return {
         status: 400,
         isValid: false,
-        messageError: `ObjectId ${model} required.`,
+        messageError: `Not a valid ${model} ObjectId.`,
       };
     }
-    try {
-      const url = process.env.URL_DB;
-      await mongoose.connect(url, {
-        family: 4,
-        dbName: "interiorConstruction",
-      });
 
-      const isValidObjectId = mongoose.Types.ObjectId.isValid(id);
+    let data = null;
 
-      if (!isValidObjectId) {
-        // The provided id is not a valid ObjectId
-        return {
-          status: 400,
-          isValid: false,
-          messageError: `Not a valid ${model} ObjectId.`,
-        };
-      }
+    switch (model) {
+      case "client":
+        // Check if the classification with the given ObjectId exists in the database
+        data = await Client.findById(id);
+        break;
+      default:
+        break;
+    }
 
-      let data = null;
-
-      switch (model) {
-        case "client":
-          // Check if the classification with the given ObjectId exists in the database
-          data = await Client.findById(id);
-          break;
-        default:
-          break;
-      }
-
-      if (data !== null) {
-        return {
-          isValid: true,
-        };
-      } else {
-        return {
-          status: 400,
-          isValid: false,
-          messageError: "ObjectId not found.",
-        };
-      }
-      return data !== null; // Returns true if data exists, false otherwise
-    } catch (error) {
-      console.error("Error checking ObjectId:", error);
+    if (data !== null) {
       return {
-        status: 500,
-        isValid: false,
-        messageError: error,
+        isValid: true,
       };
-    } finally {
-      // Close the database connection
-      mongoose.connection.close();
+    } else {
+      return {
+        status: 400,
+        isValid: false,
+        messageError: "ObjectId not found.",
+      };
     }
-  },
-};
+    return data !== null; // Returns true if data exists, false otherwise
+  } catch (error) {
+    console.error("Error checking ObjectId:", error);
+    return {
+      status: 500,
+      isValid: false,
+      messageError: error,
+    };
+  } finally {
+    // Close the database connection
+    mongoose.connection.close();
+  }
+}

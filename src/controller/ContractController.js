@@ -23,4 +23,9 @@ export const contractService = {
     let data = await contractRepository.updateContract(req.params.id, req.body);
     return res.status(data.status).json(data);
   },
+
+  deleteContract: async (req, res) => {
+    let data = await contractRepository.deleteContract(req.params.id);
+    return res.status(data.status).json(data);
+  },
 };
