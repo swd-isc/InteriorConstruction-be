@@ -12,6 +12,9 @@ const ContractRouter = (app) => {
   router.put("/:id", contractService.updateContract);
   router.put("/", contractService.updateContract);
 
+  router.delete("/:id", contractService.deleteContract);
+  router.delete("/", contractService.deleteContract);
+
   return app.use("/api/contract", router);
 };
 
