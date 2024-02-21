@@ -53,6 +53,17 @@ export const deliveryRepository = {
 
   getDeliveryById: async (id) => {
     try {
+
+      const idDeliveryValid = await isIdValid(id, "delivery");
+
+      if (!idDeliveryValid.isValid) {
+        return {
+          status: idDeliveryValid.status,
+          data: {},
+          messageError: idDeliveryValid.messageError,
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,

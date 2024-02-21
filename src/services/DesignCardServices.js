@@ -55,6 +55,16 @@ export const designCardRepository = {
 
   getDesignCardById: async (id) => {
     try {
+      const idDeisgnCardValid = await isIdValid(id, "design-card");
+
+      if (!idDeisgnCardValid.isValid) {
+        return {
+          status: idDeisgnCardValid.status,
+          data: {},
+          messageError: idDeisgnCardValid.messageError,
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
