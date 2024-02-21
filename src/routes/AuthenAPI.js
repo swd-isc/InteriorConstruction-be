@@ -1,21 +1,29 @@
-import { getTestAuthen, logInController, logOutController, updateTokenController } from "../controller/AuthenController";
+import { authenController } from "../controller/AuthenController";
 import { verifyToken } from "../middleware/authen";
 
-const router = require("express").Router();
+const AuthenRouter = (app) => {
+    const router = require("express").Router();
 
-//Test
-router.get('/', verifyToken, getTestAuthen);
+    //Login
+    router.post('/register', authenController.registerController);
 
-//Login
-router.get('/login', logInController);
+    //Login
+    router.get('/login', authenController.logInController);
 
-//Create Account
-// router.post('/createAcc', authController.createUser);
+    //Create Account
+    // router.post('/createAcc', authenController.createUser);
 
-//Update Token Expired
-router.post('/token', updateTokenController);
+    //Update Token Expired
+    router.get('/token', authenController.updateTokenController);
 
-//Logout
-router.post('/logout', logOutController);
+    //Logout
+    router.get('/logout', authenController.logOutController);
 
-module.exports = router;
+    //Test
+    router.get('/:id', verifyToken, authenController.getTestAuthen);
+    return app.use('/api/authen', router);
+}
+
+export {
+    AuthenRouter
+}

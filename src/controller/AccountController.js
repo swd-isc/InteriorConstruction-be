@@ -30,6 +30,11 @@ export const accountService = {
     return res.status(data.status).json(data);
   },
 
+  // getAccountsByEmail: async (req, res) => {
+  //   let data = await accountRepository.getAccountsByEmail();
+  //   return res.status(data.status).json(data);
+  // },
+
   createAccount: async (req, res) => {
     let data = await accountRepository.createAccount(req.body);
     return res.status(data.status).json(data);

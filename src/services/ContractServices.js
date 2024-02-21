@@ -55,6 +55,17 @@ export const contractRepository = {
 
   getContractById: async (id) => {
     try {
+
+      const idContractValid = await isIdValid(id, "contract");
+
+      if (!idContractValid.isValid) {
+        return {
+          status: idContractValid.status,
+          data: {},
+          messageError: idContractValid.messageError,
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,

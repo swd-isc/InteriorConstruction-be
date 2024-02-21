@@ -1,4 +1,5 @@
 import Client from "../models/Client";
+import Account from "../models/Account";
 import mongoose from "mongoose";
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -68,6 +69,16 @@ export const clientRepository = {
 
   getClientById: async (id) => {
     try {
+      const idClientValid = await isIdValid(id, "client");
+
+      if (!idClientValid.isValid) {
+        return {
+          status: idClientValid.status,
+          data: {},
+          messageError: idClientValid.messageError,
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
@@ -91,6 +102,86 @@ export const clientRepository = {
       return {
         status: 200,
         data: data,
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
+  getClientByAccountId: async (accountId) => {
+    try {
+
+      const idAccountValid = await isIdValid(accountId, "account");
+
+      if (!idAccountValid.isValid) {
+        return {
+          status: idAccountValid.status,
+          data: {},
+          messageError: idAccountValid.messageError,
+        };
+      }
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const data = await Client.find({ accountId: accountId }).select(
+        "_id firstName lastName"
+      );
+
+      return {
+        status: 200,
+        data: data[0],
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
+  getAccountIdByClientId: async (clientId) => {
+    try {
+
+      const idClientValid = await isIdValid(clientId, "client");
+
+      if (!idClientValid.isValid) {
+        return {
+          status: idClientValid.status,
+          data: {},
+          messageError: idClientValid.messageError,
+        };
+      }
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const data = await Client.find({
+        _id: clientId,
+      }).select("-_id accountId");
+
+      return {
+        status: 200,
+        data: data[0],
         message: data.length !== 0 ? "OK" : "No data",
       };
     } catch (error) {
@@ -295,6 +386,10 @@ async function isIdValid(id, model) {
       case "client":
         // Check if the classification with the given ObjectId exists in the database
         data = await Client.findById(id);
+        break;
+        case "account":
+        // Check if the classification with the given ObjectId exists in the database
+        data = await Account.findById(id);
         break;
       default:
         break;

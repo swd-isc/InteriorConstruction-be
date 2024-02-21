@@ -17,6 +17,7 @@ import { ClassificationRouter } from '../routes/ClassificationAPI';
 import { ReturnPolicyRouter } from '../routes/ReturnPolicyAPI';
 import { DeliveryRouter } from '../routes/DeliveryAPI';
 import { DesignCardRouter } from '../routes/DesignCardAPI';
+import { AuthenRouter } from '../routes/AuthenAPI';
 
 const app = express();
 
@@ -73,6 +74,8 @@ DeliveryRouter(app);
 
 //DesignCard routes
 DesignCardRouter(app);
+
+AuthenRouter(app);
 
 app.get('/', (req, res) => {
     res.end(`Hello kiet`);

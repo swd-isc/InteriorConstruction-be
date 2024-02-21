@@ -12,6 +12,9 @@ const DeliveryRouter = (app) => {
   router.put("/:id", deliveryService.updateDelivery);
   router.put("/", deliveryService.updateDelivery);
 
+  router.delete("/:id", deliveryService.deleteDelivery);
+  router.delete("/", deliveryService.deleteDelivery);
+
   return app.use("/api/delivery", router);
 };
 
