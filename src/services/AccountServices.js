@@ -32,7 +32,6 @@ const ObjectId = mongoose.Types.ObjectId;
 //   }
 // };
 
-
 export const accountRepository = {
   getAccounts: async (mode, pageReq) => {
     try {
@@ -112,6 +111,62 @@ export const accountRepository = {
     }
   },
 
+  getAccountByEmail: async (email) => {
+    try {
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const data = await Account.find({ email: email }).select(
+        "_id email password status"
+      );
+
+      return {
+        status: 200,
+        data: data[0],
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
+  getAccountByToken: async (refreshToken) => {
+    try {
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const data = await Account.find({ refreshToken: refreshToken });
+
+      return {
+        status: 200,
+        data: data[0],
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
   createAccount: async (reqBody) => {
     try {
       let data = [];
@@ -120,10 +175,18 @@ export const accountRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
-      const account = new Account(reqBody);
+
+      const account = new Account({
+        ...reqBody,
+        role: "CLIENT",
+        status: "ACTIVE",
+        logInMethod: "DEFAULT",
+        refreshToken: "",
+      });
 
       try {
         data = await account.save();
+        data = data._id;
       } catch (error) {
         return {
           status: 400,

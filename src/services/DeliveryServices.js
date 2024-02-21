@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import Delivery from "../models/Delivery";
 
+const ObjectId = mongoose.Types.ObjectId;
+
 export const deliveryRepository = {
   getDeliveries: async (pageReq) => {
     try {
@@ -145,6 +147,55 @@ export const deliveryRepository = {
         data = await Delivery.findByIdAndUpdate(deliveryId, reqBody, {
           runValidators: true,
           new: true,
+        });
+      } catch (error) {
+        return {
+          status: 400,
+          data: {},
+          messageError: error.message,
+        };
+      }
+
+      return {
+        status: 200,
+        data: data !== null ? data : {},
+        message: data !== null ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error("error ne", error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
+  deleteDelivery: async (deliveryId) => {
+    try {
+      let data = {};
+      //Validate classificationId
+      const idDeliveryValid = await isIdValid(deliveryId, "delivery");
+
+      if (!idDeliveryValid.isValid) {
+        return {
+          status: idDeliveryValid.status,
+          data: {},
+          messageError: idDeliveryValid.messageError,
+        };
+      }
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      try {
+        data = await Delivery.findOneAndDelete({
+          _id: new ObjectId(deliveryId),
         });
       } catch (error) {
         return {

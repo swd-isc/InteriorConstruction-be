@@ -105,6 +105,64 @@ export const clientRepository = {
     }
   },
 
+  getClientByAccountId: async (accountId) => {
+    try {
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const data = await Client.find({ accountId: accountId }).select(
+        "_id firstName lastName"
+      );
+
+      return {
+        status: 200,
+        data: data[0],
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
+  getAccountIdByClientId: async (clientId) => {
+    try {
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const data = await Client.find({
+        _id: clientId,
+      }).select("-_id accountId");
+
+      return {
+        status: 200,
+        data: data[0],
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
   createClient: async (reqBody) => {
     try {
       let data = [];
