@@ -92,6 +92,16 @@ export const authenServices = {
                 if (clientRes.status !== 200) {
                     return clientRes
                 }
+                const accountRes = await accountRepository.getAccountById(accountId);
+                if (accountRes.status !== 200) {
+                    return accountRes;
+                }
+                if (accountRes.data.refreshToken !== refreshToken) {
+                    return {
+                        status: 403,
+                        messageError: "Request a wrong refresh Token.",
+                    };
+                }
                 const updateRes = await updateRefreshToken(clientRes.data.accountId, tokens.refreshToken);
                 if (updateRes.status !== 200) {
                     return updateRes
@@ -131,15 +141,5 @@ const generateToken = async (data) => {
 }
 
 const updateRefreshToken = async (accountId, refreshToken) => {
-    const accountRes = await accountRepository.getAccountById(accountId);
-    if (accountRes.status !== 200) {
-        return accountRes;
-    }
-    if (accountRes.data.refreshToken !== refreshToken) {
-        return {
-            status: 403,
-            messageError: "Request a wrong refresh Token.",
-        };
-    }
     return await accountRepository.updateAccount(accountId, { refreshToken: refreshToken })
 }
