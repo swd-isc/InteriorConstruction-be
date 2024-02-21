@@ -2,23 +2,135 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { accountRepository } from './AccountServices';
+import { clientRepository } from './ClientServices';
+import Account from "../models/Account";
+import Client from "../models/Client";
 
 dotenv.config();
 const connectionString = process.env.CONNECTION_STRING_TO_DB;
 
-const generateToken = (data) => {
-    const { empID, name, password, dob, gender, idCard, address, phone, email, major, active, role, imageURL, contractURL } = data
-    const accessToken = jwt.sign({ empID, name, password, dob, gender, idCard, address, phone, email, major, active, role, imageURL, contractURL }, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: '10m'
-    });
-    const refreshToken = jwt.sign({ empID, name, password, dob, gender, idCard, address, phone, email, major, active, role, imageURL, contractURL }, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: '30m'
-    })
-    return { accessToken, refreshToken, role }
+export const authenServices = {
+    //Test Connection
+    testConnect: async (req, res) => {
+        let query = "select * from Account where empID like '" + req.empID + "'";
+        mongoose.query(connectionString, query, (err, rows) => {
+            const data = rows[0]
+            return res.status(200).json(data)
+        })
+    },
+
+    //Login
+    loginUser: async (reqBody) => {
+        const { email, password } = reqBody;
+
+        const account = await Account.find({ email: email })
+            .select('_id email password status');
+        if (!account) {
+            return {
+                status: 401,
+                messageError: "Wrong email",
+            };
+        }
+        const validPassword = await bcrypt.compare(
+            password, account.password
+        );
+        if (!validPassword) {
+            return {
+                status: 401,
+                messageError: "Wrong password",
+            };
+        }
+        if (account.status === "INACTIVE") {
+            return {
+                status: 401,
+                messageError: "Your account has been inactive",
+            };
+        }
+        if (account && validPassword) {
+            const client = await Client.find({ accountId: account._id })
+                .select('firstName lastName')
+            const tokens = generateToken(client)
+            updateRefreshToken(account._id, tokens.refreshToken)
+            return {
+                status: 200,
+                data: tokens,
+                message: "OK",
+            };
+        }
+    },
+
+    registerAccount: async (reqBody) => {
+        const accountRes = await accountRepository.createAccount(reqBody);
+        let client = {
+            firstName: "Anonymous",
+            lastName: "Human",
+            birthDate: "2000-01-01T00:00:00.000+00:00",
+            phone: "",
+            photoURL: "",
+            accountId: accountRes.data._id,
+            contracts: []
+        }
+        const clientRes = await clientRepository.createClient(client);
+        return clientRes;
+    },
+
+    //Update Token Expired
+    updateToken: async (refreshToken, res) => {
+        if (!refreshToken) {
+            return {
+                status: 401,
+                messageError: "Don't have refresh Token",
+            };
+        }
+        try {
+            const decodedData = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+            console.log('check decoded data: ', decodedData);
+            if (decodedData) {
+                const tokens = await generateToken(decodedData)
+                await updateRefreshToken(decodedData._id, tokens.refreshToken)
+                return {
+                    status: 200,
+                    data: tokens,
+                    message: "OK",
+                };
+            }
+        } catch (error) {
+            console.log(error)
+            return {
+                status: 403,
+                error: error.name,
+                messageError: error.message,
+            }
+        }
+    },
+
+    //Logout
+    logoutUser: async (user) => {
+        let query = `UPDATE Account SET refreshToken=NULL WHERE empID like '${user.empID}'`;
+        mongoose.query(connectionString, query, (err, rows) => {
+            if (err) {
+                return res.status(401).json("Logout Fail: " + err);
+            } else {
+                return res.status(200).json("Logout Success");
+            }
+        });
+    },
 }
 
-const updateRefreshToken = (empID, refreshToken) => {
-    let query = "update Account set refreshToken='" + refreshToken + "' where empID='" + empID + "'";
+const generateToken = async (data) => {
+    const { _id, firstName, lastName } = data
+    const accessToken = jwt.sign({ _id, firstName, lastName }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: '10m'
+    });
+    const refreshToken = jwt.sign({ _id, firstName, lastName }, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: '30m'
+    })
+    return { accessToken, refreshToken }
+}
+
+const updateRefreshToken = async (accountId, refreshToken) => {
+    let query = "update Account set refreshToken='" + refreshToken + "' where empID='" + accountId + "'";
     mongoose.query(connectionString, query, (err, result) => {
         if (err) {
             return console.log("Something wrong with db: " + err)
@@ -26,97 +138,4 @@ const updateRefreshToken = (empID, refreshToken) => {
             return console.log('Updated refreshToken Success')
         }
     })
-}
-
-//Test Connection
-export const testConnect = async (req, res) => {
-    let query = "select * from Account where empID like '" + req.empID + "'";
-    mongoose.query(connectionString, query, (err, rows) => {
-        const data = rows[0]
-        return res.status(200).json(data)
-    })
-}
-
-//Login
-export const loginUser = async (reqBody) => {
-    const { usermail, password } = reqBody;
-    let user
-    let query = "select empID, empName, password, dob, gender, idCard, address, phone, email, major, active, role, imageURL, contractURL from Account where email like '" + usermail + "'";
-    mongoose.query(connectionString, query, async (err, rows) => {
-        if (rows.length == 0) {
-            return res.status(401).json("Wrong email");
-        }
-        user = rows[0]
-        const validPassword = await bcrypt.compare(
-            password, user.password
-        );
-        if (!validPassword) {
-            return res.status(401).json("Wrong password")
-        }
-        if (user.active == 0) {
-            return res.status(401).json("Your account has been inactive")
-        }
-        if (user && validPassword) {
-            const tokens = generateToken(user)
-            updateRefreshToken(user.empID, tokens.refreshToken)
-            return res.status(200).json({ tokens, user })
-        }
-    });
-}
-
-//Update Token Expired
-export const updateToken = (req, res) => {
-    const refreshToken = req.body.refreshToken
-    if (!refreshToken) {
-        return res.status(401).json("Don't have refresh Token");
-    }
-    let userData
-    let query = "select * from Account where refreshToken like '" + refreshToken + "'";
-    mongoose.query(connectionString, query, (err, rows) => {
-        userData = rows[0]
-        if (!userData) {
-            return res.status(403).json("Request a wrong refresh Token");
-        }
-        try {
-            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
-            const tokens = generateToken(userData)
-            updateRefreshToken(userData.empID, tokens.refreshToken)
-            const user = {
-                empID: userData.empID,
-                empName: userData.empName,
-                password: userData.password,
-                dob: userData.dob,
-                gender: userData.gender,
-                idCard: userData.idCard,
-                address: userData.address,
-                phone: userData.phone,
-                email: userData.email,
-                major: userData.major,
-                active: userData.active,
-                role: userData.role,
-                imageURL: userData.imageURL,
-                contractURL: userData.contractURL
-            }
-            return res.json({ tokens, user })
-        } catch (error) {
-            console.log(error)
-            return res.status(403).json("Token expired");
-        }
-    });
-}
-
-//Logout
-export const logoutUser = async (user) => {
-    let query = `UPDATE Account SET refreshToken=NULL WHERE empID like '${user.empID}'`;
-    mongoose.query(connectionString, query, (err, rows) => {
-        if (err) {
-            return res.status(401).json("Logout Fail: " + err);
-        } else {
-            return res.status(200).json("Logout Success");
-        }
-    });
-}
-
-export const registerAccount = async (reqBody) => {
-
 }

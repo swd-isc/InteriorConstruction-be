@@ -28,7 +28,7 @@ const clientSchema = new Schema({
             },
             message: props => `${props.value} is not a valid VN phone number.`
         },
-        required: [true, 'Phone required.'],
+        required: false,
         unique: true
     },
     photoURL: {
@@ -70,7 +70,7 @@ const clientSchema = new Schema({
                     throw new mongoose.Error(`Contracts must be an array.`);
                 }
 
-                
+
 
                 for (const contractId of value) {
                     const contract = await Contract.findById(contractId);
