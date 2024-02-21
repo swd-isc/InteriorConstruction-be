@@ -131,5 +131,15 @@ const generateToken = async (data) => {
 }
 
 const updateRefreshToken = async (accountId, refreshToken) => {
+    const accountRes = await accountRepository.getAccountById(accountId);
+    if (accountRes.status !== 200) {
+        return accountRes;
+    }
+    if (accountRes.data.refreshToken !== refreshToken) {
+        return {
+            status: 403,
+            messageError: "Request a wrong refresh Token.",
+        };
+    }
     return await accountRepository.updateAccount(accountId, { refreshToken: refreshToken })
 }

@@ -20,7 +20,7 @@ const AuthenRouter = (app) => {
     router.get('/logout', authenController.logOutController);
 
     //Test
-    router.get('/:id', verifyToken, authenController.getTestAuthen);
+    router.get('/', verifyToken, authenController.getTestAuthen);
     return app.use('/api/authen', router);
 }
 
