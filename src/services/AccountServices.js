@@ -5,6 +5,8 @@ import DesignCard from "../models/DesignCard";
 import Design from "../models/Design";
 import designCardData from "../sample-data/DesignCardData";
 
+const bcrypt = require('bcrypt');
+
 const ObjectId = mongoose.Types.ObjectId;
 
 // const insertSampleData = async () => {
@@ -86,6 +88,16 @@ export const accountRepository = {
 
   getAccountById: async (id) => {
     try {
+      const idAccountValid = await isIdValid(id, "account");
+
+      if (!idAccountValid.isValid) {
+        return {
+          status: idAccountValid.status,
+          data: {},
+          messageError: idAccountValid.messageError,
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
@@ -176,11 +188,14 @@ export const accountRepository = {
         dbName: "interiorConstruction",
       });
 
+      const hashedPassword = await bcrypt.hash(reqBody.password, 10);
+
       const account = new Account({
         ...reqBody,
         role: "CLIENT",
         status: "ACTIVE",
         logInMethod: "DEFAULT",
+        password: hashedPassword,
         refreshToken: "",
       });
 

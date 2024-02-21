@@ -1,4 +1,5 @@
 import Client from "../models/Client";
+import Account from "../models/Account";
 import mongoose from "mongoose";
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -68,6 +69,16 @@ export const clientRepository = {
 
   getClientById: async (id) => {
     try {
+      const idClientValid = await isIdValid(id, "client");
+
+      if (!idClientValid.isValid) {
+        return {
+          status: idClientValid.status,
+          data: {},
+          messageError: idClientValid.messageError,
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
@@ -107,6 +118,17 @@ export const clientRepository = {
 
   getClientByAccountId: async (accountId) => {
     try {
+
+      const idAccountValid = await isIdValid(accountId, "account");
+
+      if (!idAccountValid.isValid) {
+        return {
+          status: idAccountValid.status,
+          data: {},
+          messageError: idAccountValid.messageError,
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
@@ -136,6 +158,17 @@ export const clientRepository = {
 
   getAccountIdByClientId: async (clientId) => {
     try {
+
+      const idClientValid = await isIdValid(clientId, "client");
+
+      if (!idClientValid.isValid) {
+        return {
+          status: idClientValid.status,
+          data: {},
+          messageError: idClientValid.messageError,
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
@@ -353,6 +386,10 @@ async function isIdValid(id, model) {
       case "client":
         // Check if the classification with the given ObjectId exists in the database
         data = await Client.findById(id);
+        break;
+        case "account":
+        // Check if the classification with the given ObjectId exists in the database
+        data = await Account.findById(id);
         break;
       default:
         break;

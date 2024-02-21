@@ -98,6 +98,16 @@ export const designRepository = {
 
   getDesignById: async (id) => {
     try {
+      const idDesignValid = await isIdValid(id, "design");
+
+      if (!idDesignValid.isValid) {
+        return {
+          status: idDesignValid.status,
+          data: {},
+          messageError: idDesignValid.messageError,
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
