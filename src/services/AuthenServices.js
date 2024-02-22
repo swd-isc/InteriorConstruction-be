@@ -98,7 +98,7 @@ export const authenServices = {
                 if (clientRes.status !== 200) {
                     return clientRes
                 }
-                const accountRes = await accountRepository.getAccountById(accountId);
+                const accountRes = await accountRepository.getAccountById(clientRes.data.accountId);
                 if (accountRes.status !== 200) {
                     return accountRes;
                 }
