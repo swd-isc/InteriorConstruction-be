@@ -36,7 +36,7 @@ export const clientRepository = {
         .limit(itemsPerPage)
         .populate({
           path: "accountId",
-          select: "-_id email role password refreshToken", // Select only the fields you need
+          select: "_id email role password status", // Select only the fields you need
         })
         .populate({
           path: "contracts",
