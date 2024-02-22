@@ -188,6 +188,22 @@ export const accountRepository = {
         dbName: "interiorConstruction",
       });
 
+      if (!reqBody.email || reqBody.email == "" || !reqBody.password || reqBody.password == "") {
+        return {
+          status: 400,
+          data: {},
+          messageError: "Require email or password",
+        };
+      }
+
+      if (reqBody.password.length < 8) {
+        return {
+          status: 400,
+          data: {},
+          messageError: "Password length must >= 8",
+        };
+      }
+
       const hashedPassword = await bcrypt.hash(reqBody.password, 10);
 
       const account = new Account({
@@ -230,7 +246,7 @@ export const accountRepository = {
   updateAccount: async (accountId, reqBody) => {
     try {
       let data = {};
-
+      
       const idAccountValid = await isIdValid(accountId, "account");
 
       if (!idAccountValid.isValid) {
