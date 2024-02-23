@@ -1,4 +1,5 @@
 import Contract from "../models/Contract";
+import Client from "../models/Client";
 import mongoose from "mongoose";
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -55,7 +56,6 @@ export const contractRepository = {
 
   getContractById: async (id) => {
     try {
-
       const idContractValid = await isIdValid(id, "contract");
 
       if (!idContractValid.isValid) {
@@ -91,6 +91,43 @@ export const contractRepository = {
     }
   },
 
+  getContractsByClientId: async (id) => {
+    try {
+      const idClientValid = await isIdValid(id, "client");
+
+      if (!idClientValid.isValid) {
+        return {
+          status: idClientValid.status,
+          data: {},
+          messageError: idClientValid.messageError,
+        };
+      }
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const data = await Contract.find({ clientId: id });
+
+      return {
+        status: 200,
+        data: data,
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
   createContract: async (reqBody) => {
     try {
       let data = [];
@@ -103,6 +140,15 @@ export const contractRepository = {
 
       try {
         data = await contract.save();
+
+        // Retrieve the client using the client ID from the contract request body
+        const client = await Client.findById(reqBody.clientId);
+
+        // Update the client's contracts array with the ID of the newly created contract
+        client.contracts.push(data._id);
+
+        // Save the updated client
+        await client.save();
       } catch (error) {
         return {
           status: 400,
@@ -283,6 +329,10 @@ async function isIdValid(id, model) {
       case "contract":
         // Check if the classification with the given ObjectId exists in the database
         data = await Contract.findById(id);
+        break;
+      case "client":
+        // Check if the classification with the given ObjectId exists in the database
+        data = await Client.findById(id);
         break;
       default:
         break;
