@@ -1,16 +1,16 @@
 import express from 'express';
-import { getClassificationByType, getClassificationByPage, postClassificationController, putClassificationController, deleteClassificationController } from '../controller/ClassificationController';
+import { classificationController } from '../controller/ClassificationController';
 
 const router = express.Router();
 
 const ClassificationRouter = (app) => {
-    router.get('/page/:page', getClassificationByPage);
-    router.get('/', getClassificationByType);
-    router.post('/', postClassificationController);
-    router.put('/', putClassificationController);
-    router.put('/:id', putClassificationController);
-    router.delete('/:id', deleteClassificationController);
-    router.delete('/', deleteClassificationController);
+    router.get('/page/:page', classificationController.getClassificationByPage);
+    router.get('/', classificationController.getClassificationByType);
+    router.post('/', classificationController.postClassificationController);
+    router.put('/', classificationController.putClassificationController);
+    router.put('/:id', classificationController.putClassificationController);
+    router.delete('/:id', classificationController.deleteClassificationController);
+    router.delete('/', classificationController.deleteClassificationController);
 
     return app.use('/api/classification', router);
 }

@@ -1,15 +1,15 @@
 import express from 'express';
-import { deleteMaterialController, getMaterialData, postMaterial, putMaterialController } from '../controller/MaterialController';
+import { materialController } from '../controller/MaterialController';
 
 const router = express.Router();
 
 const MaterialRouter = (app) => {
-    router.get('/page/:page', getMaterialData);
-    router.post('/', postMaterial);
-    router.put('/', putMaterialController);
-    router.put('/:id', putMaterialController);
-    router.delete('/:id', deleteMaterialController);
-    router.delete('/', deleteMaterialController);
+    router.get('/page/:page', materialController.getMaterialData);
+    router.post('/', materialController.postMaterial);
+    router.put('/', materialController.putMaterialController);
+    router.put('/:id', materialController.putMaterialController);
+    router.delete('/:id', materialController.deleteMaterialController);
+    router.delete('/', materialController.deleteMaterialController);
 
     return app.use('/api/material', router);
 }
