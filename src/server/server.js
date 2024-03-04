@@ -52,25 +52,12 @@ const options = {
         ]
     },
     apis: [
-        './src/server/server.js'
+        './src/routes/*.js'
     ]
 }
 
 const swaggerSpec = swaggerJSDoc(options);
 app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec, { customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css" }));
-
-/**
- * @swagger
- * /:
- *  get:
- *      summary: Abc ne
- *      description: This is description
- *      responses:
- *          200:
- *              description: This is 200 description
- *          400:
- *              description: This is 400 description
- */
 
 //Account routes
 AccountRouter(app);

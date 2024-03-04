@@ -137,7 +137,7 @@ export const furnitureServices = {
             console.error(error);
             return {
                 status: 500,
-                messageError: error,
+                messageError: error.toString(),
             }
         } finally {
             // Close the database connection

@@ -1,6 +1,41 @@
 import express from 'express';
 import { furnitureController } from '../controller/FurnitureController';
 
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          FurnitureData:
+ *              type: object
+ *              properties:
+ *                  id:
+ *                      type: string
+ *                  name:
+ *                      type: string
+ *                  imgURL:
+ *                      type: array
+ *                      items:
+ *                          type: string
+ *          ColorData:
+ *              type: object
+ *              properties:
+ *                  id:
+ *                      type: string
+ *                  name:
+ *                      type: string
+ *                  count:
+ *                      type: number
+ *          MaterialData:
+ *              type: object
+ *              properties:
+ *                  id:
+ *                      type: string
+ *                  name:
+ *                      type: string
+ *                  count:
+ *                      type: number
+ */
+
 const FurnitureRouter = (app) => {
     const router = express.Router();
 
@@ -17,11 +52,115 @@ const FurnitureRouter = (app) => {
     router.get('/material/:materialName', furnitureController.furnitureByMaterial);
     router.get('/color/', furnitureController.furnitureByColor);
     router.get('/color/:colorName', furnitureController.furnitureByColor);
+
+
+    /**
+    * @swagger
+    * /api/furniture/{id}:
+    *  get:
+    *      summary: Get furniture by id
+    *      description: This endpoint is for getting furniture by id
+    *      parameters:
+    *          - in: path
+    *            name: id
+    *            required: true
+    *            description: Id required
+    *            schema:
+    *               type: string
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       id:
+    *                                           type: string
+    *                                       name:
+    *                                           type: string
+    *                                       imgURL:
+    *                                           type: array
+    *                                           items:
+    *                                               type: string
+    *                                       materials:
+    *                                           type: array
+    *                                           items:
+    *                                               type: object
+    *                                               properties:
+    *                                                   name:
+    *                                                       type: string
+    *                                       colors:
+    *                                           type: array
+    *                                           items:
+    *                                               type: object
+    *                                               properties:
+    *                                                   name:
+    *                                                       type: string
+    *                                       sizes:
+    *                                           type: string
+    *                                       price:
+    *                                           type: number
+    *                                       type:
+    *                                           type: string
+    *                                       classifications:
+    *                                           type: array
+    *                                           items:
+    *                                               type: object
+    *                                               properties:
+    *                                                   classificationName:
+    *                                                       type: string
+    *                                       delivery:
+    *                                           type: object
+    *                                           properties:
+    *                                               description:
+    *                                                   type: string
+    *                                               noCharge:
+    *                                                   type: string
+    *                                               surcharge:
+    *                                                   type: string
+    *                                       description:
+    *                                           type: string
+    *                                       nonReturnExchangeCases:
+    *                                           type: array
+    *                                           items:
+    *                                               type: string
+    *                                       returnExchangeCases:
+    *                                           type: array
+    *                                           items:
+    *                                               type: string
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Server error
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                               messageError:
+    *                                   type: string
+    */
     router.get('/:id', furnitureController.furnitureById);
     router.get('/', furnitureController.furnitureById);
+
+
     router.post('/', furnitureController.createFurController);
+
+
     router.put('/', furnitureController.updateFurController);
     router.put('/:id', furnitureController.updateFurController);
+
+
     router.delete('/:id', furnitureController.deleteFurController);
     router.delete('/', furnitureController.deleteFurController);
 
@@ -32,6 +171,56 @@ const ShopRouter = (app) => {
     const router = express.Router();
     router.get('/filter-session', furnitureController.filterSession);
     router.get('/search', furnitureController.searchFurController);
+
+    /**
+    * @swagger
+    * /api/shop:
+    *  get:
+    *      summary: Get furniture by page
+    *      description: This endpoint is for getting furniture by page
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       colors:
+    *                                           type: array
+    *                                           items:
+    *                                               $ref: '#components/schemas/ColorData'
+    *                                       materials:
+    *                                           type: array
+    *                                           items:
+    *                                               $ref: '#components/schemas/MaterialData'
+    *                                       furnitures:
+    *                                           type: array
+    *                                           items:
+    *                                               $ref: '#components/schemas/FurnitureData'
+    *                                       page:
+    *                                           type: string
+    *                                       totalPages:
+    *                                           type: number
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Server error
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    */
     router.get('/', furnitureController.furnitureByPage);
 
     return app.use('/api/shop', router);
