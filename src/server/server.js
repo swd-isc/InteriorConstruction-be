@@ -47,7 +47,7 @@ const options = {
         },
         servers: [
             {
-                url: 'https://kietpt.vn/'
+                url: 'http://localhost:8080/'
             }
         ]
     },
