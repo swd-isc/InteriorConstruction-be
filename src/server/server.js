@@ -47,7 +47,7 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:8080/'
+                url: 'https://kietpt.vn/'
             }
         ]
     },
@@ -57,7 +57,7 @@ const options = {
 }
 
 const swaggerSpec = swaggerJSDoc(options);
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 /**
  * @swagger
