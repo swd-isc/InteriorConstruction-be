@@ -18,6 +18,8 @@ import { ReturnPolicyRouter } from '../routes/ReturnPolicyAPI';
 import { DeliveryRouter } from '../routes/DeliveryAPI';
 import { DesignCardRouter } from '../routes/DesignCardAPI';
 import { AuthenRouter } from '../routes/AuthenAPI';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUI from 'swagger-ui-express';
 
 const app = express();
 
@@ -35,6 +37,40 @@ configBodyParse(app);
 
 //Config static files
 configStaticFiles(app);
+
+const options = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Interior Construction API Documents',
+            version: '1.0.0'
+        },
+        servers: [
+            {
+                url: 'https://kietpt.vn/'
+            }
+        ]
+    },
+    apis: [
+        './src/server/server.js'
+    ]
+}
+
+const swaggerSpec = swaggerJSDoc(options);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
+/**
+ * @swagger
+ * /:
+ *  get:
+ *      summary: Abc ne
+ *      description: This is description
+ *      responses:
+ *          200:
+ *              description: This is 200 description
+ *          400:
+ *              description: This is 400 description
+ */
 
 //Account routes
 AccountRouter(app);
