@@ -192,7 +192,7 @@ export const furnitureServices = {
         } catch (error) {
             return {
                 status: 500,
-                messageError: error,
+                messageError: error.toString(),
             }
         } finally {
             // Close the database connection
@@ -1645,7 +1645,7 @@ export const furnitureServices = {
             console.error('error ne', error);
             return {
                 status: 500,
-                messageError: error,
+                messageError: error.toString(),
             }
         } finally {
             // Close the database connection
@@ -1706,7 +1706,7 @@ export const furnitureServices = {
             console.error('error ne', error);
             return {
                 status: 500,
-                messageError: error,
+                messageError: error.toString(),
             }
         } finally {
             // Close the database connection

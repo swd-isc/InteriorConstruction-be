@@ -231,7 +231,7 @@ export const colorServices = {
                 }
             } catch (error) {
                 return {
-                    status: 500,
+                    status: 400,
                     messageError: error.toString(),
                 }
             } finally {
