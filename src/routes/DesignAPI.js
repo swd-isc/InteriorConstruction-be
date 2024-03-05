@@ -218,7 +218,7 @@ const DesignRouter = (app) => {
    * /api/design:
    *  post:
    *    tags:
-   *      - Design
+   *      - Designs
    *    summary: Create design
    *    description: This endpoint is for creating design
    *    requestBody:
@@ -268,9 +268,123 @@ const DesignRouter = (app) => {
    */
   router.post("/", designService.createDesign);
 
+  /**
+   * @swagger
+   * /api/design/{id}:
+   *  put:
+   *    tags:
+   *      - Designs
+   *    summary: Update design
+   *    description: This endpoint is for updating design
+   *    requestBody:
+   *      required: true
+   *      content:
+   *        application/json:
+   *          schema:
+   *            $ref: '#components/schemas/Design'
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        description: Id required
+   *        schema:
+   *          type: string
+   *    responses:
+   *      200:
+   *        description: Ok
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  $ref: '#components/schemas/DesignData'
+   *                message:
+   *                  type: string
+   *      400:
+   *        description: Bad request
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  type: object
+   *                messageError:
+   *                  type: string
+   *      500:
+   *        description: Server error
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                messageError:
+   *                  type: string
+   */
   router.put("/:id", designService.updateDesign);
   router.put("/", designService.updateDesign);
 
+  /**
+   * @swagger
+   * /api/design/{id}:
+   *  delete:
+   *    tags:
+   *      - Designs
+   *    summary: Delete design
+   *    description: This endpoint is for deleting design
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        description: Id required
+   *        schema:
+   *          type: string
+   *    responses:
+   *      200:
+   *        description: Ok
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  $ref: '#components/schemas/DesignData'
+   *                message:
+   *                  type: string
+   *      400:
+   *        description: Bad request
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  type: object
+   *                messageError:
+   *                  type: string
+   *      500:
+   *        description: Server error
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                messageError:
+   *                  type: string
+   */
   router.delete("/:id", designService.deleteDesign);
   router.delete("/", designService.deleteDesign);
 

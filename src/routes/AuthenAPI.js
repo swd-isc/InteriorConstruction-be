@@ -1,6 +1,16 @@
 import { authenController } from "../controller/AuthenController";
 import { verifyToken } from "../middleware/authen";
 
+/**
+ * @swagger
+ *  components:
+ *      securitySchemes:
+ *          bearerAuth:
+ *              type: http
+ *              scheme: bearer
+ *              bearerFormat: JWT
+ */
+
 const AuthenRouter = (app) => {
     const router = require("express").Router();
 
@@ -17,6 +27,29 @@ const AuthenRouter = (app) => {
     router.get('/logout', authenController.logOutController);
 
     //Test
+    /**
+     * @swagger
+     * /api/authen:
+     *  get:
+     *      security:
+     *          - bearerAuth: []
+     *      responses:
+     *          200:
+     *              description: Ok
+     *          401:
+     *              description: Unauthorized
+     *          403:
+     *              description: Forbidden
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              error:
+     *                                  type: string
+     *                              messageError:
+     *                                  type: string
+     */
     router.get('/', verifyToken, authenController.getTestAuthen);
     return app.use('/api/authen', router);
 }
