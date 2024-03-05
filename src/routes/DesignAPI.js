@@ -16,7 +16,7 @@ const router = express.Router();
  *                type: string
  *              designURL:
  *                type: string
- *              designCard
+ *              designCard:
  *                type: string
  *              designPrice:
  *                type: number
@@ -39,7 +39,7 @@ const router = express.Router();
  *                type: string
  *              designURL:
  *                type: string
- *              designCard
+ *              designCard:
  *                type: string
  *              designPrice:
  *                type: number
