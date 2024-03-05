@@ -10,6 +10,13 @@ const router = express.Router();
  *          Material:
  *              type: object
  *              properties:
+ *                  name:
+ *                      type: string
+ *                  description:
+ *                      type: string
+ *          MaterialData:
+ *              type: object
+ *              properties:
  *                  id:
  *                      type: string
  *                  name:
@@ -48,7 +55,7 @@ const MaterialRouter = (app) => {
      *                               data:
      *                                   type: array
      *                                   items:
-     *                                       $ref: '#components/schemas/Material'
+     *                                       $ref: '#components/schemas/MaterialData'
      *                               page:
      *                                   type: number
      *                               message:
@@ -69,15 +76,194 @@ const MaterialRouter = (app) => {
     router.get('/page/:page', materialController.getMaterialData);
 
 
+    /**
+    * @swagger
+    * /api/material:
+    *  post:
+    *      tags:
+    *           - Materials
+    *      summary: Create material
+    *      description: This endpoint is for creating material
+    *      requestBody:
+    *           required: true
+    *           content:
+    *               application/json:
+    *                   schema:
+    *                       $ref: '#components/schemas/Material'
+    *      responses:
+    *          201:
+    *              description: Created
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       name:
+    *                                           type: string
+    *                                       description:
+    *                                           type: string
+    *                                       id:
+    *                                           type: string
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *               description: Server error
+    *               content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+     */
     router.post('/', materialController.postMaterial);
 
 
-
+    /**
+    * @swagger
+    * /api/material/{id}:
+    *  put:
+    *      tags:
+    *           - Materials
+    *      summary: Update material by id
+    *      description: This endpoint is for updating material
+    *      requestBody:
+    *           required: true
+    *           content:
+    *               application/json:
+    *                   schema:
+    *                       $ref: '#components/schemas/Color'
+    *      parameters:
+    *          - in: path
+    *            name: id
+    *            required: true
+    *            description: Id required
+    *            schema:
+    *               type: string
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       id:
+    *                                           type: string
+    *                                       name:
+    *                                           type: string
+    *                                       description:
+    *                                           type: string
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *               description: Server error
+    *               content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    */
     router.put('/', materialController.putMaterialController);
     router.put('/:id', materialController.putMaterialController);
 
 
-
+    /**
+    * @swagger
+    * /api/material/{id}:
+    *  delete:
+    *      tags:
+    *           - Materials
+    *      summary: Delete material by Id
+    *      description: This endpoint is for deleting material
+    *      parameters:
+    *          - in: path
+    *            name: id
+    *            required: true
+    *            description: Id required
+    *            schema:
+    *               type: string
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   $ref: '#components/schemas/MaterialData'
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *               description: Server error
+    *               content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    */
     router.delete('/:id', materialController.deleteMaterialController);
     router.delete('/', materialController.deleteMaterialController);
 

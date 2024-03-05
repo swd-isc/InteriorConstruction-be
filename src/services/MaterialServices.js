@@ -148,7 +148,7 @@ export const materialServices = {
             console.error('error ne', error);
             return {
                 status: 500,
-                messageError: error,
+                messageError: error.toString(),
             }
         } finally {
             // Close the database connection
