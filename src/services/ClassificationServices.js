@@ -19,7 +19,7 @@ export const classificationServices = {
             const url = process.env.URL_DB;
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
-            currentPageData = await Classification.find({}).sort({ classificationName: 1 }).skip(startIndex).limit(itemsPerPage).explain('executionStats');
+            currentPageData = await Classification.find({}).sort({ classificationName: 1 }).skip(startIndex).limit(itemsPerPage);
             return {
                 status: 200,
                 data: currentPageData,
@@ -87,7 +87,7 @@ export const classificationServices = {
             // }
 
             return {
-                status: 200,
+                status: 201,
                 data: data,
                 message: data.length !== 0 ? "OK" : "No data"
             };
@@ -95,7 +95,7 @@ export const classificationServices = {
             console.error('error ne', error);
             return {
                 status: 500,
-                messageError: error,
+                messageError: error.toString(),
             }
         } finally {
             // Close the database connection

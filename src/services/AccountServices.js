@@ -227,7 +227,7 @@ export const accountRepository = {
       }
 
       return {
-        status: 200,
+        status: 201,
         data: data,
         message: data.length !== 0 ? "OK" : "No data",
       };
@@ -235,7 +235,7 @@ export const accountRepository = {
       console.error("error ne", error);
       return {
         status: 500,
-        messageError: error,
+        messageError: error.toString(),
       };
     } finally {
       // Close the database connection
@@ -246,7 +246,7 @@ export const accountRepository = {
   updateAccount: async (accountId, reqBody) => {
     try {
       let data = {};
-      
+
       const idAccountValid = await isIdValid(accountId, "account");
 
       if (!idAccountValid.isValid) {

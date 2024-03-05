@@ -8,7 +8,7 @@ const AuthenRouter = (app) => {
     router.post('/register', authenController.registerController);
 
     //Login
-    router.get('/login', authenController.logInController);
+    router.post('/login', authenController.logInController);
 
     //Update Token Expired
     router.get('/token', authenController.updateTokenController);
