@@ -3,6 +3,32 @@ import { designCardService } from "../controller/DesignCardController";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          DesignCard:
+ *            type: object
+ *            properties:
+ *              title:
+ *                type: string
+ *              description:
+ *                type: string
+ *              imgURL:
+ *                type: string
+ *          DesignCardData:
+ *            type: object
+ *            properties:
+ *              id:
+ *                type: string
+ *              title:
+ *                type: string
+ *              description:
+ *                type: string
+ *              imgURL:
+ *                type: string
+ */
+
 const DesignCardRouter = (app) => {
   router.get("/", designCardService.getDesignCards);
   router.get("/:id", designCardService.getDesignCardById);

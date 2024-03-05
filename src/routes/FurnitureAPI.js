@@ -60,6 +60,8 @@ import { furnitureController } from '../controller/FurnitureController';
  *                      type: array
  *                      items:
  *                          type: string
+ *                  price:
+ *                      type: number
  *          FurnitureDelete:
  *              type: object
  *              properties:
