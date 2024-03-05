@@ -35,6 +35,85 @@ const router = express.Router();
 
 const ContractRouter = (app) => {
 
+    /**
+    * @swagger
+    * /api/contract:
+    *  get:
+    *      tags:
+    *           - Contracts
+    *      summary: Get contract by page
+    *      description: This endpoint is for getting contract by page
+    *      parameters:
+    *          - in: query
+    *            name: page
+    *            required: false
+    *            description: For paging
+    *            schema:
+    *               type: number
+    *          - in: query
+    *            name: sort_by
+    *            required: false
+    *            description: For sorting
+    *            schema:
+    *               type: string
+    *               enum:
+    *                   - asc
+    *                   - desc
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       contracts:
+    *                                           type: array
+    *                                           items:
+    *                                              $ref: '#components/schemas/ContractData'
+    *                                       id:
+    *                                           type: string
+    *                                       clientId:
+    *                                           type: string
+    *                                       designId:
+    *                                           type: string
+    *                                       contractPrice:
+    *                                           type: number
+    *                                       status:
+    *                                           type: string                                                                                                                                                 
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *              description: Server error
+    *              content:
+    *                  application/json:
+    *                      schema:
+    *                          type: object
+    *                          properties:
+    *                              status:
+    *                                  type: number
+    *                              messageError:
+    *                                  type: string
+    */
+
+
+  router.get("/", contractService.getContracts);
 
 /**
    * @swagger
@@ -91,79 +170,6 @@ const ContractRouter = (app) => {
    *                  type: string
    */
 
-
-
-    /**
-    * @swagger
-    * /api/contract:
-    *  get:
-    *      tags:
-    *           - Contracts
-    *      summary: Get contract by page
-    *      description: This endpoint is for getting contract by page
-    *      parameters:
-    *          - in: query
-    *            name: page
-    *            required: false
-    *            description: For paging
-    *            schema:
-    *               type: number
-    *          - in: query
-    *            name: sort_by
-    *            required: false
-    *            description: For sorting
-    *            schema:
-    *               type: string
-    *               enum:
-    *                   - asc
-    *                   - desc
-    *      responses:
-    *          200:
-    *              description: OK
-    *              content:
-    *                   application/json:
-    *                       schema:
-    *                           type: object
-    *                           properties:
-    *                               status:
-    *                                   type: number
-    *                               data:
-    *                                   type: object
-    *                                   properties:
-    *                                       id:
-    *                                           type: string                                          
-    *                                       classificationName:
-    *                                           type: string
-    *                                           items:
-    *                                               $ref: '#components/schemas/ContractData'                                                                  
-    *                               message:
-    *                                   type: string
-    *          400:
-    *              description: Bad Request
-    *              content:
-    *                   application/json:
-    *                       schema:
-    *                           type: object
-    *                           properties:
-    *                               status:
-    *                                   type: number
-    *                               messageError:
-    *                                   type: string
-    *          500:
-    *              description: Server error
-    *              content:
-    *                  application/json:
-    *                      schema:
-    *                          type: object
-    *                          properties:
-    *                              status:
-    *                                  type: number
-    *                              messageError:
-    *                                  type: string
-    */
-
-
-  router.get("/", contractService.getContracts);
   router.get("/:id", contractService.getContractById);
 
 

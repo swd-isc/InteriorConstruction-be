@@ -76,7 +76,9 @@ const ClassificationRouter = (app) => {
 
 
 
-    /**
+    router.get('/page/:page', classificationController.getClassificationByPage);
+
+ /**
     * @swagger
     * /api/classification:
     *  get:
@@ -145,7 +147,6 @@ const ClassificationRouter = (app) => {
     *                                  type: string
     */
 
-    router.get('/page/:page', classificationController.getClassificationByPage);
     router.get('/', classificationController.getClassificationByType);
 
     /**
