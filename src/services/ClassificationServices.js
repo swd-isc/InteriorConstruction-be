@@ -19,7 +19,7 @@ export const classificationServices = {
             const url = process.env.URL_DB;
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
-            currentPageData = await Classification.find({}).sort({ classificationName: 1 }).skip(startIndex).limit(itemsPerPage).explain('executionStats');
+            currentPageData = await Classification.find({}).sort({ classificationName: 1 }).skip(startIndex).limit(itemsPerPage);
             return {
                 status: 200,
                 data: currentPageData,
