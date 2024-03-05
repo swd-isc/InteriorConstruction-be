@@ -116,7 +116,46 @@ const router = express.Router();
  */
 
 const ClientRouter = (app) => {
-
+  /**
+   * @swagger
+   * /api/client:
+   *  get:
+   *    tags:
+   *      - Clients
+   *    summary: Get clients by page
+   *    description: This is endpoint for getting clients by page
+   *    parameters:
+   *      - in: query
+   *        name: page
+   *        description: For pagination
+   *        required: false
+   *        schema:
+   *          type: number
+   *    responses:
+   *      200:
+   *        description: Ok
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: array
+   *              items:
+   *                  type: object
+   *                  properties:
+   *                    status:
+   *                      type: number
+   *                    data:
+   *                      type: object
+   *                      properties:
+   *                        clients:
+   *                          $ref: '#components/schemas/Client'
+   *                        page:
+   *                          type: number
+   *                        totalPages:
+   *                          type: number
+   *                    message:
+   *                      type: string
+   *                    
+   */
   router.get("/", clientService.getClients);
 
 
