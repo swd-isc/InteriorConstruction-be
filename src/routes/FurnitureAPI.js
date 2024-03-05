@@ -58,6 +58,8 @@ const FurnitureRouter = (app) => {
     * @swagger
     * /api/furniture/{id}:
     *  get:
+    *      tags:
+    *           - Furnitures
     *      summary: Get furniture by id
     *      description: This endpoint is for getting furniture by id
     *      parameters:
@@ -137,7 +139,7 @@ const FurnitureRouter = (app) => {
     *                               message:
     *                                   type: string
     *          400:
-    *              description: Server error
+    *              description: Bad Request
     *              content:
     *                   application/json:
     *                       schema:
@@ -176,8 +178,26 @@ const ShopRouter = (app) => {
     * @swagger
     * /api/shop:
     *  get:
+    *      tags:
+    *           - Furnitures
     *      summary: Get furniture by page
     *      description: This endpoint is for getting furniture by page
+    *      parameters:
+    *          - in: query
+    *            name: page
+    *            required: false
+    *            description: For pagination
+    *            schema:
+    *               type: number
+    *          - in: query
+    *            name: sort_by
+    *            required: false
+    *            description: For sorting
+    *            schema:
+    *               type: string
+    *               enum:
+    *                   - asc
+    *                   - desc
     *      responses:
     *          200:
     *              description: OK
@@ -210,7 +230,7 @@ const ShopRouter = (app) => {
     *                               message:
     *                                   type: string
     *          400:
-    *              description: Server error
+    *              description: Bad Request
     *              content:
     *                   application/json:
     *                       schema:

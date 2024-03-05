@@ -87,7 +87,7 @@ export const materialServices = {
             // }
 
             return {
-                status: 200,
+                status: 201,
                 data: data,
                 message: data.length !== 0 ? "OK" : "No data"
             };
@@ -95,7 +95,7 @@ export const materialServices = {
             console.error('error ne', error);
             return {
                 status: 500,
-                messageError: error,
+                messageError: error.toString(),
             }
         } finally {
             // Close the database connection

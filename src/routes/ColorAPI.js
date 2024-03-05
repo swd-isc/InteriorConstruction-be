@@ -19,6 +19,8 @@ const ColorRouter = (app) => {
 
     router.get('/page', colorController.getColorData);
     router.get('/page/:page', colorController.getColorData);
+
+
     router.get('/:id', colorController.getColorById);
     router.get('/', colorController.getColorById);
 
@@ -26,6 +28,8 @@ const ColorRouter = (app) => {
     * @swagger
     * /api/color:
     *  post:
+    *      tags:
+    *           - Colors
     *      summary: Create color
     *      description: This endpoint is for creating color
     *      requestBody:
@@ -35,8 +39,8 @@ const ColorRouter = (app) => {
     *                   schema:
     *                       $ref: '#components/schemas/Color'
     *      responses:
-    *          200:
-    *              description: OK
+    *          201:
+    *              description: Created
     *              content:
     *                   application/json:
     *                       schema:
@@ -56,7 +60,7 @@ const ColorRouter = (app) => {
     *                               message:
     *                                   type: string
     *          400:
-    *              description: Server error
+    *              description: Bad Request
     *              content:
     *                   application/json:
     *                       schema:
@@ -68,14 +72,152 @@ const ColorRouter = (app) => {
     *                                   type: object
     *                               messageError:
     *                                   type: string
+    *          500:
+    *               description: Server error
+    *               content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
     */
     router.post('/', colorController.postColorController);
 
 
+    /**
+    * @swagger
+    * /api/color/{id}:
+    *  put:
+    *      tags:
+    *           - Colors
+    *      summary: Update color by id
+    *      description: This endpoint is for updating color
+    *      requestBody:
+    *           required: true
+    *           content:
+    *               application/json:
+    *                   schema:
+    *                       $ref: '#components/schemas/Color'
+    *      parameters:
+    *          - in: path
+    *            name: id
+    *            required: true
+    *            description: Id required
+    *            schema:
+    *               type: string
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       id:
+    *                                           type: string
+    *                                       name:
+    *                                           type: string
+    *                                       description:
+    *                                           type: string
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *               description: Server error
+    *               content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    */
     router.put('/', colorController.putColorController);
     router.put('/:id', colorController.putColorController);
 
-
+    /**
+    * @swagger
+    * /api/color/{id}:
+    *  delete:
+    *      tags:
+    *           - Colors
+    *      summary: Delete color by Id
+    *      description: This endpoint is for deleting color
+    *      parameters:
+    *          - in: path
+    *            name: id
+    *            required: true
+    *            description: Id required
+    *            schema:
+    *               type: string
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       id:
+    *                                           type: string
+    *                                       name:
+    *                                           type: string
+    *                                       description:
+    *                                           type: string
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *               description: Server error
+    *               content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    */
     router.delete('/:id', colorController.deleteColorController);
     router.delete('/', colorController.deleteColorController);
 
