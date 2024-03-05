@@ -221,61 +221,79 @@ export const designRepository = {
 
   updateDesign: async (designId, reqBody) => {
     try {
-      let data = {};
+        let data = {};
 
-      const idDesignValid = await isIdValid(designId, "design");
+        const idDesignValid = await isIdValid(designId, "design");
 
-      if (!idDesignValid.isValid) {
-        return {
-          status: idDesignValid.status,
-          data: {},
-          messageError: idDesignValid.messageError,
-        };
-      }
+        if (!idDesignValid.isValid) {
+            return {
+                status: idDesignValid.status,
+                data: {},
+                messageError: idDesignValid.messageError,
+            };
+        }
 
-      if (!reqBody) {
-        return {
-          status: 400,
-          data: {},
-          messageError: "Required body",
-        };
-      }
+        if (!reqBody) {
+            return {
+                status: 400,
+                data: {},
+                messageError: "Required body",
+            };
+        }
 
-      const url = process.env.URL_DB;
-      await mongoose.connect(url, {
-        family: 4,
-        dbName: "interiorConstruction",
-      });
-
-      try {
-        data = await Design.findByIdAndUpdate(designId, reqBody, {
-          runValidators: true,
-          new: true,
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, {
+            family: 4,
+            dbName: "interiorConstruction",
         });
-      } catch (error) {
-        return {
-          status: 400,
-          data: {},
-          messageError: error.message,
-        };
-      }
 
-      return {
-        status: 200,
-        data: data !== null ? data : {},
-        message: data !== null ? "OK" : "No data",
-      };
+        let design = await Design.findById(designId);
+
+        if (!design) {
+            return {
+                status: 404,
+                data: {},
+                messageError: "Design not found",
+            };
+        }
+
+        // Iterate through req.body and set corresponding fields in the design object
+        for (const key in reqBody) {
+            if (reqBody.hasOwnProperty(key)) {
+                design[key] = reqBody[key];
+            }
+        }
+
+        try {
+            // Validate the updated design object
+            await design.validate();
+
+            // Save the updated design
+            data = await design.save();
+        } catch (error) {
+            return {
+                status: 400,
+                data: {},
+                messageError: error.message,
+            };
+        }
+
+        return {
+            status: 200,
+            data: data !== null ? data : {},
+            message: data !== null ? "OK" : "No data",
+        };
     } catch (error) {
-      console.error("error ne", error);
-      return {
-        status: 500,
-        messageError: error,
-      };
+        console.error("error ne", error);
+        return {
+            status: 500,
+            messageError: error,
+        };
     } finally {
-      // Close the database connection
-      mongoose.connection.close();
+        // Close the database connection
+        mongoose.connection.close();
     }
-  },
+},
 
   deleteDesign: async (designId) => {
     try {
