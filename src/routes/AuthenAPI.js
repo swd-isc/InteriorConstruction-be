@@ -38,6 +38,10 @@ const AuthenRouter = (app) => {
      *              description: Ok
      *          401:
      *              description: Unauthorized
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: string
      *          403:
      *              description: Forbidden
      *              content:
