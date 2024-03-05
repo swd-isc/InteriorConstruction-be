@@ -4,7 +4,8 @@ export const designService = {
   getDesigns: async (req, res) => {
     let data = await designRepository.getDesigns(
       req.query.sort_by,
-      req.query.page
+      req.query.page,
+      req.query.type
     );
     return res.status(data.status).json(data);
   },

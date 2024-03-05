@@ -16,15 +16,46 @@ const router = express.Router();
  *                type: string
  *              designURL:
  *                type: string
+ *              designCard
+ *                type: string
  *              designPrice:
  *                type: number
- *              designCard:
- *                $ref: '#components/schemas/DesignCardData'
+ *              type:
+ *                type: string
+ *              classifications:
+ *                type: array
+ *                items:
+ *                  type: string
  *              furnitures:
  *                type: array
  *                items:
- *                  $ref: '#components/schemas/FurnitureData'
+ *                  type: string
  *          DesignData:
+ *            type: object
+ *            properties:
+ *              designName:
+ *                type: string
+ *              description:
+ *                type: string
+ *              designURL:
+ *                type: string
+ *              designCard
+ *                type: string
+ *              designPrice:
+ *                type: number
+ *              type:
+ *                type: string
+ *              classifications:
+ *                type: array
+ *                items:
+ *                  type: string
+ *              furnitures:
+ *                type: array
+ *                items:
+ *                  type: string
+ *              id:
+ *                type: string
+ *          DesignDataCustom:
  *            type: object
  *            properties:
  *              id:
@@ -46,7 +77,84 @@ const router = express.Router();
  */
 
 const DesignRouter = (app) => {
-
+  /**
+   * @swagger
+   * /api/design:
+   *  get:
+   *    tags:
+   *      - Designs
+   *    summary: Get design by page
+   *    description: This endpoint is for getting design by page
+   *    parameters:
+   *      - in: query
+   *        name: page
+   *        required: false
+   *        description: For pagination
+   *        schema:
+   *          type: number
+   *      - in: query
+   *        name: sort_by
+   *        required: false
+   *        description: For sorting
+   *        schema:
+   *          type: string
+   *      - in: query
+   *        name: type
+   *        required: false
+   *        description: Choose design type, default type = DEFAULT
+   *        schema:
+   *          type: string
+   *          enum:
+   *            - DEFAULT
+   *            - CUSTOM
+   *    responses:
+   *      200:
+   *        description: Ok
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  type: object
+   *                  properties:
+   *                    designs:
+   *                      type: array
+   *                      items:
+   *                        type: object
+   *                        properties:
+   *                           id:
+   *                            type: string
+   *                           designName:
+   *                            type: string
+   *                           description:
+   *                            type: string
+   *                           designURL:
+   *                            type: string
+   *                           classifications:
+   *                            type: array
+   *                            items:
+   *                              type: string
+   *                    page:
+   *                      type: number
+   *                    totalPages:
+   *                      type: number
+   *                message:
+   *                  type: string
+   *      400:
+   *        description: Bad request
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                messageError:
+   *                  type: string
+   */
   router.get("/", designService.getDesigns);
 
   /**
@@ -75,7 +183,7 @@ const DesignRouter = (app) => {
    *                status:
    *                  type: number
    *                data:
-   *                  $ref: '#components/schemas/DesignData'
+   *                  $ref: '#components/schemas/DesignDataCustom'
    *                message:
    *                  type: string
    *      400:
@@ -105,6 +213,59 @@ const DesignRouter = (app) => {
    */
   router.get("/:id", designService.getDesignById);
 
+  /**
+   * @swagger
+   * /api/design:
+   *  post:
+   *    tags:
+   *      - Design
+   *    summary: Create design
+   *    description: This endpoint is for creating design
+   *    requestBody:
+   *      required: true
+   *      content:
+   *        application/json:
+   *          schema:
+   *            $ref: '#components/schemas/Design'
+   *    responses:
+   *      201:
+   *        description: Ok
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  $ref: '#components/schemas/DeliveryData'
+   *                message:
+   *                  type: string
+   *      400:
+   *        description: Bad request
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  type: object
+   *                messageError:
+   *                  type: string
+   *      500:
+   *        description: Server error
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                messageError:
+   *                  type: string
+   */
   router.post("/", designService.createDesign);
 
   router.put("/:id", designService.updateDesign);

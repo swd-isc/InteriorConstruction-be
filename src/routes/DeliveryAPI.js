@@ -36,8 +36,8 @@ const DeliveryRouter = (app) => {
    *  get:
    *    tags:
    *      - Deliveries
-   *    summary: Get delivery by Id
-   *    description: This endpoint is for getting delivery by Id
+   *    summary: Get delivery by page
+   *    description: This endpoint is for getting delivery by page
    *    parameters:
    *      - in: query
    *        name: page

@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
 
 export const designRepository = {
-  getDesigns: async (mode, pageReq) => {
+  getDesigns: async (mode, pageReq, designType) => {
     try {
       let sortAsc = sortByInput(mode);
       const itemsPerPage = 10;
@@ -15,6 +15,23 @@ export const designRepository = {
       // Calculate start and end indices for the current page
       const startIndex = (page - 1) * itemsPerPage;
 
+      // Check if designType is undefined or null, and convert to uppercase
+      if (designType !== undefined && designType !== null) {
+        designType = designType.toUpperCase();
+
+        // Validate designType
+        if (designType === "DEFAULT" || designType === "CUSTOM") {
+          // Valid input, proceed with your logic
+          console.log("Design type is valid:", designType);
+        } else {
+          // Invalid input, set to DEFAULT and log a message
+          designType = "DEFAULT";
+          console.warn("Invalid design type. Setting to DEFAULT.");
+        }
+      } else {
+        designType = "DEFAULT";
+      }
+
       // Get the data for the current page
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
@@ -23,7 +40,7 @@ export const designRepository = {
       });
 
       // Count all documents in the collection
-      const totalDocuments = await Design.countDocuments({ type: "DEFAULT" });
+      const totalDocuments = await Design.countDocuments({ type: designType });
 
       // Calculate total pages
       const totalPages = Math.ceil(totalDocuments / itemsPerPage);
@@ -31,7 +48,7 @@ export const designRepository = {
       data.designs = await Design.aggregate([
         {
           $match: {
-            type: "DEFAULT",
+            type: designType,
           },
         },
         {
@@ -87,8 +104,8 @@ export const designRepository = {
     } catch (error) {
       console.error(error);
       return {
-        status: 500,
-        messageError: error,
+        status: 400,
+        messageError: error.toString(),
       };
     } finally {
       // Close the database connection
