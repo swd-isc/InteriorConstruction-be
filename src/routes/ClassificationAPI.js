@@ -10,12 +10,19 @@ const router = express.Router();
  *          Classification:
  *              type: object
  *              properties:
+ *                  classificationName:
+ *                      type: string
+ *                  type:
+ *                      type: string
+ *          ClassificationData:
+ *              type: object
+ *              properties:
  *                  id:
  *                      type: string
  *                  classificationName:
  *                      type: string
  *                  type:
- *                      type: string
+ *                      type: string 
  */
 
 
@@ -49,13 +56,7 @@ const ClassificationRouter = (app) => {
      *                               data:
      *                                   type: array
      *                                   items:
-     *                                       $ref: '#components/schemas/Classification'
-     *                               id: 
-     *                                   type: string
-     *                               classificationName:
-     *                                   type: string
-     *                               type:  
-     *                                   type: string
+     *                                       $ref: '#components/schemas/ClassificationData'                             
      *                               page:
      *                                   type: number
      *                               message:
@@ -73,16 +74,270 @@ const ClassificationRouter = (app) => {
      *                                   type: string
      */
 
+
+
+    /**
+    * @swagger
+    * /api/classification:
+    *  get:
+    *      tags:
+    *           - Classifications
+    *      summary: Get classification by type
+    *      description: This endpoint is for getting classification by type
+    *      parameters:
+    *          - in: query
+    *            name: type
+    *            required: false
+    *            description: For type
+    *            schema:
+    *               type: string
+    *          - in: query
+    *            name: sort_by
+    *            required: false
+    *            description: For sorting
+    *            schema:
+    *               type: string
+    *               enum:
+    *                   - asc
+    *                   - desc
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       id:
+    *                                           type: string                                          
+    *                                       classificationName:
+    *                                           type: string
+    *                                           items:
+    *                                               $ref: '#components/schemas/ClassificationData'                                                                  
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *              description: Server error
+    *              content:
+    *                  application/json:
+    *                      schema:
+    *                          type: object
+    *                          properties:
+    *                              status:
+    *                                  type: number
+    *                              messageError:
+    *                                  type: string
+    */
+
     router.get('/page/:page', classificationController.getClassificationByPage);
     router.get('/', classificationController.getClassificationByType);
+
+    /**
+    * @swagger
+    * /api/classification:
+    *  post:
+    *      tags:
+    *           - Classifications
+    *      summary: Create classification
+    *      description: This endpoint is for creating classification
+    *      requestBody:
+    *           required: true
+    *           content:
+    *               application/json:
+    *                   schema:
+    *                       $ref: '#components/schemas/ClassificationData'
+    *      responses:
+    *          201:
+    *              description: Created
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       classificationName:
+    *                                           type: string
+    *                                       type:
+    *                                           type: string
+    *                                       id:
+    *                                           type: string
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *               description: Server error
+    *               content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+     */
 
 
     router.post('/', classificationController.postClassificationController);
 
+/**
+    * @swagger
+    * /api/classification/{id}:
+    *  put:
+    *      tags:
+    *           - Classifications
+    *      summary: Update classification by id
+    *      description: This endpoint is for updating classification
+    *      requestBody:
+    *           required: true
+    *           content:
+    *               application/json:
+    *                   schema:
+    *                       $ref: '#components/schemas/ClassificationData'
+    *      parameters:
+    *          - in: path
+    *            name: id
+    *            required: true
+    *            description: Id required
+    *            schema:
+    *               type: string
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       id:
+    *                                           type: string
+    *                                       classificationName:
+    *                                           type: string
+    *                                       type:
+    *                                           type: string
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *               description: Server error
+    *               content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    */
 
     router.put('/', classificationController.putClassificationController);
     router.put('/:id', classificationController.putClassificationController);
 
+
+    /**
+    * @swagger
+    * /api/classification/{id}:
+    *  delete:
+    *      tags:
+    *           - Classifications
+    *      summary: Delete classification by Id
+    *      description: This endpoint is for deleting classification
+    *      parameters:
+    *          - in: path
+    *            name: id
+    *            required: true
+    *            description: Id required
+    *            schema:
+    *               type: string
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   $ref: '#components/schemas/ClassificationData'
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *               description: Server error
+    *               content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    */    
 
     router.delete('/:id', classificationController.deleteClassificationController);
     router.delete('/', classificationController.deleteClassificationController);

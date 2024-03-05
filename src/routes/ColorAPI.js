@@ -1,7 +1,7 @@
 import express from 'express';
 import { colorController } from '../controller/ColorController';
 
-/**
+ /**
  * @swagger
  *  components:
  *      schemas:
