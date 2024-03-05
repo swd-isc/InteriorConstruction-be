@@ -172,6 +172,7 @@ const FurnitureRouter = (app) => {
 const ShopRouter = (app) => {
     const router = express.Router();
     router.get('/filter-session', furnitureController.filterSession);
+
     router.get('/search', furnitureController.searchFurController);
 
     /**
