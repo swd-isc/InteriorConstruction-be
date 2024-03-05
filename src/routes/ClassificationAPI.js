@@ -10,12 +10,19 @@ const router = express.Router();
  *          Classification:
  *              type: object
  *              properties:
+ *                  classificationName:
+ *                      type: string
+ *                  type:
+ *                      type: string
+ *          ClassificationData:
+ *              type: object
+ *              properties:
  *                  id:
  *                      type: string
  *                  classificationName:
  *                      type: string
  *                  type:
- *                      type: string
+ *                      type: string 
  */
 
 
@@ -49,13 +56,7 @@ const ClassificationRouter = (app) => {
      *                               data:
      *                                   type: array
      *                                   items:
-     *                                       $ref: '#components/schemas/Classification'
-     *                               id: 
-     *                                   type: string
-     *                               classificationName:
-     *                                   type: string
-     *                               type:  
-     *                                   type: string
+     *                                       $ref: '#components/schemas/ClassificationData'                             
      *                               page:
      *                                   type: number
      *                               message:
