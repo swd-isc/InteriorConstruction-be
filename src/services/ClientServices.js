@@ -135,9 +135,15 @@ export const clientRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Client.find({ accountId: accountId }).select(
-        "_id firstName lastName"
-      );
+      const data = await Client.find({ accountId: accountId })
+        .populate({
+          path: 'accountId',
+          model: 'account',
+          select: 'email role logInMethod status',
+        })
+        .select(
+          "-contracts"
+        );
 
       return {
         status: 200,

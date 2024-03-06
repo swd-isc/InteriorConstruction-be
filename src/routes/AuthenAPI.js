@@ -14,7 +14,7 @@ import { verifyToken } from "../middleware/authen";
 const AuthenRouter = (app) => {
     const router = require("express").Router();
 
-    //Login
+    //Register
     router.post('/register', authenController.registerController);
 
     //Login
@@ -50,10 +50,41 @@ const AuthenRouter = (app) => {
      *                              data:
      *                                  type: object
      *                                  properties:
-     *                                      accessToken:
-     *                                          type: string
-     *                                      refreshToken:
-     *                                          type: string
+     *                                      client:
+     *                                          type: object
+     *                                          properties:
+     *                                              id:
+     *                                                  type: string
+     *                                              firstName:
+     *                                                  type: string
+     *                                              lastName:
+     *                                                  type: string
+     *                                              birthday:
+     *                                                  type: string
+     *                                              phone:
+     *                                                  type: string
+     *                                              photoURL:
+     *                                                  type: string
+     *                                              accountId:
+     *                                                  type: object
+     *                                                  properties:
+     *                                                      id:
+     *                                                          type: string
+     *                                                      email:
+     *                                                          type: string
+     *                                                      role:
+     *                                                          type: string
+     *                                                      logInMethod:
+     *                                                          type: string
+     *                                                      status:
+     *                                                          type: string
+     *                                      tokens:
+     *                                          type: object
+     *                                          properties:
+     *                                              accessToken:
+     *                                                  type: string
+     *                                              refreshToken:
+     *                                                  type: string
      *                              message:
      *                                  type: string
      *          400:

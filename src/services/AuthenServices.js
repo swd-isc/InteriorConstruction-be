@@ -57,7 +57,10 @@ export const authenServices = {
             }
             return {
                 status: 200,
-                data: tokens,
+                data: {
+                    client: client.data,
+                    tokens: tokens
+                },
                 message: "OK",
             };
         }
