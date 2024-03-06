@@ -57,10 +57,8 @@ export const authenServices = {
             }
             return {
                 status: 200,
-                data: {
-                    client: client.data,
-                    tokens: tokens
-                },
+                accessToken: tokens.accessToken,
+                refreshToken: tokens.refreshToken,
                 message: "OK",
             };
         }
@@ -140,11 +138,11 @@ export const authenServices = {
 }
 
 const generateToken = async (data) => {
-    const { _id, firstName, lastName } = data
-    const accessToken = jwt.sign({ _id, firstName, lastName }, process.env.ACCESS_TOKEN_SECRET, {
+    const { _id, firstName, lastName, birthDate, phone, photoURL, accountId } = data
+    const accessToken = jwt.sign({ _id, firstName, lastName, birthDate, phone, photoURL, accountId }, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: '10m'
     });
-    const refreshToken = jwt.sign({ _id, firstName, lastName }, process.env.REFRESH_TOKEN_SECRET, {
+    const refreshToken = jwt.sign({ _id, firstName, lastName, birthDate, phone, photoURL, accountId }, process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: '30m'
     })
     return { accessToken, refreshToken }
