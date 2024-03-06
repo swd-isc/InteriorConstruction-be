@@ -29,7 +29,6 @@ const clientSchema = new Schema({
         //     message: props => `${props.value} is not a valid VN phone number.`
         // },
         required: false,
-        unique: true
     },
     photoURL: {
         type: String,

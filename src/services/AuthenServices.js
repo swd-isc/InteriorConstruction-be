@@ -65,9 +65,10 @@ export const authenServices = {
 
     registerAccount: async (reqBody) => {
         const accountRes = await accountRepository.createAccount(reqBody);
-        if (accountRes.status !== 200) {
+        if (accountRes.status !== 201) {
             return accountRes;
         }
+        console.log('check acc', accountRes);
         const client = {
             firstName: "Anonymous",
             lastName: "Human",

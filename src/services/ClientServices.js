@@ -204,6 +204,7 @@ export const clientRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
+      console.log('check cli', reqBody);
       const client = new Client(reqBody);
 
       try {
