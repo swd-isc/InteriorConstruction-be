@@ -62,6 +62,7 @@ export const designRepository = {
         {
           $limit: itemsPerPage, // Limit the number of documents per page
         },
+        {$addFields:{v:0}},
         {
           $lookup: {
             from: "classification",
