@@ -159,7 +159,46 @@ const ClientRouter = (app) => {
    */
   router.get("/", clientService.getClients);
 
-
+  /**
+   * @swagger
+   * /api/client/{id}:
+   *  get:
+   *    tags:
+   *      - Clients
+   *    summary: Get client by id
+   *    description: This is endpoint for getting client by id
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        description: Id required
+   *        required: true
+   *        schema:
+   *          type: string
+   *    responses:
+   *      200:
+   *        description: Ok
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: array
+   *              items:
+   *                  type: object
+   *                  properties:
+   *                    status:
+   *                      type: number
+   *                    data:
+   *                      type: object
+   *                      properties:
+   *                        clients:
+   *                          $ref: '#components/schemas/Client'
+   *                        page:
+   *                          type: number
+   *                        totalPages:
+   *                          type: number
+   *                    message:
+   *                      type: string
+   *                    
+   */
   router.get("/:id", clientService.getClientById);
 
   router.post("/", clientService.createClient);

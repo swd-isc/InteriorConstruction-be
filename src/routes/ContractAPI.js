@@ -243,7 +243,7 @@ const ContractRouter = (app) => {
   *                                   type: string
   */
 
-  router.post("/", verifyToken, contractService.createContract);
+  router.post("/", verifyToken, isAdmin, contractService.createContract);
 
   /**
    * @swagger
@@ -318,68 +318,8 @@ const ContractRouter = (app) => {
    *                               messageError:
    *                                   type: string
    */
-
-
   router.put("/:id", verifyToken, isAdmin, contractService.updateContract);
   router.put("/", verifyToken, isAdmin, contractService.updateContract);
-
-  /**
-      * @swagger
-      * /api/contract/{id}:
-      *  delete:
-      *      security:
-      *           - bearerAuth: []
-      *      tags:
-      *           - Contracts
-      *      summary: Delete contract by Id
-      *      description: This endpoint is for deleting contract
-      *      parameters:
-      *          - in: path
-      *            name: id
-      *            required: true
-      *            description: Id required
-      *            schema:
-      *               type: string
-      *      responses:
-      *          200:
-      *              description: OK
-      *              content:
-      *                   application/json:
-      *                       schema:
-      *                           type: object
-      *                           properties:
-      *                               status:
-      *                                   type: number
-      *                               data:
-      *                                   $ref: '#components/schemas/MaterialData'
-      *                               message:
-      *                                   type: string
-      *          400:
-      *              description: Bad Request
-      *              content:
-      *                   application/json:
-      *                       schema:
-      *                           type: object
-      *                           properties:
-      *                               status:
-      *                                   type: number
-      *                               data:
-      *                                   type: object
-      *                               messageError:
-      *                                   type: string
-      *          500:
-      *               description: Server error
-      *               content:
-      *                   application/json:
-      *                       schema:
-      *                           type: object
-      *                           properties:
-      *                               status:
-      *                                   type: number
-      *                               messageError:
-      *                                   type: string
-      */
-
 
   router.delete("/:id", verifyToken, isAdmin, contractService.deleteContract);
   router.delete("/", verifyToken, isAdmin, contractService.deleteContract);

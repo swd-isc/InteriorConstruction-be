@@ -11,10 +11,6 @@ dotenv.config();
 const connectionString = process.env.CONNECTION_STRING_TO_DB;
 
 export const authenServices = {
-    //Test Connection
-    testConnect: async () => {
-        return await clientRepository.getClients();
-    },
 
     //Login
     loginUser: async (reqBody) => {
@@ -119,7 +115,8 @@ export const authenServices = {
                 }
                 return {
                     status: 200,
-                    data: tokens,
+                    accessToken: tokens.accessToken,
+                    refreshToken: tokens.refreshToken,
                     message: "OK",
                 };
             }

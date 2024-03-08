@@ -143,58 +143,61 @@ const AuthenRouter = (app) => {
     router.post('/login', authenController.logInController);
 
     //Update Token Expired
-    router.get('/token', verifyToken, authenController.updateTokenController);
-
-    //Logout
-    router.get('/logout', authenController.logOutController);
-
-    //Test
     /**
      * @swagger
-     * /api/authen:
-     *  get:
-     *      security:
-     *          - bearerAuth: []
-     *      summary: Testing authen
-     *      description: This endpoint is for testing authen
+     * /api/authen/token:
+     *  post:
+     *      summary: Update refresh token endpoint
+     *      description: This endpoint is for updating refresh token
      *      tags:
      *          - Authen
-     *      parameters:
-     *          - in: query
-     *            name: page
-     *            description: For pagination
-     *            required: false
-     *            schema:
-     *              type: number
+     *      requestBody:
+     *          required: true
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          refreshToken:
+     *                              type: string
      *      responses:
      *          200:
      *              description: Ok
      *              content:
      *                  application/json:
      *                      schema:
-     *                          type: array
-     *                          items:
-     *                              type: object
-     *                              properties:
-     *                                  status:
-     *                                      type: number
-     *                                  data:
-     *                                      type: object
-     *                                      properties:
-     *                                          clients:
-     *                                              $ref: '#components/schemas/Client'
-     *                                          page:
-     *                                              type: number
-     *                                          totalPages:
-     *                                              type: number
-     *                                  message:
-     *                                      type: string
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              accessToken:
+     *                                  type: string
+     *                              refreshToken:
+     *                                  type: string
+     *                              message:
+     *                                  type: string
+     *          400:
+     *              description: Bad request
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              messageError:
+     *                                  type: string
      *          401:
      *              description: Unauthorized
      *              content:
      *                  application/json:
      *                      schema:
-     *                          type: string
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              messageError:
+     *                                  type: string
      *          403:
      *              description: Forbidden
      *              content:
@@ -202,12 +205,59 @@ const AuthenRouter = (app) => {
      *                      schema:
      *                          type: object
      *                          properties:
+     *                              status:
+     *                                  type: number
      *                              error:
      *                                  type: string
      *                              messageError:
      *                                  type: string
      */
-    router.get('/', verifyToken, authenController.getTestAuthen);
+    router.post('/token', authenController.updateTokenController);
+
+    //Logout
+    /**
+     * @swagger
+     * /api/authen/logout:
+     *  post:
+     *      summary: User sign out endpoint
+     *      description: This endpoint is for user to sign out
+     *      tags:
+     *          - Authen
+     *      requestBody:
+     *          required: true
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          clientId:
+     *                              type: string
+     *      responses:
+     *          200:
+     *              description: Ok
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              message:
+     *                                  type: string
+     *          400:
+     *              description: Bad request
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              messageError:
+     *                                  type: string
+     */
+    router.post('/logout', authenController.logOutController);
+
     return app.use('/api/authen', router);
 }
 

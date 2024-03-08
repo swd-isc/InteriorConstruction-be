@@ -48,6 +48,21 @@ const designSchema = new Schema({
         },
         required: [true, 'Type required.'],
     },
+    customBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'client',
+        validate: {
+            validator: async function (value) {
+                const Client = mongoose.model('client');
+
+                const delivery = await Client.findById(value);
+                if (!delivery) {
+                    throw new mongoose.Error(`${value} is not a valid client ID.`); // Invalid ObjectId reference in the array
+                }
+                return true; // Return true if delivery exists, otherwise false
+            }
+        }
+    },
     furnitures: {
         type: [{
             type: Schema.Types.ObjectId,
