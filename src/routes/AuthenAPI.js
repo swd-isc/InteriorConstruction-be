@@ -15,6 +15,70 @@ const AuthenRouter = (app) => {
     const router = require("express").Router();
 
     //Register
+    /**
+     * @swagger
+     * /api/authen/register:
+     *  post:
+     *      summary: Register endpoint
+     *      description: This endpoint is for registing an account
+     *      tags:
+     *          - Authen
+     *      requestBody:
+     *          required: true
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          email:
+     *                              type: string
+     *                          password:
+     *                              type: string
+     *      responses:
+     *          200:
+     *              description: Ok
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              data:
+     *                                  type: object
+     *                                  properties:
+     *                                      firstName:
+     *                                          type: string
+     *                                      lastName:
+     *                                          type: string
+     *                                      birthDate:
+     *                                          type: string
+     *                                      phone:
+     *                                          type: string
+     *                                      photoURL:
+     *                                          type: string
+     *                                      accountId:
+     *                                          type: string
+     *                                      contracts:
+     *                                          type: array
+     *                                      _id:
+     *                                          type: string
+     *                              message:
+     *                                  type: string
+     *          400:
+     *              description: Bad request
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              data:
+     *                                  type: object
+     *                              messageError:
+     *                                  type: string
+     */
     router.post('/register', authenController.registerController);
 
     //Login

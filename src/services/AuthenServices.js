@@ -80,6 +80,9 @@ export const authenServices = {
             contracts: []
         }
         const clientRes = await clientRepository.createClient(client);
+        if (clientRes.status !== 201) {
+            await accountRepository.deleteAccount(accountRes.data._id);
+        }
         return clientRes;
     },
 
