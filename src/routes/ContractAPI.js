@@ -44,8 +44,8 @@ const ContractRouter = (app) => {
   *           - bearerAuth: []
   *      tags:
   *           - Contracts
-  *      summary: Get contract by page
-  *      description: This endpoint is for getting contract by page
+  *      summary: Get contract by clientId
+  *      description: This endpoint is for getting contract by clientId (if no clientId will find all contract for admin usage)
   *      parameters:
   *          - in: query
   *            name: page

@@ -29,7 +29,7 @@ export const contractRepository = {
       // Calculate total pages
       const totalPages = Math.ceil(totalDocuments / itemsPerPage);
 
-      const idClientValid = await isIdValid(id, "client");
+      const idClientValid = await isIdValid(clientId, "client");
 
       if (!idClientValid.isValid) {
         data.contracts = await Contract.find()
