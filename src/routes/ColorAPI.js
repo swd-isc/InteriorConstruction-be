@@ -72,8 +72,8 @@ const ColorRouter = (app) => {
      *                               messageError:
      *                                   type: string
      */
-    router.get('/page', colorController.getColorData);
-    router.get('/page/:page', colorController.getColorData);
+    router.get('/page', verifyToken, colorController.getColorData);
+    router.get('/page/:page', verifyToken, colorController.getColorData);
 
     /**
      * @swagger

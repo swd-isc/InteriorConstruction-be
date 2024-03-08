@@ -185,6 +185,8 @@ const AccountRouter = (app) => {
 
   router.put("/:id", verifyToken, isAdmin, accountService.updateAccount);
   router.put("/", verifyToken, isAdmin, accountService.updateAccount);
+
+  //TODO: swagger this
   router.put("/client/:id", verifyToken, accountService.updateAccountByClient)
   router.put("/admin/:id", verifyToken, accountService.updateAccountByAdmin)
 
