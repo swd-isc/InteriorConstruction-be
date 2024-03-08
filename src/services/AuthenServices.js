@@ -119,7 +119,8 @@ export const authenServices = {
                 }
                 return {
                     status: 200,
-                    data: tokens,
+                    accessToken: tokens.accessToken,
+                    refreshToken: tokens.refreshToken,
                     message: "OK",
                 };
             }
