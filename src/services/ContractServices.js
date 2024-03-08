@@ -16,6 +16,8 @@ export const contractRepository = {
       // Calculate start and end indices for the current page
       const startIndex = (page - 1) * itemsPerPage;
 
+      const idClientValid = await isIdValid(clientId, "client");
+
       // Get the data for the current page
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
@@ -29,7 +31,6 @@ export const contractRepository = {
       // Calculate total pages
       const totalPages = Math.ceil(totalDocuments / itemsPerPage);
 
-      const idClientValid = await isIdValid(clientId, "client");
 
       if (!idClientValid.isValid) {
         data.contracts = await Contract.find()
@@ -37,8 +38,8 @@ export const contractRepository = {
           .skip(startIndex)
           .limit(itemsPerPage);
       } else {
-        data.contracts = await Contract.find()
-          .sort({ price: sortAsc, clientId: clientId })
+        data.contracts = await Contract.find({ clientId: clientId })
+          .sort({ price: sortAsc })
           .skip(startIndex)
           .limit(itemsPerPage);
       }
