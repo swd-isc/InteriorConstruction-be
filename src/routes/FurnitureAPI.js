@@ -699,6 +699,93 @@ const ShopRouter = (app) => {
 const FurnitureCategoryRouter = (app) => {
     const router = express.Router();
 
+    /**
+    * @swagger
+    * /api/furniture-category:
+    *  get:
+    *      tags:
+    *           - Furnitures
+    *      summary: Get furniture by page
+    *      description: This endpoint is for getting furniture by page
+    *      parameters:
+    *          - in: query
+    *            name: page
+    *            required: false
+    *            description: For pagination
+    *            schema:
+    *               type: number
+    *          - in: query
+    *            name: sort_by
+    *            required: false
+    *            description: For sorting
+    *            schema:
+    *               type: string
+    *               enum:
+    *                   - asc
+    *                   - desc
+    *          - in: query
+    *            name: classificationId
+    *            required: true
+    *            description: For finding
+    *            schema:
+    *               type: string
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       colors:
+    *                                           type: array
+    *                                           items:
+    *                                               type: object
+    *                                               properties:
+    *                                                   id:
+    *                                                       type: string
+    *                                                   name:
+    *                                                       type: string
+    *                                                   count:
+    *                                                       type: number
+    *                                       materials:
+    *                                           type: array
+    *                                           items:
+    *                                               type: object
+    *                                               properties:
+    *                                                   id:
+    *                                                       type: string
+    *                                                   name:
+    *                                                       type: string
+    *                                                   count:
+    *                                                       type: number
+    *                                       furnitures:
+    *                                           type: array
+    *                                           items:
+    *                                               $ref: '#components/schemas/FurnitureData'
+    *                                       page:
+    *                                           type: string
+    *                                       totalPages:
+    *                                           type: number
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    */
     router.get('/', furnitureController.furnitureByClassificationId);
 
     return app.use('/api/furniture-category', router);
