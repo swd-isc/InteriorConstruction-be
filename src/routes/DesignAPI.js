@@ -257,7 +257,7 @@ const DesignRouter = (app) => {
    *                status:
    *                  type: number
    *                data:
-   *                  $ref: '#components/schemas/DeliveryData'
+   *                  $ref: '#components/schemas/DesignData'
    *                message:
    *                  type: string
    *      400:
