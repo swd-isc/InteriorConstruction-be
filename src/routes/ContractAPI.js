@@ -62,6 +62,12 @@ const ContractRouter = (app) => {
   *               enum:
   *                   - asc
   *                   - desc
+  *          - in: query
+  *            name: clientId
+  *            required: false
+  *            description: For finding contract by clientId. default will find all contract by page
+  *            schema:
+  *               type: string
   *      responses:
   *          200:
   *              description: OK
