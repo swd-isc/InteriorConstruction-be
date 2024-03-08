@@ -230,9 +230,6 @@ const ClientRouter = (app) => {
     *                   properties:
     *                     status:
     *                       type: string
-    *                       enum:
-    *                         - ACTIVE
-    *                         - INACTIVE
     *    responses:
     *      200:
     *        description: Ok
@@ -273,6 +270,69 @@ const ClientRouter = (app) => {
   router.put("/ad/:accountId", verifyToken, isAdmin, accountService.updateAccountByAdmin);
   router.put("/ad/", verifyToken, isAdmin, accountService.updateAccountByAdmin);
 
+  /**
+    * @swagger
+    * /api/client/{id}:
+    *  put:
+    *    security:
+    *      - bearerAuth: []
+    *    tags:
+    *      - Clients
+    *    summary: Update information client by Id
+    *    description: This endpoint is for client updating information by client Id
+    *    parameters:
+    *      - in: path
+    *        name: id
+    *        required: true
+    *        description: Id required
+    *        schema:
+    *          type: string
+    *    requestBody:
+    *       required: true
+    *       content:
+    *           application/json:
+    *               schema:
+    *                   type: object
+    *                   properties:
+    *                     status:
+    *                       type: string
+    *    responses:
+    *      200:
+    *        description: Ok
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                message:
+    *                  type: string
+    *      400:
+    *        description: Bad request
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                data:
+    *                  type: object
+    *                messageError:
+    *                  type: string
+    *      500:
+    *        description: Server error
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                messageError:
+    *                  type: string
+    */
   router.put("/:id", verifyToken, clientService.updateClient);
   router.put("/", verifyToken, clientService.updateClient);
 
