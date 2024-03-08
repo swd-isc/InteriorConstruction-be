@@ -1,6 +1,7 @@
 import Client from "../models/Client";
 import Account from "../models/Account";
 import mongoose from "mongoose";
+const bcrypt = require("bcrypt");
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -118,7 +119,6 @@ export const clientRepository = {
 
   getClientByAccountId: async (accountId) => {
     try {
-
       const idAccountValid = await isIdValid(accountId, "account");
 
       if (!idAccountValid.isValid) {
@@ -137,13 +137,11 @@ export const clientRepository = {
 
       const data = await Client.find({ accountId: accountId })
         .populate({
-          path: 'accountId',
-          model: 'account',
-          select: 'email role logInMethod status',
+          path: "accountId",
+          model: "account",
+          select: "email role logInMethod status",
         })
-        .select(
-          "-contracts"
-        );
+        .select("-contracts");
 
       return {
         status: 200,
@@ -164,7 +162,6 @@ export const clientRepository = {
 
   getAccountIdByClientId: async (clientId) => {
     try {
-
       const idClientValid = await isIdValid(clientId, "client");
 
       if (!idClientValid.isValid) {
@@ -210,7 +207,7 @@ export const clientRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
-      console.log('check cli', reqBody);
+      console.log("check cli", reqBody);
       const client = new Client(reqBody);
 
       try {
@@ -262,6 +259,14 @@ export const clientRepository = {
         };
       }
 
+      if (reqBody.password && reqBody.password.length < 8) {
+        return {
+          status: 400,
+          data: {},
+          messageError: "Password length must >= 8",
+        };
+      }
+
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
@@ -270,14 +275,21 @@ export const clientRepository = {
 
       try {
         const client = await Client.findById(clientId);
-        
-        if (reqBody.firstName) client.firstName = reqBody.firstName;  
-        if (reqBody.lastName) client.lastName = reqBody.lastName; 
-        if (reqBody.birthDate) client.birthDate = reqBody.birthDate; 
-        if (reqBody.phone) client.phone = reqBody.phone; 
-        if (reqBody.photoURL) client.photoURL = reqBody.photoURL; 
+        const account = await Account.findById(client.accountId);
+
+        if (reqBody.password) {
+          const hashedPassword = await bcrypt.hash(reqBody.password, 10);
+          account.password = hashedPassword;
+        }
+
+        if (reqBody.firstName) client.firstName = reqBody.firstName;
+        if (reqBody.lastName) client.lastName = reqBody.lastName;
+        if (reqBody.birthDate) client.birthDate = reqBody.birthDate;
+        if (reqBody.phone) client.phone = reqBody.phone;
+        if (reqBody.photoURL) client.photoURL = reqBody.photoURL;
 
         data = await client.save();
+        await account.save();
       } catch (error) {
         return {
           status: 400,

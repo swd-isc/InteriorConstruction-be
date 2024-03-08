@@ -136,6 +136,7 @@ export const contractRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
+      reqBody.status = "PROCESSING";
       const contract = new Contract(reqBody);
 
       try {
@@ -203,10 +204,14 @@ export const contractRepository = {
       });
 
       try {
-        data = await Contract.findByIdAndUpdate(contractId, reqBody, {
-          runValidators: true,
-          new: true,
-        });
+        const contract = await Contract.findById(contractId);
+
+        if (reqBody.contractPrice) contract.contractPrice = reqBody.contractPrice;
+        if (reqBody.status) contract.status = reqBody.status;
+        if (reqBody.contractFileURL) contract.contractFileURL = reqBody.contractFileURL;
+
+        data = await contract.save();
+
       } catch (error) {
         return {
           status: 400,
