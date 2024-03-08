@@ -300,6 +300,135 @@ export const accountRepository = {
     }
   },
 
+  updateAccountByClient: async (accountId, reqBody) => {
+    try {
+      let data = {};
+
+      const idAccountValid = await isIdValid(accountId, "account");
+
+      if (!idAccountValid.isValid) {
+        return {
+          status: idAccountValid.status,
+          data: {},
+          messageError: idAccountValid.messageError,
+        };
+      }
+
+      if (!reqBody) {
+        return {
+          status: 400,
+          data: {},
+          messageError: "Required body",
+        };
+      }
+
+      if (reqBody.password.length < 8) {
+        return {
+          status: 400,
+          data: {},
+          messageError: "Password length must >= 8",
+        };
+      }
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      try {
+        const account = await Account.findById(accountId);
+        if (reqBody.password) {
+          const hashedPassword = await bcrypt.hash(reqBody.password, 10)
+          account.password = hashedPassword;
+        } 
+        data = await account.save();
+        data.password = undefined;
+        data.refreshToken = undefined;
+      } catch (error) {
+        return {
+          status: 400,
+          data: {},
+          messageError: error.message,
+        };
+      }
+
+      return {
+        status: 200,
+        data: data !== null ? data : {},
+        message: data !== null ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error("error ne", error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
+  updateAccountByAdmin: async (accountId, reqBody) => {
+    try {
+      let data = {};
+
+      const idAccountValid = await isIdValid(accountId, "account");
+
+      if (!idAccountValid.isValid) {
+        return {
+          status: idAccountValid.status,
+          data: {},
+          messageError: idAccountValid.messageError,
+        };
+      }
+
+      if (!reqBody) {
+        return {
+          status: 400,
+          data: {},
+          messageError: "Required body",
+        };
+      }
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      try {
+        const account = await Account.findById(accountId);
+        if (reqBody.status) account.status = reqBody.status;
+        data = await account.save();
+        data.password = undefined;
+        data.refreshToken = undefined;
+      } catch (error) {
+        return {
+          status: 400,
+          data: {},
+          messageError: error.message,
+        };
+      }
+
+      return {
+        status: 200,
+        data: data !== null ? data : {},
+        message: data !== null ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error("error ne", error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
   deleteAccount: async (accountId) => {
     try {
       let data = {};

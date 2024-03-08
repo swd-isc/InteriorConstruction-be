@@ -185,6 +185,8 @@ const AccountRouter = (app) => {
 
   router.put("/:id", verifyToken, isAdmin, accountService.updateAccount);
   router.put("/", verifyToken, isAdmin, accountService.updateAccount);
+  router.put("/client/:id", verifyToken, accountService.updateAccountByClient)
+  router.put("/admin/:id", verifyToken, accountService.updateAccountByAdmin)
 
   router.delete("/:id", verifyToken, isAdmin, accountService.deleteAccount);
   router.delete("/", verifyToken, isAdmin, accountService.deleteAccount);
