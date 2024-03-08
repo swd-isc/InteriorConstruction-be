@@ -285,20 +285,21 @@ export const designRepository = {
       // Iterate through req.body and set corresponding fields in the design object
       for (const key in reqBody) {
         if (reqBody.hasOwnProperty(key)) {
-          design[key] = reqBody[key];
+           design[key] = reqBody[key];
         }
       }
 
       if (reqBody.type) {
         return {
-          status: 400,
-          data: {},
+          status:  400,
+          data: {} ,
           messageError: "Can not edit Type of Design",
         };
       }
 
       try {
         // Save the updated design
+        
         data = await design.save();
       } catch (error) {
         return {
