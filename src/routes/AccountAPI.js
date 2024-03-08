@@ -181,76 +181,8 @@ const AccountRouter = (app) => {
 
   router.post("/", verifyToken, isAdmin, accountService.createAccount);
 
-
   router.put("/:id", verifyToken, isAdmin, accountService.updateAccount);
   router.put("/", verifyToken, isAdmin, accountService.updateAccount);
-
-  //TODO: swagger this
-  /**
-  * @swagger
-  * /api/account/client/{id}:
-  *  get:
-  *    security:
-  *      - bearerAuth: []
-  *    tags:
-  *      - Accounts
-  *    summary: Update client account by Id
-  *    description: This endpoint is for updating client account by Id
-  *    parameters:
-  *      - in: path
-  *        name: id
-  *        required: true
-  *        description: Id required
-  *        schema:
-  *          type: string
-  *    requestBody:
-  *       required: true
-  *       content:
-  *           application/json:
-  *               schema:
-  *                   type: object
-  *                   properties:
-  *                     
-  *    responses:
-  *      200:
-  *        description: Ok
-  *        content:
-  *          application/json:
-  *            schema:
-  *              type: object
-  *              properties:
-  *                status:
-  *                  type: number
-  *                data:
-  *                  $ref: '#components/schemas/AccountData'
-  *                message:
-  *                  type: string
-  *      400:
-  *        description: Bad request
-  *        content:
-  *          application/json:
-  *            schema:
-  *              type: object
-  *              properties:
-  *                status:
-  *                  type: number
-  *                data:
-  *                  type: object
-  *                messageError:
-  *                  type: string
-  *      500:
-  *        description: Server error
-  *        content:
-  *          application/json:
-  *            schema:
-  *              type: object
-  *              properties:
-  *                status:
-  *                  type: number
-  *                messageError:
-  *                  type: string
-  */
-  router.put("/admin/:id", verifyToken, isAdmin, accountService.updateAccountByAdmin)
 
   router.delete("/:id", verifyToken, isAdmin, accountService.deleteAccount);
   router.delete("/", verifyToken, isAdmin, accountService.deleteAccount);

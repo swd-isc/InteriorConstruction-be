@@ -1,6 +1,7 @@
 import express from "express";
 import { clientService } from "../controller/ClientController";
-import { verifyToken } from "../middleware/authen";
+import { isAdmin, verifyToken } from "../middleware/authen";
+import { accountService } from "../controller/AccountController";
 
 const router = express.Router();
 
@@ -202,6 +203,75 @@ const ClientRouter = (app) => {
   router.get("/:id", clientService.getClientById);
 
   router.post("/", clientService.createClient);
+
+  /**
+    * @swagger
+    * /api/client/ad/{accountId}:
+    *  put:
+    *    security:
+    *      - bearerAuth: []
+    *    tags:
+    *      - Clients
+    *    summary: Admin update account by account Id
+    *    description: This endpoint is for admin updating account by account Id
+    *    parameters:
+    *      - in: path
+    *        name: accountId
+    *        required: true
+    *        description: Account ID required
+    *        schema:
+    *          type: string
+    *    requestBody:
+    *       required: true
+    *       content:
+    *           application/json:
+    *               schema:
+    *                   type: object
+    *                   properties:
+    *                     status:
+    *                       type: string
+    *                       enum:
+    *                         - ACTIVE
+    *                         - INACTIVE
+    *    responses:
+    *      200:
+    *        description: Ok
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                message:
+    *                  type: string
+    *      400:
+    *        description: Bad request
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                data:
+    *                  type: object
+    *                messageError:
+    *                  type: string
+    *      500:
+    *        description: Server error
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                messageError:
+    *                  type: string
+    */
+  router.put("/ad/:accountId", verifyToken, isAdmin, accountService.updateAccountByAdmin);
+  router.put("/ad/", verifyToken, isAdmin, accountService.updateAccountByAdmin);
 
   router.put("/:id", verifyToken, clientService.updateClient);
   router.put("/", verifyToken, clientService.updateClient);
