@@ -4,7 +4,8 @@ export const contractService = {
   getContracts: async (req, res) => {
     let data = await contractRepository.getContracts(
       req.query.sort_by,
-      req.query.page
+      req.query.page,
+      req.query.clientId
     );
     return res.status(data.status).json(data);
   },
