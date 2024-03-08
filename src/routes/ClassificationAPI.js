@@ -218,7 +218,7 @@ const ClassificationRouter = (app) => {
         * /api/classification/{id}:
         *  put:
         *      security:
-                    - bearerAuth: []
+        *           - bearerAuth: []
         *      tags:
         *           - Classifications
         *      summary: Update classification by id

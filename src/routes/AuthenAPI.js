@@ -143,7 +143,76 @@ const AuthenRouter = (app) => {
     router.post('/login', authenController.logInController);
 
     //Update Token Expired
-    router.get('/token', verifyToken, authenController.updateTokenController);
+    /**
+     * @swagger
+     * /api/authen/token:
+     *  post:
+     *      summary: Update refresh token endpoint
+     *      description: This endpoint is for updating refresh token
+     *      tags:
+     *          - Authen
+     *      requestBody:
+     *          required: true
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          refreshToken:
+     *                              type: string
+     *      responses:
+     *          200:
+     *              description: Ok
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              accessToken:
+     *                                  type: string
+     *                              refreshToken:
+     *                                  type: string
+     *                              message:
+     *                                  type: string
+     *          400:
+     *              description: Bad request
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              messageError:
+     *                                  type: string
+     *          401:
+     *              description: Unauthorized
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              messageError:
+     *                                  type: string
+     *          403:
+     *              description: Forbidden
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              error:
+     *                                  type: string
+     *                              messageError:
+     *                                  type: string
+     */
+    router.post('/token', authenController.updateTokenController);
 
     //Logout
     router.get('/logout', authenController.logOutController);
