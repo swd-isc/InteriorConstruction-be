@@ -226,7 +226,26 @@ const DesignRouter = (app) => {
    *      content:
    *        application/json:
    *          schema:
-   *            $ref: '#components/schemas/Design'
+   *            type: object
+   *            properties:
+   *              designName:
+   *                type: string
+   *              description:
+   *                type: string
+   *              designURL:
+   *                type: string
+   *              designCard:
+   *                type: string
+   *              designPrice:
+   *                type: number
+   *              classifications:
+   *                type: array
+   *                items:
+   *                  type: string
+   *              furnitures:
+   *                type: array
+   *                items:
+   *                  type: string
    *    responses:
    *      201:
    *        description: Ok
