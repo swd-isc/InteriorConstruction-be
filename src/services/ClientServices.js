@@ -269,10 +269,15 @@ export const clientRepository = {
       });
 
       try {
-        data = await Client.findByIdAndUpdate(clientId, reqBody, {
-          runValidators: true,
-          new: true,
-        });
+        const client = await Client.findById(clientId);
+        
+        if (reqBody.firstName) client.firstName = reqBody.firstName;  
+        if (reqBody.lastName) client.lastName = reqBody.lastName; 
+        if (reqBody.birthDate) client.birthDate = reqBody.birthDate; 
+        if (reqBody.phone) client.phone = reqBody.phone; 
+        if (reqBody.photoURL) client.photoURL = reqBody.photoURL; 
+
+        data = await client.save();
       } catch (error) {
         return {
           status: 400,
