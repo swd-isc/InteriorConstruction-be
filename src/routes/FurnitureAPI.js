@@ -1,5 +1,6 @@
 import express from 'express';
 import { furnitureController } from '../controller/FurnitureController';
+import { isAdmin, verifyToken } from '../middleware/authen';
 
 /**
  * @swagger
@@ -251,6 +252,8 @@ const FurnitureRouter = (app) => {
      * @swagger
      * /api/furniture:
      *  post:
+     *      security:
+     *          - bearerAuth: []
      *      tags:
      *          - Furnitures
      *      summary: Create furniture
@@ -300,12 +303,14 @@ const FurnitureRouter = (app) => {
      *                               messageError:
      *                                   type: string
      */
-    router.post('/', furnitureController.createFurController);
+    router.post('/', verifyToken, isAdmin, furnitureController.createFurController);
 
     /**
      * @swagger
      * api/furniture/{id}:
      *  put:
+     *      security:
+     *          - bearerAuth: []
      *      tags:
      *          - Furnitures
      *      summary: Update furniture by Id
@@ -362,13 +367,15 @@ const FurnitureRouter = (app) => {
      *                               messageError:
      *                                   type: string
      */
-    router.put('/', furnitureController.updateFurController);
-    router.put('/:id', furnitureController.updateFurController);
+    router.put('/', verifyToken, isAdmin, furnitureController.updateFurController);
+    router.put('/:id', verifyToken, isAdmin, furnitureController.updateFurController);
 
     /**
      * @swagger
      * /api/furniture/{id}:
      *  delete:
+     *      security:
+     *          - bearerAuth: []
      *      tags:
      *          - Furnitures
      *      summary: Delete furniture by Id
@@ -419,8 +426,8 @@ const FurnitureRouter = (app) => {
      *                               messageError:
      *                                   type: string
      */
-    router.delete('/:id', furnitureController.deleteFurController);
-    router.delete('/', furnitureController.deleteFurController);
+    router.delete('/:id', verifyToken, isAdmin, furnitureController.deleteFurController);
+    router.delete('/', verifyToken, isAdmin, furnitureController.deleteFurController);
 
     return app.use('/api/furniture', router);
 }

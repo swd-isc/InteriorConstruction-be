@@ -1,5 +1,6 @@
 import express from 'express';
 import { returnPolicyController } from '../controller/ReturnPolicyController';
+import { isAdmin, verifyToken } from '../middleware/authen';
 
 const router = express.Router();
 /**
@@ -29,8 +30,6 @@ const router = express.Router();
 
 
 const ReturnPolicyRouter = (app) => {
-    router.get('/:id', returnPolicyController.getReturnPolicyById);
-
     /**
     * @swagger
     * /api/return-policy/{id}:
@@ -102,72 +101,75 @@ const ReturnPolicyRouter = (app) => {
     *                               messageError:
     *                                   type: string       
     */
+    router.get('/:id', returnPolicyController.getReturnPolicyById);
 
-    router.post('/', returnPolicyController.postReturnPolicyController);
-/**
- * @swagger
- * /api/return-policy:
- *  post:
- *      tags:
- *           - ReturnPolicy
- *      summary: Create return policy
- *      description: This endpoint is for creating return policy
- *      requestBody:
- *           required: true
- *           content:
- *               application/json:
- *                   schema:
- *                       $ref: '#components/schemas/ReturnPolicy' 
- *      responses:
- *          201:
- *              description: Created
- *              content:
- *                   application/json:
- *                       schema:
- *                           type: object
- *                           properties:
- *                               status:
- *                                   type: number
- *                               data:
- *                                   type: object
- *                                   properties:
- *                                       headerName:
- *                                           type: string
- *                                       headerDescription:
- *                                           type: string
- *                                       titleName:
- *                                           type: string
- *                                       titleDescription:
- *                                           type: string
- *                                       returnExchangeCases:
- *                                           type: string
- *                                       nonReturnExchangeCases:
- *                                           type: string
- *                                       returnProcedure:
- *                                           type: string
- *                                       id:
- *                                           type: string
- *                               message:
- *                                   type: string        
- *          500:
- *               description: Server error
- *               content:
- *                   application/json:
- *                       schema:
- *                           type: object
- *                           properties:
- *                               status:
- *                                   type: number
- *                               messageError:
- *                                   type: string      
- */
-    router.put('/', returnPolicyController.putReturnPolicyController);
-    router.put('/:id', returnPolicyController.putReturnPolicyController);
+    /**
+     * @swagger
+     * /api/return-policy:
+     *  post:
+     *      security:
+     *           - bearerAuth: []
+     *      tags:
+     *           - ReturnPolicy
+     *      summary: Create return policy
+     *      description: This endpoint is for creating return policy
+     *      requestBody:
+     *           required: true
+     *           content:
+     *               application/json:
+     *                   schema:
+     *                       $ref: '#components/schemas/ReturnPolicy' 
+     *      responses:
+     *          201:
+     *              description: Created
+     *              content:
+     *                   application/json:
+     *                       schema:
+     *                           type: object
+     *                           properties:
+     *                               status:
+     *                                   type: number
+     *                               data:
+     *                                   type: object
+     *                                   properties:
+     *                                       headerName:
+     *                                           type: string
+     *                                       headerDescription:
+     *                                           type: string
+     *                                       titleName:
+     *                                           type: string
+     *                                       titleDescription:
+     *                                           type: string
+     *                                       returnExchangeCases:
+     *                                           type: string
+     *                                       nonReturnExchangeCases:
+     *                                           type: string
+     *                                       returnProcedure:
+     *                                           type: string
+     *                                       id:
+     *                                           type: string
+     *                               message:
+     *                                   type: string        
+     *          500:
+     *               description: Server error
+     *               content:
+     *                   application/json:
+     *                       schema:
+     *                           type: object
+     *                           properties:
+     *                               status:
+     *                                   type: number
+     *                               messageError:
+     *                                   type: string      
+     */
+    router.post('/', verifyToken, isAdmin, returnPolicyController.postReturnPolicyController);
 
     /**
     * @swagger
     * /api/return-policy/{id}:
     *  put:
+    *      security:
+    *           - bearerAuth: []
     *      tags:
     *           - ReturnPolicy
     *      summary: Update color by id
@@ -241,13 +243,15 @@ const ReturnPolicyRouter = (app) => {
     *                               messageError:
     *                                   type: string       
     */
-    router.delete('/:id', returnPolicyController.deleteReturnPolicyController);
-    router.delete('/', returnPolicyController.deleteReturnPolicyController);
+    router.put('/', verifyToken, isAdmin, returnPolicyController.putReturnPolicyController);
+    router.put('/:id', verifyToken, isAdmin, returnPolicyController.putReturnPolicyController);
 
     /**
     * @swagger
     * /api/return-policy/{id}:
     *  delete:
+    *      security:
+    *           - bearerAuth: []
     *      tags:
     *           - ReturnPolicy
     *      summary: Delete return policy by Id
@@ -305,6 +309,8 @@ const ReturnPolicyRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
+    router.delete('/:id', verifyToken, isAdmin, returnPolicyController.deleteReturnPolicyController);
+    router.delete('/', verifyToken, isAdmin, returnPolicyController.deleteReturnPolicyController);
 
     return app.use('/api/return-policy', router);
 }

@@ -1,5 +1,6 @@
 import express from "express";
 import { designService } from "../controller/DesignController";
+import { isAdmin, verifyToken } from "../middleware/authen";
 
 const router = express.Router();
 
@@ -217,6 +218,8 @@ const DesignRouter = (app) => {
    * @swagger
    * /api/design:
    *  post:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Designs
    *    summary: Create design
@@ -266,12 +269,14 @@ const DesignRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.post("/", designService.createDesign);
+  router.post("/", verifyToken, isAdmin, designService.createDesign);
 
   /**
    * @swagger
    * /api/design/{id}:
    *  put:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Designs
    *    summary: Update design
@@ -328,13 +333,15 @@ const DesignRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.put("/:id", designService.updateDesign);
-  router.put("/", designService.updateDesign);
+  router.put("/:id", verifyToken, isAdmin, designService.updateDesign);
+  router.put("/", verifyToken, isAdmin, designService.updateDesign);
 
   /**
    * @swagger
    * /api/design/{id}:
    *  delete:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Designs
    *    summary: Delete design
@@ -385,8 +392,8 @@ const DesignRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.delete("/:id", designService.deleteDesign);
-  router.delete("/", designService.deleteDesign);
+  router.delete("/:id", verifyToken, isAdmin, designService.deleteDesign);
+  router.delete("/", verifyToken, isAdmin, designService.deleteDesign);
 
   return app.use("/api/design", router);
 };

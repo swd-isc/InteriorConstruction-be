@@ -1,27 +1,28 @@
 import express from 'express';
 import { colorController } from '../controller/ColorController';
+import { isAdmin, verifyToken } from '../middleware/authen';
 
- /**
- * @swagger
- *  components:
- *      schemas:
- *          Color:
- *              type: object
- *              properties:
- *                  name:
- *                      type: string
- *                  description:
- *                      type: string
- *          ColorData:
- *              type: object
- *              properties:
- *                  id:
- *                      type: string
- *                  name:
- *                      type: string
- *                  description:
- *                      type: string
- */
+/**
+* @swagger
+*  components:
+*      schemas:
+*          Color:
+*              type: object
+*              properties:
+*                  name:
+*                      type: string
+*                  description:
+*                      type: string
+*          ColorData:
+*              type: object
+*              properties:
+*                  id:
+*                      type: string
+*                  name:
+*                      type: string
+*                  description:
+*                      type: string
+*/
 
 const ColorRouter = (app) => {
     const router = express.Router();
@@ -122,6 +123,8 @@ const ColorRouter = (app) => {
     * @swagger
     * /api/color:
     *  post:
+    *      security:
+    *           - bearerAuth: []
     *      tags:
     *           - Colors
     *      summary: Create color
@@ -178,13 +181,15 @@ const ColorRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
-    router.post('/', colorController.postColorController);
+    router.post('/', verifyToken, isAdmin, colorController.postColorController);
 
 
     /**
     * @swagger
     * /api/color/{id}:
     *  put:
+    *      security:
+    *           - bearerAuth: []
     *      tags:
     *           - Colors
     *      summary: Update color by id
@@ -248,13 +253,15 @@ const ColorRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
-    router.put('/', colorController.putColorController);
-    router.put('/:id', colorController.putColorController);
+    router.put('/', verifyToken, isAdmin, colorController.putColorController);
+    router.put('/:id', verifyToken, isAdmin, colorController.putColorController);
 
     /**
     * @swagger
     * /api/color/{id}:
     *  delete:
+    *      security:
+    *           - bearerAuth: []
     *      tags:
     *           - Colors
     *      summary: Delete color by Id
@@ -312,8 +319,8 @@ const ColorRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
-    router.delete('/:id', colorController.deleteColorController);
-    router.delete('/', colorController.deleteColorController);
+    router.delete('/:id', verifyToken, isAdmin, colorController.deleteColorController);
+    router.delete('/', verifyToken, isAdmin, colorController.deleteColorController);
 
     return app.use('/api/color', router);
 }

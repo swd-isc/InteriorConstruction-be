@@ -1,5 +1,6 @@
 import express from 'express';
 import { materialController } from '../controller/MaterialController';
+import { isAdmin, verifyToken } from '../middleware/authen';
 
 const router = express.Router();
 
@@ -80,6 +81,8 @@ const MaterialRouter = (app) => {
     * @swagger
     * /api/material:
     *  post:
+    *      security:
+    *           - bearerAuth: []
     *      tags:
     *           - Materials
     *      summary: Create material
@@ -136,13 +139,15 @@ const MaterialRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
-    router.post('/', materialController.postMaterial);
+    router.post('/', verifyToken, isAdmin, materialController.postMaterial);
 
 
     /**
     * @swagger
     * /api/material/{id}:
     *  put:
+    *      security:
+    *           - bearerAuth: []
     *      tags:
     *           - Materials
     *      summary: Update material by id
@@ -206,14 +211,16 @@ const MaterialRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
-    router.put('/', materialController.putMaterialController);
-    router.put('/:id', materialController.putMaterialController);
+    router.put('/', verifyToken, isAdmin, materialController.putMaterialController);
+    router.put('/:id', verifyToken, isAdmin, materialController.putMaterialController);
 
 
     /**
     * @swagger
     * /api/material/{id}:
     *  delete:
+    *      security:
+    *           - bearerAuth: []
     *      tags:
     *           - Materials
     *      summary: Delete material by Id
@@ -264,8 +271,8 @@ const MaterialRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
-    router.delete('/:id', materialController.deleteMaterialController);
-    router.delete('/', materialController.deleteMaterialController);
+    router.delete('/:id', verifyToken, isAdmin, materialController.deleteMaterialController);
+    router.delete('/', verifyToken, isAdmin, materialController.deleteMaterialController);
 
     return app.use('/api/material', router);
 }

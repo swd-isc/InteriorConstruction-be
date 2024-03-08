@@ -1,5 +1,6 @@
 import express from "express";
 import { accountService } from "../controller/AccountController";
+import { isAdmin, verifyToken } from "../middleware/authen";
 
 const router = express.Router();
 
@@ -47,6 +48,8 @@ const AccountRouter = (app) => {
       * @swagger
       * /api/account:
       *  get:
+      *      security:
+      *           - bearerAuth: []
       *      tags:
       *           - Accounts
       *      summary: Get account by page
@@ -115,12 +118,14 @@ const AccountRouter = (app) => {
       */
 
 
-  router.get("/", accountService.getAccounts);
+  router.get("/", verifyToken, isAdmin, accountService.getAccounts);
 
   /**
      * @swagger
      * /api/account/{id}:
      *  get:
+     *    security:
+     *      - bearerAuth: []
      *    tags:
      *      - Accounts
      *    summary: Get account by Id
@@ -172,17 +177,17 @@ const AccountRouter = (app) => {
      *                  type: string
      */
 
-  router.get("/:id", accountService.getAccountById);
+  router.get("/:id", verifyToken, accountService.getAccountById);
 
 
-  router.post("/", accountService.createAccount);
+  router.post("/", verifyToken, isAdmin, accountService.createAccount);
 
 
-  router.put("/:id", accountService.updateAccount);
-  router.put("/", accountService.updateAccount);
+  router.put("/:id", verifyToken, isAdmin, accountService.updateAccount);
+  router.put("/", verifyToken, isAdmin, accountService.updateAccount);
 
-  router.delete("/:id", accountService.deleteAccount);
-  router.delete("/", accountService.deleteAccount);
+  router.delete("/:id", verifyToken, isAdmin, accountService.deleteAccount);
+  router.delete("/", verifyToken, isAdmin, accountService.deleteAccount);
 
   return app.use("/api/account", router);
 };

@@ -1,5 +1,6 @@
 import express from "express";
 import { deliveryService } from "../controller/DeliveryController";
+import { isAdmin, verifyToken } from "../middleware/authen";
 
 const router = express.Router();
 
@@ -140,6 +141,8 @@ const DeliveryRouter = (app) => {
    * @swagger
    * /api/delivery:
    *  post:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Deliveries
    *    summary: Create delivery
@@ -189,12 +192,14 @@ const DeliveryRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.post("/", deliveryService.createDelivery);
+  router.post("/", verifyToken, isAdmin, deliveryService.createDelivery);
 
   /**
    * @swagger
    * /api/delivery/{id}:
    *  put:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Deliveries
    *    summary: Update delivery
@@ -251,13 +256,15 @@ const DeliveryRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.put("/:id", deliveryService.updateDelivery);
-  router.put("/", deliveryService.updateDelivery);
+  router.put("/:id", verifyToken, isAdmin, deliveryService.updateDelivery);
+  router.put("/", verifyToken, isAdmin, deliveryService.updateDelivery);
 
   /**
    * @swagger
    * /api/delivery/{id}:
    *  delete:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Deliveries
    *    summary: Delete delivery
@@ -308,8 +315,8 @@ const DeliveryRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.delete("/:id", deliveryService.deleteDelivery);
-  router.delete("/", deliveryService.deleteDelivery);
+  router.delete("/:id", verifyToken, isAdmin, deliveryService.deleteDelivery);
+  router.delete("/", verifyToken, isAdmin, deliveryService.deleteDelivery);
 
   return app.use("/api/delivery", router);
 };
