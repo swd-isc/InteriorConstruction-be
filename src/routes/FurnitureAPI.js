@@ -492,11 +492,25 @@ const ShopRouter = (app) => {
     *                                       colors:
     *                                           type: array
     *                                           items:
-    *                                               $ref: '#components/schemas/ColorData'
+    *                                               type: object
+    *                                               properties:
+    *                                                   id:
+    *                                                       type: string
+    *                                                   name:
+    *                                                       type: string
+    *                                                   count:
+    *                                                       type: number
     *                                       materials:
     *                                           type: array
     *                                           items:
-    *                                               $ref: '#components/schemas/MaterialData'
+    *                                               type: object
+    *                                               properties:
+    *                                                   id:
+    *                                                       type: string
+    *                                                   name:
+    *                                                       type: string
+    *                                                   count:
+    *                                                       type: number
     *                                       furnitures:
     *                                           type: array
     *                                           items:
@@ -521,6 +535,93 @@ const ShopRouter = (app) => {
     */
     router.get('/filter-session', furnitureController.filterSession);
 
+    /**
+    * @swagger
+    * /api/shop/search:
+    *  get:
+    *      tags:
+    *           - Furnitures
+    *      summary: Search furniture by name
+    *      description: This endpoint is for searching furniture by name
+    *      parameters:
+    *          - in: query
+    *            name: page
+    *            required: false
+    *            description: For pagination
+    *            schema:
+    *               type: number
+    *          - in: query
+    *            name: sort_by
+    *            required: false
+    *            description: For filtering
+    *            schema:
+    *               type: string
+    *               enum:
+    *                   - asc
+    *                   - desc
+    *          - in: query
+    *            name: furName
+    *            required: false
+    *            description: For filtering
+    *            schema:
+    *               type: string
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       colors:
+    *                                           type: array
+    *                                           items:
+    *                                               type: object
+    *                                               properties:
+    *                                                   id:
+    *                                                       type: string
+    *                                                   name:
+    *                                                       type: string
+    *                                                   count:
+    *                                                       type: number
+    *                                       materials:
+    *                                           type: array
+    *                                           items:
+    *                                               type: object
+    *                                               properties:
+    *                                                   id:
+    *                                                       type: string
+    *                                                   name:
+    *                                                       type: string
+    *                                                   count:
+    *                                                       type: number
+    *                                       furnitures:
+    *                                           type: array
+    *                                           items:
+    *                                               $ref: '#components/schemas/FurnitureData'
+    *                                       page:
+    *                                           type: string
+    *                                       totalPages:
+    *                                           type: number
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    */
     router.get('/search', furnitureController.searchFurController);
 
     /**
