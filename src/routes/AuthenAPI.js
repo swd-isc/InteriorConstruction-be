@@ -35,7 +35,7 @@ const AuthenRouter = (app) => {
      *                          password:
      *                              type: string
      *      responses:
-     *          200:
+     *          201:
      *              description: Ok
      *              content:
      *                  application/json:
