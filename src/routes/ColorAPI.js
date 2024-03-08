@@ -31,8 +31,6 @@ const ColorRouter = (app) => {
      * @swagger
      * /api/color/page/{page}:
      *  get:
-     *      security:
-     *          - bearerAuth: []
      *      tags:
      *          - Colors
      *      summary: Get color by page
@@ -74,8 +72,8 @@ const ColorRouter = (app) => {
      *                               messageError:
      *                                   type: string
      */
-    router.get('/page', verifyToken, colorController.getColorData);
-    router.get('/page/:page', verifyToken, colorController.getColorData);
+    router.get('/page', colorController.getColorData);
+    router.get('/page/:page', colorController.getColorData);
 
     /**
      * @swagger
