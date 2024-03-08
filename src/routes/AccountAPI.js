@@ -203,6 +203,14 @@ const AccountRouter = (app) => {
   *        description: Id required
   *        schema:
   *          type: string
+  *    requestBody:
+  *       required: true
+  *       content:
+  *           application/json:
+  *               schema:
+  *                   type: object
+  *                   properties:
+  *                     
   *    responses:
   *      200:
   *        description: Ok
@@ -242,9 +250,6 @@ const AccountRouter = (app) => {
   *                messageError:
   *                  type: string
   */
-  router.put("/client/:id", verifyToken, accountService.updateAccountByClient)
-
-
   router.put("/admin/:id", verifyToken, isAdmin, accountService.updateAccountByAdmin)
 
   router.delete("/:id", verifyToken, isAdmin, accountService.deleteAccount);
