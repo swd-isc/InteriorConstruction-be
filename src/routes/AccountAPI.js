@@ -121,63 +121,62 @@ const AccountRouter = (app) => {
   router.get("/", verifyToken, isAdmin, accountService.getAccounts);
 
   /**
-     * @swagger
-     * /api/account/{id}:
-     *  get:
-     *    security:
-     *      - bearerAuth: []
-     *    tags:
-     *      - Accounts
-     *    summary: Get account by Id
-     *    description: This endpoint is for getting account by Id
-     *    parameters:
-     *      - in: path
-     *        name: id
-     *        required: true
-     *        description: Id required
-     *        schema:
-     *          type: string
-     *    responses:
-     *      200:
-     *        description: Ok
-     *        content:
-     *          application/json:
-     *            schema:
-     *              type: object
-     *              properties:
-     *                status:
-     *                  type: number
-     *                data:
-     *                  $ref: '#components/schemas/AccountData'
-     *                message:
-     *                  type: string
-     *      400:
-     *        description: Bad request
-     *        content:
-     *          application/json:
-     *            schema:
-     *              type: object
-     *              properties:
-     *                status:
-     *                  type: number
-     *                data:
-     *                  type: object
-     *                messageError:
-     *                  type: string
-     *      500:
-     *        description: Server error
-     *        content:
-     *          application/json:
-     *            schema:
-     *              type: object
-     *              properties:
-     *                status:
-     *                  type: number
-     *                messageError:
-     *                  type: string
-     */
-
-  router.get("/:id", verifyToken, accountService.getAccountById);
+  * @swagger
+  * /api/account/{id}:
+  *  get:
+  *    security:
+  *      - bearerAuth: []
+  *    tags:
+  *      - Accounts
+  *    summary: Get account by Id
+  *    description: This endpoint is for getting account by Id
+  *    parameters:
+  *      - in: path
+  *        name: id
+  *        required: true
+  *        description: Id required
+  *        schema:
+  *          type: string
+  *    responses:
+  *      200:
+  *        description: Ok
+  *        content:
+  *          application/json:
+  *            schema:
+  *              type: object
+  *              properties:
+  *                status:
+  *                  type: number
+  *                data:
+  *                  $ref: '#components/schemas/AccountData'
+  *                message:
+  *                  type: string
+  *      400:
+  *        description: Bad request
+  *        content:
+  *          application/json:
+  *            schema:
+  *              type: object
+  *              properties:
+  *                status:
+  *                  type: number
+  *                data:
+  *                  type: object
+  *                messageError:
+  *                  type: string
+  *      500:
+  *        description: Server error
+  *        content:
+  *          application/json:
+  *            schema:
+  *              type: object
+  *              properties:
+  *                status:
+  *                  type: number
+  *                messageError:
+  *                  type: string
+  */
+  router.get("/:id", verifyToken, isAdmin, accountService.getAccountById);
 
 
   router.post("/", verifyToken, isAdmin, accountService.createAccount);
@@ -187,8 +186,66 @@ const AccountRouter = (app) => {
   router.put("/", verifyToken, isAdmin, accountService.updateAccount);
 
   //TODO: swagger this
+  /**
+  * @swagger
+  * /api/account/client/{id}:
+  *  get:
+  *    security:
+  *      - bearerAuth: []
+  *    tags:
+  *      - Accounts
+  *    summary: Update client account by Id
+  *    description: This endpoint is for updating client account by Id
+  *    parameters:
+  *      - in: path
+  *        name: id
+  *        required: true
+  *        description: Id required
+  *        schema:
+  *          type: string
+  *    responses:
+  *      200:
+  *        description: Ok
+  *        content:
+  *          application/json:
+  *            schema:
+  *              type: object
+  *              properties:
+  *                status:
+  *                  type: number
+  *                data:
+  *                  $ref: '#components/schemas/AccountData'
+  *                message:
+  *                  type: string
+  *      400:
+  *        description: Bad request
+  *        content:
+  *          application/json:
+  *            schema:
+  *              type: object
+  *              properties:
+  *                status:
+  *                  type: number
+  *                data:
+  *                  type: object
+  *                messageError:
+  *                  type: string
+  *      500:
+  *        description: Server error
+  *        content:
+  *          application/json:
+  *            schema:
+  *              type: object
+  *              properties:
+  *                status:
+  *                  type: number
+  *                messageError:
+  *                  type: string
+  */
   router.put("/client/:id", verifyToken, accountService.updateAccountByClient)
-  router.put("/admin/:id", verifyToken, accountService.updateAccountByAdmin)
+
+
+  router.put("/admin/:id", verifyToken, isAdmin, accountService.updateAccountByAdmin)
 
   router.delete("/:id", verifyToken, isAdmin, accountService.deleteAccount);
   router.delete("/", verifyToken, isAdmin, accountService.deleteAccount);
