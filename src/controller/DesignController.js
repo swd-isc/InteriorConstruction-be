@@ -5,10 +5,11 @@ export const designService = {
     let data = await designRepository.getDesigns(
       req.query.sort_by,
       req.query.page,
-      req.query.type
+      req.query.classificationId,
     );
     return res.status(data.status).json(data);
   },
+
 
   getDesignById: async (req, res) => {
     let data = await designRepository.getDesignById(req.params.id);

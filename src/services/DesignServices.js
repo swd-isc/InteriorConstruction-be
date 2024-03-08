@@ -1,10 +1,11 @@
 import Design from "../models/Design";
 import mongoose from "mongoose";
+import Classification from "../models/Classification";
 
 const ObjectId = mongoose.Types.ObjectId;
 
 export const designRepository = {
-  getDesigns: async (mode, pageReq, designType) => {
+  getDesigns: async (mode, pageReq, classificationId) => {
     try {
       let sortAsc = sortByInput(mode);
       const itemsPerPage = 10;
@@ -12,27 +13,28 @@ export const designRepository = {
       const page = parseInt(pageReq) || 1;
       let data = {};
 
-      // Calculate start and end indices for the current page
       const startIndex = (page - 1) * itemsPerPage;
 
-      // Check if designType is undefined or null, and convert to uppercase
-      if (designType !== undefined && designType !== null) {
-        designType = designType.toUpperCase();
+      const match = {
+        type: "DEFAULT",
+      };
 
-        // Validate designType
-        if (designType === "DEFAULT" || designType === "CUSTOM") {
-          // Valid input, proceed with your logic
-          console.log("Design type is valid:", designType);
-        } else {
-          // Invalid input, set to DEFAULT and log a message
-          designType = "DEFAULT";
-          console.warn("Invalid design type. Setting to DEFAULT.");
+      if (classificationId) {
+        const idClassificationValid = await isIdValid(
+          classificationId,
+          "classification"
+        );
+
+        if (!idClassificationValid.isValid) {
+          return {
+            status: idClassificationValid.status,
+            data: {},
+            messageError: idClassificationValid.messageError,
+          };
         }
-      } else {
-        designType = "DEFAULT";
+        match.classifications = new ObjectId(classificationId);
       }
 
-      // Get the data for the current page
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
@@ -40,16 +42,14 @@ export const designRepository = {
       });
 
       // Count all documents in the collection
-      const totalDocuments = await Design.countDocuments({ type: designType });
+      const totalDocuments = await Design.countDocuments(match);
 
       // Calculate total pages
       const totalPages = Math.ceil(totalDocuments / itemsPerPage);
 
       data.designs = await Design.aggregate([
         {
-          $match: {
-            type: designType,
-          },
+          $match: match,
         },
         {
           $sort: {
@@ -62,7 +62,7 @@ export const designRepository = {
         {
           $limit: itemsPerPage, // Limit the number of documents per page
         },
-        {$addFields:{v:0}},
+        { $addFields: { v: 0 } },
         {
           $lookup: {
             from: "classification",
@@ -178,10 +178,17 @@ export const designRepository = {
         {
           $project: {
             classifications: 0,
-            type: 0,
           },
         },
       ]);
+
+      if (data[0].type == "CUSTOM") {
+        return {
+          status: 400,
+          data: {},
+          message: "Can not view Custom Design",
+        };
+      }
 
       return {
         status: 200,
@@ -239,79 +246,84 @@ export const designRepository = {
 
   updateDesign: async (designId, reqBody) => {
     try {
-        let data = {};
+      let data = {};
 
-        const idDesignValid = await isIdValid(designId, "design");
+      const idDesignValid = await isIdValid(designId, "design");
 
-        if (!idDesignValid.isValid) {
-            return {
-                status: idDesignValid.status,
-                data: {},
-                messageError: idDesignValid.messageError,
-            };
-        }
-
-        if (!reqBody) {
-            return {
-                status: 400,
-                data: {},
-                messageError: "Required body",
-            };
-        }
-
-        const url = process.env.URL_DB;
-        await mongoose.connect(url, {
-            family: 4,
-            dbName: "interiorConstruction",
-        });
-
-        let design = await Design.findById(designId);
-
-        if (!design) {
-            return {
-                status: 404,
-                data: {},
-                messageError: "Design not found",
-            };
-        }
-
-        // Iterate through req.body and set corresponding fields in the design object
-        for (const key in reqBody) {
-            if (reqBody.hasOwnProperty(key)) {
-                design[key] = reqBody[key];
-            }
-        }
-
-        try {
-            // Validate the updated design object
-            await design.validate();
-
-            // Save the updated design
-            data = await design.save();
-        } catch (error) {
-            return {
-                status: 400,
-                data: {},
-                messageError: error.message,
-            };
-        }
-
+      if (!idDesignValid.isValid) {
         return {
-            status: 200,
-            data: data !== null ? data : {},
-            message: data !== null ? "OK" : "No data",
+          status: idDesignValid.status,
+          data: {},
+          messageError: idDesignValid.messageError,
         };
+      }
+
+      if (!reqBody) {
+        return {
+          status: 400,
+          data: {},
+          messageError: "Required body",
+        };
+      }
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      let design = await Design.findById(designId);
+
+      if (!design) {
+        return {
+          status: 404,
+          data: {},
+          messageError: "Design not found",
+        };
+      }
+
+      // Iterate through req.body and set corresponding fields in the design object
+      for (const key in reqBody) {
+        if (reqBody.hasOwnProperty(key)) {
+          design[key] = reqBody[key];
+        }
+      }
+
+      if (reqBody.type) {
+        return {
+          status: 400,
+          data: {},
+          messageError: "Can not edit Type of Design",
+        };
+      }
+
+      try {
+        // Save the updated design
+        data = await design.save();
+      } catch (error) {
+        return {
+          status: 400,
+          data: {},
+          messageError: error.message,
+        };
+      }
+
+      return {
+        status: 200,
+        data: data !== null ? data : {},
+        message: data !== null ? "OK" : "No data",
+      };
     } catch (error) {
-        console.error("error ne", error);
-        return {
-            status: 500,
-            messageError: error,
-        };
+      console.error("error ne", error);
+      return {
+        status: 500,
+        messageError: error,
+      };
     } finally {
-        // Close the database connection
-        mongoose.connection.close();
+      // Close the database connection
+      mongoose.connection.close();
     }
-},
+  },
 
   deleteDesign: async (designId) => {
     try {
@@ -410,6 +422,10 @@ async function isIdValid(id, model) {
       case "design":
         // Check if the classification with the given ObjectId exists in the database
         data = await Design.findById(id);
+        break;
+      case "classification":
+        // Check if the classification with the given ObjectId exists in the database
+        data = await Classification.findById(id);
         break;
       default:
         break;
