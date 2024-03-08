@@ -84,8 +84,8 @@ const DesignRouter = (app) => {
    *  get:
    *    tags:
    *      - Designs
-   *    summary: Get design by page
-   *    description: This endpoint is for getting design by page
+   *    summary: Get design by classificationId
+   *    description: This endpoint is for getting design by classificationId
    *    parameters:
    *      - in: query
    *        name: page
@@ -100,14 +100,11 @@ const DesignRouter = (app) => {
    *        schema:
    *          type: string
    *      - in: query
-   *        name: type
+   *        name: classificationId
    *        required: false
-   *        description: Choose design type, default type = DEFAULT
+   *        description: For filter
    *        schema:
    *          type: string
-   *          enum:
-   *            - DEFAULT
-   *            - CUSTOM
    *    responses:
    *      200:
    *        description: Ok
@@ -156,7 +153,7 @@ const DesignRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.get("/", designService.getDesigns);
+  router.get("/", designService.getDesigns); //This router just for type = "DEFAULT"
 
   /**
    * @swagger
