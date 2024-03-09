@@ -107,6 +107,9 @@ const DesignRouter = (app) => {
    *        description: For filter "DEFAULT" or "CUSTOM". If not will find all
    *        schema:
    *          type: string
+   *          enum:
+   *            - DEFAULT
+   *            - CUSTOM
    *    responses:
    *      200:
    *        description: Ok
