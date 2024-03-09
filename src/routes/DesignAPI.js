@@ -102,9 +102,9 @@ const DesignRouter = (app) => {
    *        schema:
    *          type: string
    *      - in: query
-   *        name: classificationId
+   *        name: type
    *        required: false
-   *        description: For filter
+   *        description: For filter "DEFAULT" or "CUSTOM". If not will find all
    *        schema:
    *          type: string
    *    responses:
