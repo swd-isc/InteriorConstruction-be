@@ -122,6 +122,8 @@ const ClientRouter = (app) => {
    * @swagger
    * /api/client:
    *  get:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Clients
    *    summary: Get clients by page
@@ -158,12 +160,14 @@ const ClientRouter = (app) => {
    *                      type: string
    *                    
    */
-  router.get("/", clientService.getClients);
+  router.get("/", verifyToken, isAdmin, clientService.getClients);
 
   /**
    * @swagger
    * /api/client/{id}:
    *  get:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Clients
    *    summary: Get client by id
@@ -200,7 +204,7 @@ const ClientRouter = (app) => {
    *                      type: string
    *                    
    */
-  router.get("/:id", clientService.getClientById);
+  router.get("/:id", verifyToken, isAdmin, clientService.getClientById);
 
   router.post("/", clientService.createClient);
 
