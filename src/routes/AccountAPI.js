@@ -115,9 +115,22 @@ const AccountRouter = (app) => {
       *                                  type: number
       *                              messageError:
       *                                  type: string
+      *          401:
+      *               description: Unauthorized
+      *               content:
+      *                    application/json:
+      *                        schema:
+      *                            type: string
+      *          403:
+      *               description: Forbidden
+      *               content:
+      *                    application/json:
+      *                        schema:
+      *                            type: object
+      *                            properties:
+      *                                messageError:
+      *                                    type: string 
       */
-
-
   router.get("/", verifyToken, isAdmin, accountService.getAccounts);
 
   /**
@@ -175,6 +188,21 @@ const AccountRouter = (app) => {
   *                  type: number
   *                messageError:
   *                  type: string
+  *      401:
+  *           description: Unauthorized
+  *           content:
+  *                application/json:
+  *                    schema:
+  *                        type: string
+  *      403:
+  *           description: Forbidden
+  *           content:
+  *                application/json:
+  *                    schema:
+  *                        type: object
+  *                        properties:
+  *                            messageError:
+  *                                type: string 
   */
   router.get("/:id", verifyToken, isAdmin, accountService.getAccountById);
 

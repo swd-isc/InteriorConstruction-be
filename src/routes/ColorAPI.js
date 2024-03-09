@@ -180,6 +180,21 @@ const ColorRouter = (app) => {
     *                                   type: number
     *                               messageError:
     *                                   type: string
+    *          401:
+    *               description: Unauthorized
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: string
+    *          403:
+    *               description: Forbidden
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: object
+    *                            properties:
+    *                                messageError:
+    *                                    type: string 
     */
     router.post('/', verifyToken, isAdmin, colorController.postColorController);
 
@@ -252,6 +267,21 @@ const ColorRouter = (app) => {
     *                                   type: number
     *                               messageError:
     *                                   type: string
+    *          401:
+    *               description: Unauthorized
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: string
+    *          403:
+    *               description: Forbidden
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: object
+    *                            properties:
+    *                                messageError:
+    *                                    type: string 
     */
     router.put('/', verifyToken, isAdmin, colorController.putColorController);
     router.put('/:id', verifyToken, isAdmin, colorController.putColorController);
@@ -318,6 +348,21 @@ const ColorRouter = (app) => {
     *                                   type: number
     *                               messageError:
     *                                   type: string
+    *          401:
+    *               description: Unauthorized
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: string
+    *          403:
+    *               description: Forbidden
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: object
+    *                            properties:
+    *                                messageError:
+    *                                    type: string 
     */
     router.delete('/:id', verifyToken, isAdmin, colorController.deleteColorController);
     router.delete('/', verifyToken, isAdmin, colorController.deleteColorController);

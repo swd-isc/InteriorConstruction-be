@@ -138,6 +138,21 @@ const MaterialRouter = (app) => {
     *                                   type: number
     *                               messageError:
     *                                   type: string
+    *          401:
+    *               description: Unauthorized
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: string
+    *          403:
+    *               description: Forbidden
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: object
+    *                            properties:
+    *                                messageError:
+    *                                    type: string 
     */
     router.post('/', verifyToken, isAdmin, materialController.postMaterial);
 
@@ -157,7 +172,7 @@ const MaterialRouter = (app) => {
     *           content:
     *               application/json:
     *                   schema:
-    *                       $ref: '#components/schemas/Color'
+    *                       $ref: '#components/schemas/Material'
     *      parameters:
     *          - in: path
     *            name: id
@@ -210,6 +225,21 @@ const MaterialRouter = (app) => {
     *                                   type: number
     *                               messageError:
     *                                   type: string
+    *          401:
+    *               description: Unauthorized
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: string
+    *          403:
+    *               description: Forbidden
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: object
+    *                            properties:
+    *                                messageError:
+    *                                    type: string 
     */
     router.put('/', verifyToken, isAdmin, materialController.putMaterialController);
     router.put('/:id', verifyToken, isAdmin, materialController.putMaterialController);
@@ -270,6 +300,21 @@ const MaterialRouter = (app) => {
     *                                   type: number
     *                               messageError:
     *                                   type: string
+    *          401:
+    *               description: Unauthorized
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: string
+    *          403:
+    *               description: Forbidden
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: object
+    *                            properties:
+    *                                messageError:
+    *                                    type: string 
     */
     router.delete('/:id', verifyToken, isAdmin, materialController.deleteMaterialController);
     router.delete('/', verifyToken, isAdmin, materialController.deleteMaterialController);

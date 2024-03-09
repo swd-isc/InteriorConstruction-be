@@ -11,27 +11,25 @@ const router = express.Router();
  *          Contract:
  *              type: object
  *              properties:
- *                  clientId:
- *                      type: string
  *                  designId:
  *                      type: string
  *                  contractPrice:
  *                      type: number
+ *                  contractFileURL:
+ *                      type: string
  *                  status: 
  *                      type: string
  *          ContractData:
  *              type: object
  *              properties:
- *                  id:
- *                      type: string
  *                  clientId:
  *                      type: string
  *                  designId:
  *                      type: string
  *                  contractPrice:
  *                      type: number
- *                  status: 
- *                      type: string           
+ *                  contractFileURL:
+ *                      type: string         
  */
 
 const ContractRouter = (app) => {
@@ -119,6 +117,21 @@ const ContractRouter = (app) => {
   *                                  type: number
   *                              messageError:
   *                                  type: string
+  *          401:
+  *               description: Unauthorized
+  *               content:
+  *                    application/json:
+  *                        schema:
+  *                            type: string
+  *          403:
+  *               description: Forbidden
+  *               content:
+  *                    application/json:
+  *                        schema:
+  *                            type: object
+  *                            properties:
+  *                                messageError:
+  *                                    type: string 
   */
   router.get("/", verifyToken, contractService.getContracts);
 
@@ -177,6 +190,21 @@ const ContractRouter = (app) => {
      *                  type: number
      *                messageError:
      *                  type: string
+     *      401:
+     *           description: Unauthorized
+     *           content:
+     *                application/json:
+     *                    schema:
+     *                        type: string
+     *      403:
+     *           description: Forbidden
+     *           content:
+     *                application/json:
+     *                    schema:
+     *                        type: object
+     *                        properties:
+     *                            messageError:
+     *                                type: string 
      */
 
   router.get("/:id", verifyToken, contractService.getContractById);
@@ -247,8 +275,22 @@ const ContractRouter = (app) => {
   *                                   type: number
   *                               messageError:
   *                                   type: string
+  *          401:
+  *               description: Unauthorized
+  *               content:
+  *                    application/json:
+  *                        schema:
+  *                            type: string
+  *          403:
+  *               description: Forbidden
+  *               content:
+  *                    application/json:
+  *                        schema:
+  *                            type: object
+  *                            properties:
+  *                                messageError:
+  *                                    type: string 
   */
-
   router.post("/", verifyToken, isAdmin, contractService.createContract);
 
   /**
@@ -266,7 +308,7 @@ const ContractRouter = (app) => {
    *           content:
    *               application/json:
    *                   schema:
-   *                       $ref: '#components/schemas/ContractData'
+   *                       $ref: '#components/schemas/Contract'
    *      parameters:
    *          - in: path
    *            name: id
@@ -295,6 +337,8 @@ const ContractRouter = (app) => {
    *                                           type: string
    *                                       contractPrice:
    *                                           type: number
+   *                                       contractFileURL:
+   *                                           type: string 
    *                                       status:
    *                                           type: string
    *                               message:
@@ -323,6 +367,21 @@ const ContractRouter = (app) => {
    *                                   type: number
    *                               messageError:
    *                                   type: string
+   *          401:
+   *               description: Unauthorized
+   *               content:
+   *                    application/json:
+   *                        schema:
+   *                            type: string
+   *          403:
+   *               description: Forbidden
+   *               content:
+   *                    application/json:
+   *                        schema:
+   *                            type: object
+   *                            properties:
+   *                                messageError:
+   *                                    type: string 
    */
   router.put("/:id", verifyToken, isAdmin, contractService.updateContract);
   router.put("/", verifyToken, isAdmin, contractService.updateContract);

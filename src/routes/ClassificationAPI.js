@@ -18,14 +18,11 @@ const router = express.Router();
  *          ClassificationData:
  *              type: object
  *              properties:
- *                  id:
- *                      type: string
  *                  classificationName:
  *                      type: string
  *                  type:
  *                      type: string 
  */
-
 
 const ClassificationRouter = (app) => {
 
@@ -208,9 +205,22 @@ const ClassificationRouter = (app) => {
     *                                   type: number
     *                               messageError:
     *                                   type: string
+    *          401:
+    *               description: Unauthorized
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: string
+    *          403:
+    *               description: Forbidden
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: object
+    *                            properties:
+    *                                messageError:
+    *                                    type: string 
      */
-
-
     router.post('/', verifyToken, isAdmin, classificationController.postClassificationController);
 
     /**
@@ -281,8 +291,22 @@ const ClassificationRouter = (app) => {
         *                                   type: number
         *                               messageError:
         *                                   type: string
+        *          401:
+        *               description: Unauthorized
+        *               content:
+        *                    application/json:
+        *                        schema:
+        *                            type: string
+        *          403:
+        *               description: Forbidden
+        *               content:
+        *                    application/json:
+        *                        schema:
+        *                            type: object
+        *                            properties:
+        *                                messageError:
+        *                                    type: string 
         */
-
     router.put('/', verifyToken, isAdmin, classificationController.putClassificationController);
     router.put('/:id', verifyToken, isAdmin, classificationController.putClassificationController);
 
@@ -342,8 +366,22 @@ const ClassificationRouter = (app) => {
     *                                   type: number
     *                               messageError:
     *                                   type: string
+    *          401:
+    *               description: Unauthorized
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: string
+    *          403:
+    *               description: Forbidden
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: object
+    *                            properties:
+    *                                messageError:
+    *                                    type: string 
     */
-
     router.delete('/:id', verifyToken, isAdmin, classificationController.deleteClassificationController);
     router.delete('/', verifyToken, isAdmin, classificationController.deleteClassificationController);
 

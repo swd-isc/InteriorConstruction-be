@@ -191,6 +191,21 @@ const DeliveryRouter = (app) => {
    *                  type: number
    *                messageError:
    *                  type: string
+   *      401:
+   *           description: Unauthorized
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: string
+   *      403:
+   *           description: Forbidden
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            messageError:
+   *                                type: string 
    */
   router.post("/", verifyToken, isAdmin, deliveryService.createDelivery);
 
@@ -255,6 +270,21 @@ const DeliveryRouter = (app) => {
    *                  type: number
    *                messageError:
    *                  type: string
+   *      401:
+   *           description: Unauthorized
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: string
+   *      403:
+   *           description: Forbidden
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            messageError:
+   *                                type: string 
    */
   router.put("/:id", verifyToken, isAdmin, deliveryService.updateDelivery);
   router.put("/", verifyToken, isAdmin, deliveryService.updateDelivery);
@@ -314,6 +344,21 @@ const DeliveryRouter = (app) => {
    *                  type: number
    *                messageError:
    *                  type: string
+   *      401:
+   *           description: Unauthorized
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: string
+   *      403:
+   *           description: Forbidden
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            messageError:
+   *                                type: string 
    */
   router.delete("/:id", verifyToken, isAdmin, deliveryService.deleteDelivery);
   router.delete("/", verifyToken, isAdmin, deliveryService.deleteDelivery);

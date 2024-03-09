@@ -10,6 +10,29 @@ const router = express.Router();
  *          ReturnPolicy:
  *              type: object
  *              properties:
+ *                  headerName:
+ *                      type: string
+ *                  headerDescription:
+ *                      type: string
+ *                  titleName:
+ *                      type: string
+ *                  titleDescription:
+ *                      type: string
+ *                  returnExchangeCases:
+ *                      type: string
+ *                  nonReturnExchangeCases:
+ *                      type: array
+ *                      items:
+ *                         schema:
+ *                             type: string
+ *                  returnProcedure:
+ *                      type: array
+ *                      items:
+ *                         schema:
+ *                             type: string
+ *          ReturnPolicyData:
+ *              type: object
+ *              properties:
  *                  id:
  *                      type: string
  *                  headerName:
@@ -23,9 +46,15 @@ const router = express.Router();
  *                  returnExchangeCases:
  *                      type: string
  *                  nonReturnExchangeCases:
- *                      type: string
+ *                      type: array
+ *                      items:
+ *                         schema:
+ *                             type: string
  *                  returnProcedure:
- *                      type: string
+ *                      type: array
+ *                      items:
+ *                         schema:
+ *                             type: string
  */
 
 
@@ -143,14 +172,48 @@ const ReturnPolicyRouter = (app) => {
      *                                       returnExchangeCases:
      *                                           type: string
      *                                       nonReturnExchangeCases:
-     *                                           type: string
+     *                                           type: array
+     *                                           items:
+     *                                              schema:
+     *                                                  type: string
      *                                       returnProcedure:
-     *                                           type: string
+     *                                           type: array
+     *                                           items:
+     *                                              schema:
+     *                                                  type: string
      *                                       id:
      *                                           type: string
      *                               message:
-     *                                   type: string        
-     *          500:
+     *                                   type: string
+     *          400:
+     *               description: Bad Request
+     *               content:
+     *                    application/json:
+     *                        schema:
+     *                            type: object
+     *                            properties:
+     *                                status:
+     *                                    type: number
+     *                                data:
+     *                                    type: object
+     *                                messageError:
+     *                                    type: string
+     *          401:
+     *               description: Unauthorized
+     *               content:
+     *                    application/json:
+     *                        schema:
+     *                            type: string
+     *          403:
+     *               description: Forbidden
+     *               content:
+     *                    application/json:
+     *                        schema:
+     *                            type: object
+     *                            properties:
+     *                                messageError:
+     *                                    type: string
+     *          500: 
      *               description: Server error
      *               content:
      *                   application/json:
@@ -213,9 +276,15 @@ const ReturnPolicyRouter = (app) => {
     *                                       returnExchangeCases:
     *                                           type: string
     *                                       nonReturnExchangeCases:
-    *                                           type: string
+    *                                           type: array
+    *                                           items:
+    *                                              schema:
+    *                                                  type: string
     *                                       returnProcedure:
-    *                                           type: string
+    *                                           type: array
+    *                                           items:
+    *                                              schema:
+    *                                                  type: string
     *                               message:
     *                                   type: string
     *          500:
@@ -241,7 +310,22 @@ const ReturnPolicyRouter = (app) => {
     *                               data:
     *                                   type: object
     *                               messageError:
-    *                                   type: string       
+    *                                   type: string
+    *          401:
+    *               description: Unauthorized
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: string
+    *          403:
+    *               description: Forbidden
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: object
+    *                            properties:
+    *                                messageError:
+    *                                    type: string 
     */
     router.put('/', verifyToken, isAdmin, returnPolicyController.putReturnPolicyController);
     router.put('/:id', verifyToken, isAdmin, returnPolicyController.putReturnPolicyController);
@@ -308,6 +392,21 @@ const ReturnPolicyRouter = (app) => {
     *                                   type: number
     *                               messageError:
     *                                   type: string
+    *          401:
+    *               description: Unauthorized
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: string
+    *          403:
+    *               description: Forbidden
+    *               content:
+    *                    application/json:
+    *                        schema:
+    *                            type: object
+    *                            properties:
+    *                                messageError:
+    *                                    type: string 
     */
     router.delete('/:id', verifyToken, isAdmin, returnPolicyController.deleteReturnPolicyController);
     router.delete('/', verifyToken, isAdmin, returnPolicyController.deleteReturnPolicyController);

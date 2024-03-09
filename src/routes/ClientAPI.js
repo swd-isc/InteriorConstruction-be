@@ -1,6 +1,6 @@
 import express from "express";
 import { clientService } from "../controller/ClientController";
-import { isAdmin, isCurrentClient, verifyToken } from "../middleware/authen";
+import { isAdmin, isCurrentUser, verifyToken } from "../middleware/authen";
 import { accountService } from "../controller/AccountController";
 
 const router = express.Router();
@@ -158,7 +158,45 @@ const ClientRouter = (app) => {
    *                          type: number
    *                    message:
    *                      type: string
-   *                    
+   *      400:
+   *        description: Bad request
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  type: object
+   *                messageError:
+   *                  type: string
+   *      500:
+   *        description: Server error
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                messageError:
+   *                  type: string
+   *      401:
+   *           description: Unauthorized
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: string
+   *      403:
+   *           description: Forbidden
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            messageError:
+   *                                type: string 
    */
   router.get("/", verifyToken, isAdmin, clientService.getClients);
 
@@ -202,7 +240,45 @@ const ClientRouter = (app) => {
    *                          type: number
    *                    message:
    *                      type: string
-   *                    
+   *      400:
+   *        description: Bad request
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  type: object
+   *                messageError:
+   *                  type: string
+   *      500:
+   *        description: Server error
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                messageError:
+   *                  type: string
+   *      401:
+   *           description: Unauthorized
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: string
+   *      403:
+   *           description: Forbidden
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            messageError:
+   *                                type: string 
    */
   router.get("/:id", verifyToken, isAdmin, clientService.getClientById);
 
@@ -270,6 +346,21 @@ const ClientRouter = (app) => {
     *                  type: number
     *                messageError:
     *                  type: string
+    *      401:
+    *           description: Unauthorized
+    *           content:
+    *                application/json:
+    *                    schema:
+    *                        type: string
+    *      403:
+    *           description: Forbidden
+    *           content:
+    *                application/json:
+    *                    schema:
+    *                        type: object
+    *                        properties:
+    *                            messageError:
+    *                                type: string 
     */
   router.put("/ad/:accountId", verifyToken, isAdmin, accountService.updateAccountByAdmin);
   router.put("/ad/", verifyToken, isAdmin, accountService.updateAccountByAdmin);
@@ -346,9 +437,24 @@ const ClientRouter = (app) => {
     *                  type: number
     *                messageError:
     *                  type: string
+    *      401:
+    *           description: Unauthorized
+    *           content:
+    *                application/json:
+    *                    schema:
+    *                        type: string
+    *      403:
+    *           description: Forbidden
+    *           content:
+    *                application/json:
+    *                    schema:
+    *                        type: object
+    *                        properties:
+    *                            messageError:
+    *                                type: string 
     */
-  router.put("/:id", verifyToken, isCurrentClient, clientService.updateClient);
-  router.put("/", verifyToken, isCurrentClient, clientService.updateClient);
+  router.put("/:id", verifyToken, isCurrentUser, clientService.updateClient);
+  router.put("/", verifyToken, isCurrentUser, clientService.updateClient);
 
   router.delete("/:id", verifyToken, clientService.deleteClient);
   router.delete("/", verifyToken, clientService.deleteClient);

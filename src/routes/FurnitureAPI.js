@@ -302,6 +302,21 @@ const FurnitureRouter = (app) => {
      *                                   type: number
      *                               messageError:
      *                                   type: string
+     *          401:
+     *               description: Unauthorized
+     *               content:
+     *                    application/json:
+     *                        schema:
+     *                            type: string
+     *          403:
+     *               description: Forbidden
+     *               content:
+     *                    application/json:
+     *                        schema:
+     *                            type: object
+     *                            properties:
+     *                                messageError:
+     *                                    type: string 
      */
     router.post('/', verifyToken, isAdmin, furnitureController.createFurController);
 
@@ -366,6 +381,21 @@ const FurnitureRouter = (app) => {
      *                                   type: number
      *                               messageError:
      *                                   type: string
+     *          401:
+     *               description: Unauthorized
+     *               content:
+     *                    application/json:
+     *                        schema:
+     *                            type: string
+     *          403:
+     *               description: Forbidden
+     *               content:
+     *                    application/json:
+     *                        schema:
+     *                            type: object
+     *                            properties:
+     *                                messageError:
+     *                                    type: string 
      */
     router.put('/', verifyToken, isAdmin, furnitureController.updateFurController);
     router.put('/:id', verifyToken, isAdmin, furnitureController.updateFurController);
@@ -425,6 +455,21 @@ const FurnitureRouter = (app) => {
      *                                   type: number
      *                               messageError:
      *                                   type: string
+     *          401:
+     *               description: Unauthorized
+     *               content:
+     *                    application/json:
+     *                        schema:
+     *                            type: string
+     *          403:
+     *               description: Forbidden
+     *               content:
+     *                    application/json:
+     *                        schema:
+     *                            type: object
+     *                            properties:
+     *                                messageError:
+     *                                    type: string 
      */
     router.delete('/:id', verifyToken, isAdmin, furnitureController.deleteFurController);
     router.delete('/', verifyToken, isAdmin, furnitureController.deleteFurController);
