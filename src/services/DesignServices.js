@@ -226,11 +226,13 @@ export const designRepository = {
 
       const match = {};
 
-      type = type.toUpperCase();
-      if (type == "DEFAULT" || type == "CUSTOM") {
-        match.type = type;
+      if (type) {
+        type = type.toUpperCase();
+        if (type == "DEFAULT" || type == "CUSTOM") {
+          match.type = type;
+        }
       }
-
+      
       // Count all documents in the collection
       const totalDocuments = await Design.countDocuments(match);
 
