@@ -243,62 +243,62 @@ export const accountRepository = {
     }
   },
 
-  updateAccount: async (accountId, reqBody) => {
-    try {
-      let data = {};
+  // updateAccount: async (accountId, reqBody) => {
+  //   try {
+  //     let data = {};
 
-      const idAccountValid = await isIdValid(accountId, "account");
+  //     const idAccountValid = await isIdValid(accountId, "account");
 
-      if (!idAccountValid.isValid) {
-        return {
-          status: idAccountValid.status,
-          data: {},
-          messageError: idAccountValid.messageError,
-        };
-      }
+  //     if (!idAccountValid.isValid) {
+  //       return {
+  //         status: idAccountValid.status,
+  //         data: {},
+  //         messageError: idAccountValid.messageError,
+  //       };
+  //     }
 
-      if (!reqBody) {
-        return {
-          status: 400,
-          data: {},
-          messageError: "Required body",
-        };
-      }
+  //     if (!reqBody) {
+  //       return {
+  //         status: 400,
+  //         data: {},
+  //         messageError: "Required body",
+  //       };
+  //     }
 
-      const url = process.env.URL_DB;
-      await mongoose.connect(url, {
-        family: 4,
-        dbName: "interiorConstruction",
-      });
+  //     const url = process.env.URL_DB;
+  //     await mongoose.connect(url, {
+  //       family: 4,
+  //       dbName: "interiorConstruction",
+  //     });
 
-      try {
-        data = await Account.findByIdAndUpdate(accountId, reqBody, {
-          runValidators: true,
-          new: true,
-        });
-      } catch (error) {
-        return {
-          status: 400,
-          data: {},
-          messageError: error.message,
-        };
-      }
+  //     try {
+  //       data = await Account.findByIdAndUpdate(accountId, reqBody, {
+  //         runValidators: true,
+  //         new: true,
+  //       });
+  //     } catch (error) {
+  //       return {
+  //         status: 400,
+  //         data: {},
+  //         messageError: error.message,
+  //       };
+  //     }
 
-      return {
-        status: 200,
-        message: data !== null ? "OK" : "No data",
-      };
-    } catch (error) {
-      console.error("error ne", error);
-      return {
-        status: 500,
-        messageError: error,
-      };
-    } finally {
-      // Close the database connection
-      mongoose.connection.close();
-    }
-  },
+  //     return {
+  //       status: 200,
+  //       message: data !== null ? "OK" : "No data",
+  //     };
+  //   } catch (error) {
+  //     console.error("error ne", error);
+  //     return {
+  //       status: 500,
+  //       messageError: error,
+  //     };
+  //   } finally {
+  //     // Close the database connection
+  //     mongoose.connection.close();
+  //   }
+  // },
 
   updateAccountByAdmin: async (accountId, reqBody) => {
     try {
@@ -331,8 +331,6 @@ export const accountRepository = {
       try {
         const account = await Account.findById(accountId);
         if (reqBody.status) account.status = reqBody.status;
-
-        console.log(account.role)
 
         if (account.role == "ADMIN") {
           return {
