@@ -264,6 +264,17 @@ export const colorServices = {
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
             try {
+
+                const furnitureWithColor = await Furniture.findOne({ colors: colorId });
+                if (furnitureWithColor) {
+                    return {
+                        status: 400,
+                        data: {},
+                        messageError: 'Cannot delete color because it is referenced by one or more furnitures.'
+                    };
+                }
+
+
                 data = await Color.findOneAndDelete({ _id: new ObjectId(colorId) });
             } catch (error) {
                 return {

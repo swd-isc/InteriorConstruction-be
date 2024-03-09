@@ -1,4 +1,5 @@
 import Material from '../models/Material';
+import Furniture from '../models/Furniture';
 
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
@@ -174,6 +175,16 @@ export const materialServices = {
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
             try {
+
+                const furnitureWithMaterial = await Furniture.findOne({ materials: materialId });
+                if (furnitureWithMaterial) {
+                    return {
+                        status: 400,
+                        data: {},
+                        messageError: 'Cannot delete material because it is referenced by one or more furnitures.'
+                    };
+                }
+
                 data = await Material.findOneAndDelete({ _id: new ObjectId(materialId) });
             } catch (error) {
                 return {

@@ -2,6 +2,7 @@ import Furniture from '../models/Furniture';
 import Color from '../models/Color';
 import Material from '../models/Material';
 import Classification from '../models/Classification';
+import Design from '../models/Design';
 
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
@@ -1671,6 +1672,16 @@ export const furnitureServices = {
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
             try {
+
+                const designWithFurniture = await Design.findOne({ furnitures: furId });
+                if (designWithFurniture) {
+                    return {
+                        status: 400,
+                        data: {},
+                        messageError: 'Cannot delete furniture because it is referenced by one or more designs.'
+                    };
+                }
+
                 data = await Furniture.findOneAndDelete({ _id: new ObjectId(furId) })
                     .populate({
                         path: 'colors',

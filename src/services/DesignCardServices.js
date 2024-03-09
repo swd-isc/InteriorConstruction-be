@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import DesignCard from "../models/DesignCard";
+import Design from "../models/Design";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -205,9 +206,19 @@ export const designCardRepository = {
         dbName: "interiorConstruction",
       });
 
-      console.log(designCardId)
-
       try {
+        const designWithDesignCard = await Design.findOne({
+          designCard: designCardId,
+        });
+        if (designWithDesignCard) {
+          return {
+            status: 400,
+            data: {},
+            messageError:
+              "Cannot delete design card because it is referenced by one or more designs.",
+          };
+        }
+
         data = await DesignCard.findOneAndDelete({
           _id: new ObjectId(designCardId),
         });
