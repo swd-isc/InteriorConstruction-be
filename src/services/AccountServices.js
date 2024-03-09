@@ -331,6 +331,17 @@ export const accountRepository = {
       try {
         const account = await Account.findById(accountId);
         if (reqBody.status) account.status = reqBody.status;
+
+        console.log(account.role)
+
+        if (account.role == "ADMIN") {
+          return {
+            status: 400,
+            data: {},
+            messageError: "Can not change status of ADMIN"
+          }
+        }
+
         data = await account.save();
         data.password = undefined;
         data.refreshToken = undefined;

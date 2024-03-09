@@ -209,6 +209,7 @@ export const contractRepository = {
         if (reqBody.contractPrice) contract.contractPrice = reqBody.contractPrice;
         if (reqBody.status) contract.status = reqBody.status;
         if (reqBody.contractFileURL) contract.contractFileURL = reqBody.contractFileURL;
+        if (reqBody.designId) contract.designId = reqBody.designId;
 
         data = await contract.save();
 
