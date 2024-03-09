@@ -14,8 +14,7 @@ export const furnitureController = {
     },
 
     adminFurnitureByPage: async (req, res) => {
-        //TODO: Create admin service and then call it here
-        let data = await furnitureServices.userGetFurnitureByPage(req.query.sort_by, req.query.page);
+        let data = await furnitureServices.adminGetFurnitureByPage(req.query.sort_by, req.query.page, req.query.type);
         return res.status(data.status).json(data);
     },
 

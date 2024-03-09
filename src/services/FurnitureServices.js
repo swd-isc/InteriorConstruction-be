@@ -199,6 +199,154 @@ export const furnitureServices = {
         }
     },
 
+    adminGetFurnitureByPage: async (mode, pageReq, type) => {
+        try {
+            const typeCheck = await checkType(type);
+            const sortAsc = sortByInput(mode);
+            const itemsPerPage = 10;
+            // Parse query parameters
+            const page = parseInt(pageReq) || 1;
+            let data = [];
+
+            // Calculate start and end indices for the current page
+            const startIndex = (page - 1) * itemsPerPage;
+
+            // Get the data for the current page
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+            data = await Furniture.aggregate([
+                ...(type === 'default' ? [
+                    {
+                        $match: {
+                            'type': 'DEFAULT',
+                        },
+                    }
+                ] : []),
+                ...(type === 'custom' ? [
+                    {
+                        $match: {
+                            'type': 'CUSTOM',
+                        },
+                    }
+                ] : []),
+                {
+                    $lookup: {
+                        from: 'color', // Assuming your color schema collection is named 'color'
+                        localField: 'colors',
+                        foreignField: '_id',
+                        as: 'colorsData',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'material', // Assuming your material schema collection is named 'material'
+                        localField: 'materials',
+                        foreignField: '_id',
+                        as: 'materialsData',
+                    },
+                },
+                { // Separate the groups for colors, materials and furnitures
+                    $facet: {
+                        colors: [
+                            {
+                                $unwind: '$colorsData', // Unwind the colors array
+                            },
+                            {
+                                $group: {
+                                    _id: '$colorsData._id',
+                                    name: { $first: '$colorsData.name' },
+                                    count: { $sum: 1 },
+                                },
+                            },
+                            {
+                                $sort: {
+                                    // Specify the field you want to use for sorting, e.g., '_id'
+                                    'name': 1,
+                                },
+                            },
+                        ],
+                        materials: [
+                            {
+                                $unwind: '$materialsData', // Unwind the materials array
+                            },
+                            {
+                                $group: {
+                                    _id: '$materialsData._id',
+                                    name: { $first: '$materialsData.name' },
+                                    count: { $sum: 1 },
+                                },
+                            },
+                            {
+                                $sort: {
+                                    // Specify the field you want to use for sorting, e.g., '_id'
+                                    'name': 1,
+                                },
+                            },
+                        ],
+                        furnitures: [
+                            {
+                                $group: {
+                                    _id: '$_id',
+                                    name: { $first: '$name' },
+                                    imgURL: { $first: '$imgURL' },
+                                    price: { $first: '$price' },
+                                },
+                            },
+                            {
+                                $sort: {
+                                    // Specify the field you want to use for sorting, e.g., '_id'
+                                    'price': sortAsc,
+                                },
+                            },
+                        ],
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        furnitures: { $slice: ['$furnitures', startIndex, itemsPerPage] },
+                        page: `${page}`,
+                        totalPages: {
+                            $ceil: {
+                                $divide: [{ $size: "$furnitures" }, 10]
+                            }
+                        },
+                        materials: 1,
+                        colors: 1,
+                    },
+                },
+            ]);
+
+            // data = await Furniture.find({}).sort({ price: sortAsc })
+            //     .skip(startIndex).limit(itemsPerPage)
+            //     .select('name imgURL price materials colors')
+            //     .populate({
+            //         path: "materials",
+            //         select: 'name',
+            //     })
+            //     .populate({
+            //         path: "colors",
+            //         select: 'name',
+            //     })
+            return {
+                status: 200,
+                data: data[0],
+                message: data.length !== 0 ? "OK" : "No data"
+            };
+
+        } catch (error) {
+            console.error(error);
+            return {
+                status: 500,
+                messageError: error.toString(),
+            }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
+        }
+    },
+
     adminGetFurnitureById: async (id) => {
         try {
             const idValid = await isIdValid(id, 'furniture');
@@ -2216,4 +2364,17 @@ async function checkDupName(arrays) {
     }
 
     return false; // All item names are unique
+}
+
+async function checkType(type) {
+    const upperCaseType = type?.toString().toUpperCase();
+
+    switch (upperCaseType) {
+        case "CUSTOM":
+            return "custom";
+        case "DEFAULT":
+            return "default";
+        default:
+            return "undefined";
+    }
 }

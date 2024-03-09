@@ -43,7 +43,7 @@ const options = {
         openapi: '3.0.0',
         info: {
             title: 'Interior Construction API Documents',
-            version: '1.1.1'
+            version: '1.1.2'
         },
         servers: [
             {
