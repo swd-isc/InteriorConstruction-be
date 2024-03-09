@@ -1,4 +1,6 @@
 import Classification from '../models/Classification';
+import Design from '../models/Design';
+import Furniture from '../models/Furniture'
 
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
@@ -181,7 +183,28 @@ export const classificationServices = {
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
             try {
-                data = await Classification.findOneAndDelete({ _id: new ObjectId(classificationId) });
+
+            // Check if any furniture references the classification
+            const furnitureWithClassification = await Furniture.findOne({ classifications: classificationId });
+            if (furnitureWithClassification) {
+                return {
+                    status: 400,
+                    data: {},
+                    messageError: 'Cannot delete classification because it is referenced by one or more furnitures.'
+                };
+            }
+
+            // Check if any design references the classification
+            const designWithClassification = await Design.findOne({ classifications: classificationId });
+            if (designWithClassification) {
+                return {
+                    status: 400,
+                    data: {},
+                    messageError: 'Cannot delete classification because it is referenced by one or more designs.'
+                };
+            }
+            
+            data = await Classification.findOneAndDelete({ _id: new ObjectId(classificationId) });
             } catch (error) {
                 return {
                     status: 400,

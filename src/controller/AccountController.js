@@ -40,18 +40,9 @@ export const accountService = {
     return res.status(data.status).json(data);
   },
 
-  updateAccount: async (req, res) => {
-    let data = await accountRepository.updateAccount(req.params.id, req.body);
-    return res.status(data.status).json(data);
-  },
-
-  updateAccountByClient: async (req, res) => {
-    let data = await accountRepository.updateAccountByClient(req.params.id, req.body);
-    return res.status(data.status).json(data);
-  },
-
   updateAccountByAdmin: async (req, res) => {
-    let data = await accountRepository.updateAccountByAdmin(req.params.accountId, req.body);
+    console.log(req.params.id)
+    let data = await accountRepository.updateAccountByAdmin(req.params.id, req.body);
     return res.status(data.status).json(data);
   },
 

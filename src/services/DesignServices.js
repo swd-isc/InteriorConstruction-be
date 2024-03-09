@@ -1,6 +1,7 @@
 import Design from "../models/Design";
 import mongoose from "mongoose";
 import Classification from "../models/Classification";
+import Contract from "../models/Contract";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -207,6 +208,188 @@ export const designRepository = {
     }
   },
 
+  getDesignsForAdmin: async (mode, pageReq, type) => {
+    try {
+      let sortAsc = sortByInput(mode);
+      const itemsPerPage = 10;
+      // Parse query parameters
+      const page = parseInt(pageReq) || 1;
+      let data = {};
+
+      const startIndex = (page - 1) * itemsPerPage;
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const match = {};
+
+      type = type.toUpperCase();
+      if (type == "DEFAULT" || type == "CUSTOM") {
+        match.type = type;
+      }
+
+      // Count all documents in the collection
+      const totalDocuments = await Design.countDocuments(match);
+
+      // Calculate total pages
+      const totalPages = Math.ceil(totalDocuments / itemsPerPage);
+
+      data.designs = await Design.aggregate([
+        {
+          $match: match,
+        },
+        {
+          $sort: {
+            designPrice: sortAsc,
+          },
+        },
+        {
+          $skip: startIndex, // Skip documents based on the startIndex
+        },
+        {
+          $limit: itemsPerPage, // Limit the number of documents per page
+        },
+        { $addFields: { v: 0 } },
+        {
+          $lookup: {
+            from: "classification",
+            localField: "classifications",
+            foreignField: "_id",
+            as: "classifications",
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            designName: 1,
+            description: 1,
+            designURL: 1,
+            type: 1,
+            classifications: {
+              $map: {
+                input: {
+                  $filter: {
+                    input: "$classifications",
+                    as: "classification",
+                    cond: { $eq: ["$$classification.type", "STYLE"] },
+                  },
+                },
+                as: "classification",
+                in: "$$classification.classificationName",
+              },
+            },
+          },
+        },
+      ]);
+
+      data.page = page;
+      data.totalPages = totalPages;
+
+      return {
+        status: 200,
+        data: data,
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 400,
+        messageError: error.toString(),
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
+  getDesignByIdForAdmin: async (id) => {
+    try {
+      const idDesignValid = await isIdValid(id, "design");
+
+      if (!idDesignValid.isValid) {
+        return {
+          status: idDesignValid.status,
+          data: {},
+          messageError: idDesignValid.messageError,
+        };
+      }
+
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const data = await Design.aggregate([
+        {
+          $match: {
+            _id: new ObjectId(id), // Match the document by its _id
+          },
+        },
+        {
+          $lookup: {
+            from: "furniture",
+            localField: "furnitures",
+            foreignField: "_id",
+            as: "furnitures",
+          },
+        },
+        {
+          $addFields: {
+            furnitures: {
+              $map: {
+                input: "$furnitures",
+                as: "furniture",
+                in: {
+                  _id: "$$furniture._id",
+                  name: "$$furniture.name",
+                  imgURL: "$$furniture.imgURL",
+                  price: "$$furniture.price",
+                },
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "design_card", // The collection to perform the lookup on
+            localField: "designCard", // The field in the Design collection
+            foreignField: "_id", // The field in the DesignCard collection
+            as: "designCard", // The name of the field to add to the Design document
+          },
+        },
+        {
+          $addFields: {
+            designCard: { $arrayElemAt: ["$designCard", 0] }, // Convert designCard array to object
+          },
+        },
+        {
+          $project: {
+            classifications: 0,
+          },
+        },
+      ]);
+
+      return {
+        status: 200,
+        data: data[0],
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 500,
+        messageError: error.toString(),
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
   createDesign: async (reqBody) => {
     try {
       let data = [];
@@ -285,21 +468,21 @@ export const designRepository = {
       // Iterate through req.body and set corresponding fields in the design object
       for (const key in reqBody) {
         if (reqBody.hasOwnProperty(key)) {
-           design[key] = reqBody[key];
+          design[key] = reqBody[key];
         }
       }
 
       if (reqBody.type) {
         return {
-          status:  400,
-          data: {} ,
+          status: 400,
+          data: {},
           messageError: "Can not edit Type of Design",
         };
       }
 
       try {
         // Save the updated design
-        
+
         data = await design.save();
       } catch (error) {
         return {
@@ -347,6 +530,18 @@ export const designRepository = {
       });
 
       try {
+        const contractWithDesign = await Contract.findOne({
+          designId: designId,
+        });
+        if (contractWithDesign) {
+          return {
+            status: 400,
+            data: {},
+            messageError:
+              "Cannot delete design because it is referenced by one or more contracts.",
+          };
+        }
+
         data = await Design.findOneAndDelete({
           _id: new ObjectId(designId),
         });

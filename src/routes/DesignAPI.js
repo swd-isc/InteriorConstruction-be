@@ -153,7 +153,7 @@ const DesignRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.get("/", designService.getDesigns); //This router just for type = "DEFAULT"
+  router.get("/client/", designService.getDesigns); //This router just for type = "DEFAULT"
 
   /**
    * @swagger
@@ -209,7 +209,7 @@ const DesignRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.get("/:id", designService.getDesignById);
+  router.get("/client/:id", designService.getDesignById);
 
   /**
    * @swagger
@@ -455,6 +455,9 @@ const DesignRouter = (app) => {
    */
   router.delete("/:id", verifyToken, isAdmin, designService.deleteDesign);
   router.delete("/", verifyToken, isAdmin, designService.deleteDesign);
+
+  router.get("/admin/", verifyToken, isAdmin, designService.getDesignsForAdmin)
+  router.get("/admin/:id", verifyToken, isAdmin, designService.getDesignByIdForAdmin)
 
   return app.use("/api/design", router);
 };

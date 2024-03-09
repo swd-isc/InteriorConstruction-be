@@ -10,9 +10,22 @@ export const designService = {
     return res.status(data.status).json(data);
   },
 
+  getDesignsForAdmin: async (req, res) => {
+    let data = await designRepository.getDesignsForAdmin(
+      req.query.sort_by,
+      req.query.page,
+      req.query.type
+    );
+    return res.status(data.status).json(data);
+  },
 
   getDesignById: async (req, res) => {
     let data = await designRepository.getDesignById(req.params.id);
+    return res.status(data.status).json(data);
+  },
+
+  getDesignByIdForAdmin: async (req, res) => {
+    let data = await designRepository.getDesignByIdForAdmin(req.params.id);
     return res.status(data.status).json(data);
   },
 

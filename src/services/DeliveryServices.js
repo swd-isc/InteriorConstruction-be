@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Delivery from "../models/Delivery";
+import Furniture from "../models/Furniture";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -53,7 +54,6 @@ export const deliveryRepository = {
 
   getDeliveryById: async (id) => {
     try {
-
       const idDeliveryValid = await isIdValid(id, "delivery");
 
       if (!idDeliveryValid.isValid) {
@@ -205,6 +205,17 @@ export const deliveryRepository = {
       });
 
       try {
+
+        const furnitureWithDelivery = await Furniture.findOne({ delivery: deliveryId });
+        if (furnitureWithDelivery) {
+          return {
+            status: 400,
+            data: {},
+            messageError:
+              "Cannot delete delivery because it is referenced by one or more furnitures.",
+          };
+        }
+
         data = await Delivery.findOneAndDelete({
           _id: new ObjectId(deliveryId),
         });
