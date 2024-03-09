@@ -28,7 +28,7 @@ export const colorServices = {
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
             // Count all documents in the collection
-            const totalDocuments = await Material.countDocuments();
+            const totalDocuments = await Color.countDocuments();
 
             // Calculate total pages
             const totalPages = Math.ceil(totalDocuments / itemsPerPage);
