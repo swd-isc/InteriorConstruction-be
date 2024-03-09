@@ -292,13 +292,23 @@ const ClientRouter = (app) => {
     *        schema:
     *          type: string
     *    requestBody:
-    *       required: true
+    *       required: false
     *       content:
     *           application/json:
     *               schema:
     *                   type: object
     *                   properties:
-    *                     status:
+    *                     firstName:
+    *                       type: string
+    *                     lastName:
+    *                       type: string
+    *                     birthDate:
+    *                       type: string
+    *                     phone:
+    *                       type: string
+    *                     photoURL:
+    *                       type: string
+    *                     password:
     *                       type: string
     *    responses:
     *      200:
