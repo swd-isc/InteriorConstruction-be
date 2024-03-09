@@ -497,7 +497,7 @@ const ShopRouter = (app) => {
     *          - in: query
     *            name: sort_by
     *            required: false
-    *            description: For filtering
+    *            description: Just sort furniture array by price
     *            schema:
     *               type: string
     *               enum:
@@ -506,19 +506,19 @@ const ShopRouter = (app) => {
     *          - in: query
     *            name: classificationId
     *            required: false
-    *            description: For filtering
+    *            description: Filter by classificationId
     *            schema:
     *               type: string
     *          - in: query
     *            name: colorId
     *            required: false
-    *            description: For filtering
+    *            description: Filter by colorId
     *            schema:
     *               type: string
     *          - in: query
     *            name: materialId
     *            required: false
-    *            description: For filtering
+    *            description: Filter by materialId
     *            schema:
     *               type: string
     *      responses:
@@ -598,7 +598,7 @@ const ShopRouter = (app) => {
     *          - in: query
     *            name: sort_by
     *            required: false
-    *            description: For filtering
+    *            description: Just sort furniture array by price
     *            schema:
     *               type: string
     *               enum:
@@ -607,7 +607,7 @@ const ShopRouter = (app) => {
     *          - in: query
     *            name: furName
     *            required: false
-    *            description: For filtering
+    *            description: Find by furniture name, default find all.
     *            schema:
     *               type: string
     *      responses:
@@ -687,7 +687,7 @@ const ShopRouter = (app) => {
     *          - in: query
     *            name: sort_by
     *            required: false
-    *            description: For sorting
+    *            description: Just sort furniture array by price
     *            schema:
     *               type: string
     *               enum:

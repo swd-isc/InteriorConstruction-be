@@ -18,6 +18,9 @@ export const verifyToken = async (req, res, next) => {
         let data = await Client.findById(decoded._id)
 
         if (data) {
+
+            req.user = data;
+
             next()
         } else {
             return res.status(403).json({
