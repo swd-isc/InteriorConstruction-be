@@ -750,8 +750,8 @@ const FurnitureCategoryRouter = (app) => {
     *  get:
     *      tags:
     *           - Furnitures
-    *      summary: Get furniture by page
-    *      description: This endpoint is for getting furniture by page
+    *      summary: Get furniture by classificationId
+    *      description: This endpoint is for getting furniture by classificationId
     *      parameters:
     *          - in: query
     *            name: page
