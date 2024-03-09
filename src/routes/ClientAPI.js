@@ -1,6 +1,7 @@
 import express from "express";
 import { clientService } from "../controller/ClientController";
-import { verifyToken } from "../middleware/authen";
+import { isAdmin, isCurrentClient, verifyToken } from "../middleware/authen";
+import { accountService } from "../controller/AccountController";
 
 const router = express.Router();
 
@@ -121,6 +122,8 @@ const ClientRouter = (app) => {
    * @swagger
    * /api/client:
    *  get:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Clients
    *    summary: Get clients by page
@@ -157,12 +160,14 @@ const ClientRouter = (app) => {
    *                      type: string
    *                    
    */
-  router.get("/", clientService.getClients);
+  router.get("/", verifyToken, isAdmin, clientService.getClients);
 
   /**
    * @swagger
    * /api/client/{id}:
    *  get:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Clients
    *    summary: Get client by id
@@ -199,12 +204,151 @@ const ClientRouter = (app) => {
    *                      type: string
    *                    
    */
-  router.get("/:id", clientService.getClientById);
+  router.get("/:id", verifyToken, isAdmin, clientService.getClientById);
 
   router.post("/", clientService.createClient);
 
-  router.put("/:id", verifyToken, clientService.updateClient);
-  router.put("/", verifyToken, clientService.updateClient);
+  /**
+    * @swagger
+    * /api/client/ad/{accountId}:
+    *  put:
+    *    security:
+    *      - bearerAuth: []
+    *    tags:
+    *      - Clients
+    *    summary: Admin update account by account Id
+    *    description: This endpoint is for admin updating account by account Id
+    *    parameters:
+    *      - in: path
+    *        name: accountId
+    *        required: true
+    *        description: Account ID required
+    *        schema:
+    *          type: string
+    *    requestBody:
+    *       required: true
+    *       content:
+    *           application/json:
+    *               schema:
+    *                   type: object
+    *                   properties:
+    *                     status:
+    *                       type: string
+    *    responses:
+    *      200:
+    *        description: Ok
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                message:
+    *                  type: string
+    *      400:
+    *        description: Bad request
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                data:
+    *                  type: object
+    *                messageError:
+    *                  type: string
+    *      500:
+    *        description: Server error
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                messageError:
+    *                  type: string
+    */
+  router.put("/ad/:accountId", verifyToken, isAdmin, accountService.updateAccountByAdmin);
+  router.put("/ad/", verifyToken, isAdmin, accountService.updateAccountByAdmin);
+
+  /**
+    * @swagger
+    * /api/client/{id}:
+    *  put:
+    *    security:
+    *      - bearerAuth: []
+    *    tags:
+    *      - Clients
+    *    summary: Update information client by Id
+    *    description: This endpoint is for client updating information by client Id
+    *    parameters:
+    *      - in: path
+    *        name: id
+    *        required: true
+    *        description: Id required
+    *        schema:
+    *          type: string
+    *    requestBody:
+    *       required: false
+    *       content:
+    *           application/json:
+    *               schema:
+    *                   type: object
+    *                   properties:
+    *                     firstName:
+    *                       type: string
+    *                     lastName:
+    *                       type: string
+    *                     birthDate:
+    *                       type: string
+    *                     phone:
+    *                       type: string
+    *                     photoURL:
+    *                       type: string
+    *                     password:
+    *                       type: string
+    *    responses:
+    *      200:
+    *        description: Ok
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                message:
+    *                  type: string
+    *      400:
+    *        description: Bad request
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                data:
+    *                  type: object
+    *                messageError:
+    *                  type: string
+    *      500:
+    *        description: Server error
+    *        content:
+    *          application/json:
+    *            schema:
+    *              type: object
+    *              properties:
+    *                status:
+    *                  type: number
+    *                messageError:
+    *                  type: string
+    */
+  router.put("/:id", verifyToken, isCurrentClient, clientService.updateClient);
+  router.put("/", verifyToken, isCurrentClient, clientService.updateClient);
 
   router.delete("/:id", verifyToken, clientService.deleteClient);
   router.delete("/", verifyToken, clientService.deleteClient);

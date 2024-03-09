@@ -404,61 +404,61 @@ export const furnitureServices = {
                 && idColorValid.isValid
                 && idMaterialValid.isValid) { //filter with no classificationId
                 console.log('Filter with colorId and materialId due to wrong classificationId.');
-                let returnData = await getFurnitureByColorIdAndMaterialId(colorId, materialId, page, sortAsc);
+                let returnData = await furnitureServices.getFurnitureByColorIdAndMaterialId(colorId, materialId, page, sortAsc);
                 returnData.message = 'Filter with colorId and materialId due to wrong classificationId.'
                 return returnData;
             } else if (!idClassificationValid.isValid
                 && !idColorValid.isValid
                 && idMaterialValid.isValid) { //filter with just materialId
                 console.log('Filter with just materialId due to wrong classificationId and colorId.');
-                let returnData = await getFurnitureByMaterialId(materialId, page, sortAsc);
+                let returnData = await furnitureServices.getFurnitureByMaterialId(materialId, page, sortAsc);
                 returnData.message = 'Filter with just materialId due to wrong classificationId and colorId.'
                 return returnData;
             } else if (!idClassificationValid.isValid
                 && !idMaterialValid.isValid
                 && idColorValid.isValid) { //filter with just colorId
                 console.log('Filter with just colorId due to wrong classificationId and materialId.');
-                let returnData = await getFurnitureByColorId(colorId, page, sortAsc);
+                let returnData = await furnitureServices.getFurnitureByColorId(colorId, page, sortAsc);
                 returnData.message = 'Filter with just colorId due to wrong classificationId and materialId.'
                 return returnData;
             } else if (idClassificationValid.isValid
                 && idColorValid.isValid
                 && !idMaterialValid.isValid) { //filter with classificationId, colorId
                 console.log('Filter with classificationId and colorId due to wrong materialId.');
-                let returnData = await getFurnitureByClassificationIdAndColorId(classificationId, colorId, page, sortAsc);
+                let returnData = await furnitureServices.getFurnitureByClassificationIdAndColorId(classificationId, colorId, page, sortAsc);
                 returnData.message = 'Filter with classificationId and colorId due to wrong materialId.'
                 return returnData;
             } else if (idClassificationValid.isValid
                 && idMaterialValid.isValid
                 && !idColorValid.isValid) { //filter with classificationId, materialId
                 console.log('Filter with classificationId and materialId due to wrong colorId.');
-                let returnData = await getFurnitureByClassificationIdAndMaterialId(classificationId, materialId, page, sortAsc);
+                let returnData = await furnitureServices.getFurnitureByClassificationIdAndMaterialId(classificationId, materialId, page, sortAsc);
                 returnData.message = 'Filter with classificationId and materialId due to wrong colorId.'
                 return returnData;
             } else if (idClassificationValid.isValid
                 && idMaterialValid.isValid
                 && idColorValid.isValid) { //filter with classificationId, colorId and materialId
                 console.log('Filter with classificationId, colorId and materialId.');
-                let returnData = await getFurnitureByClassificationIdColorIdAndMaterialId(classificationId, colorId, materialId, page, sortAsc);
+                let returnData = await furnitureServices.getFurnitureByClassificationIdColorIdAndMaterialId(classificationId, colorId, materialId, page, sortAsc);
                 returnData.message = 'Filter with classificationId, colorId and materialId.'
                 return returnData;
             } else if (idClassificationValid.isValid
                 && !idMaterialValid.isValid
                 && !idColorValid.isValid) { //filter with just classificationId
                 console.log('Filter with just classificationId due to wrong colorId and materialId.');
-                let returnData = await getFurnitureByClassificationId(classificationId, page, sort_by);
+                let returnData = await furnitureServices.getFurnitureByClassificationId(classificationId, page, sort_by);
                 returnData.message = 'Filter with just classificationId due to wrong colorId and materialId.'
                 return returnData;
             } else {
                 console.log('else');
                 let error = {};
-                if (!idClassificationValid.valid) {
+                if (!idClassificationValid.isValid) {
                     error.errorClassificationId = idClassificationValid.messageError;
                 }
-                if (!idColorValid.valid) {
+                if (!idColorValid.isValid) {
                     error.errorColorId = idColorValid.messageError;
                 }
-                if (!idMaterialValid.valid) {
+                if (!idMaterialValid.isValid) {
                     error.errorMaterialId = idMaterialValid.messageError;
                 }
                 return {

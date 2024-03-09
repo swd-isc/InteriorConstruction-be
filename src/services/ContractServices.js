@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
 
 export const contractRepository = {
-  getContracts: async (mode, pageReq) => {
+  getContracts: async (mode, pageReq, clientId) => {
     try {
       let sortAsc = sortByInput(mode);
       const itemsPerPage = 10;
@@ -15,6 +15,8 @@ export const contractRepository = {
 
       // Calculate start and end indices for the current page
       const startIndex = (page - 1) * itemsPerPage;
+
+      const idClientValid = await isIdValid(clientId, "client");
 
       // Get the data for the current page
       const url = process.env.URL_DB;
@@ -29,10 +31,18 @@ export const contractRepository = {
       // Calculate total pages
       const totalPages = Math.ceil(totalDocuments / itemsPerPage);
 
-      data.contracts = await Contract.find()
-        .sort({ price: sortAsc })
-        .skip(startIndex)
-        .limit(itemsPerPage);
+
+      if (!idClientValid.isValid) {
+        data.contracts = await Contract.find()
+          .sort({ price: sortAsc })
+          .skip(startIndex)
+          .limit(itemsPerPage);
+      } else {
+        data.contracts = await Contract.find({ clientId: clientId })
+          .sort({ price: sortAsc })
+          .skip(startIndex)
+          .limit(itemsPerPage);
+      }
 
       data.page = page;
       data.totalPages = totalPages;
@@ -73,43 +83,6 @@ export const contractRepository = {
       });
 
       const data = await Contract.findById(id);
-
-      return {
-        status: 200,
-        data: data,
-        message: data.length !== 0 ? "OK" : "No data",
-      };
-    } catch (error) {
-      console.error(error);
-      return {
-        status: 500,
-        messageError: error,
-      };
-    } finally {
-      // Close the database connection
-      mongoose.connection.close();
-    }
-  },
-
-  getContractsByClientId: async (id) => {
-    try {
-      const idClientValid = await isIdValid(id, "client");
-
-      if (!idClientValid.isValid) {
-        return {
-          status: idClientValid.status,
-          data: {},
-          messageError: idClientValid.messageError,
-        };
-      }
-
-      const url = process.env.URL_DB;
-      await mongoose.connect(url, {
-        family: 4,
-        dbName: "interiorConstruction",
-      });
-
-      const data = await Contract.find({ clientId: id });
 
       return {
         status: 200,

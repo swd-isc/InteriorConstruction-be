@@ -300,7 +300,6 @@ export const clientRepository = {
 
       return {
         status: 200,
-        data: data !== null ? data : {},
         message: data !== null ? "OK" : "No data",
       };
     } catch (error) {
