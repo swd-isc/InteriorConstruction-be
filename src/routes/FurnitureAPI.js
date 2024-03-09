@@ -307,7 +307,7 @@ const FurnitureRouter = (app) => {
 
     /**
      * @swagger
-     * api/furniture/{id}:
+     *  /api/furniture/{id}:
      *  put:
      *      security:
      *          - bearerAuth: []
