@@ -450,21 +450,10 @@ export const furnitureServices = {
                 returnData.message = 'Filter with just classificationId due to wrong colorId and materialId.'
                 return returnData;
             } else {
-                console.log('else');
-                let error = {};
-                if (!idClassificationValid.isValid) {
-                    error.errorClassificationId = idClassificationValid.messageError;
-                }
-                if (!idColorValid.isValid) {
-                    error.errorColorId = idColorValid.messageError;
-                }
-                if (!idMaterialValid.isValid) {
-                    error.errorMaterialId = idMaterialValid.messageError;
-                }
                 return {
                     status: 400,
                     data: {},
-                    messageError: error
+                    messageError: "Required 1 of this id: clssificationId, colorId, materialId."
                 };
             }
 

@@ -58,6 +58,8 @@ const ColorRouter = (app) => {
      *                                       $ref: '#components/schemas/ColorData'
      *                               page:
      *                                   type: number
+     *                               totalPages:
+     *                                   type: number
      *                               message:
      *                                   type: string
      *          500:

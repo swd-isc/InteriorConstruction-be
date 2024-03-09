@@ -27,12 +27,19 @@ export const colorServices = {
             const url = process.env.URL_DB;
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
+            // Count all documents in the collection
+            const totalDocuments = await Material.countDocuments();
+
+            // Calculate total pages
+            const totalPages = Math.ceil(totalDocuments / itemsPerPage);
+
             currentPageData = await Color.find({}).sort({ name: 1 }).skip(startIndex).limit(itemsPerPage);
 
             return {
                 status: 200,
                 data: currentPageData,
                 page: page,
+                totalPages: totalPages,
                 message: currentPageData.length !== 0 ? "OK" : "No data"
             };
 

@@ -59,6 +59,8 @@ const MaterialRouter = (app) => {
      *                                       $ref: '#components/schemas/MaterialData'
      *                               page:
      *                                   type: number
+     *                               totalPages:
+     *                                   type: number
      *                               message:
      *                                   type: string
      *          500:
