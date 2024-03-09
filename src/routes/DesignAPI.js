@@ -154,6 +154,32 @@ const DesignRouter = (app) => {
    *                  type: number
    *                messageError:
    *                  type: string
+   *      500:
+   *        description: Server error
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                messageError:
+   *                  type: string
+   *      401:
+   *           description: Unauthorized
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: string
+   *      403:
+   *           description: Forbidden
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            messageError:
+   *                                type: string 
    */
   router.get("/ad/", verifyToken, isAdmin, designService.getDesignsForAdmin)
 
@@ -212,6 +238,21 @@ const DesignRouter = (app) => {
    *                  type: number
    *                messageError:
    *                  type: string
+   *      401:
+   *           description: Unauthorized
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: string
+   *      403:
+   *           description: Forbidden
+   *           content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            messageError:
+   *                                type: string 
    */
   router.get("/ad/:id", verifyToken, isAdmin, designService.getDesignByIdForAdmin)
 
@@ -280,6 +321,17 @@ const DesignRouter = (app) => {
    *                  type: string
    *      400:
    *        description: Bad request
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                messageError:
+   *                  type: string
+   *      500:
+   *        description: Server error
    *        content:
    *          application/json:
    *            schema:
