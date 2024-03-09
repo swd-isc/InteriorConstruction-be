@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
 
 export const furnitureServices = {
-    getFurnitureByPage: async (mode, pageReq) => {
+    userGetFurnitureByPage: async (mode, pageReq) => {
         try {
             const sortAsc = sortByInput(mode);
             const itemsPerPage = 10;
@@ -145,7 +145,7 @@ export const furnitureServices = {
         }
     },
 
-    getFurnitureById: async (id) => {
+    userGetFurnitureById: async (id) => {
         try {
             const idValid = await isIdValid(id, 'furniture');
             if (!idValid.isValid) {
@@ -158,7 +158,60 @@ export const furnitureServices = {
 
             const url = process.env.URL_DB;
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+            const data = await Furniture.find({ _id: id, type: "DEFAULT" })
+                .populate({
+                    path: 'colors',
+                    select: '-_id name',
+                })
+                .populate({
+                    path: 'materials',
+                    select: '-_id name',
+                })
+                .populate({
+                    path: 'delivery',
+                    select: '-_id', // Exclude the _id field
+                })
+                .populate({
+                    path: 'classifications',
+                    select: '-_id classificationName',
+                })
+            if (data.length !== 0) {
+                return {
+                    status: 200,
+                    data: data[0],
+                    message: "OK"
+                };
+            } else {
+                return {
+                    status: 200,
+                    data: {},
+                    message: "No data"
+                }
+            }
+        } catch (error) {
+            return {
+                status: 500,
+                messageError: error.toString(),
+            }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
+        }
+    },
 
+    adminGetFurnitureById: async (id) => {
+        try {
+            const idValid = await isIdValid(id, 'furniture');
+            if (!idValid.isValid) {
+                return {
+                    status: idValid.status,
+                    data: {},
+                    messageError: idValid.messageError
+                }
+            }
+
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
             const data = await Furniture.findById(id)
                 .populate({
                     path: 'colors',

@@ -1,6 +1,6 @@
 import express from "express";
 import { contractService } from "../controller/ContractController";
-import { isAdmin, verifyToken } from "../middleware/authen";
+import { isAdmin, isCurrentUser, isCurrentUserOrAdmin, verifyToken } from "../middleware/authen";
 
 const router = express.Router();
 
@@ -207,7 +207,7 @@ const ContractRouter = (app) => {
      *                                type: string 
      */
 
-  router.get("/:id", verifyToken, contractService.getContractById);
+  router.get("/:id", verifyToken, isCurrentUserOrAdmin, contractService.getContractById);
 
 
   /**

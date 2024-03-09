@@ -1,15 +1,27 @@
 import { furnitureServices } from "../services/FurnitureServices";
 
 export const furnitureController = {
-    furnitureByPage: async (req, res) => {
+    userFurnitureByPage: async (req, res) => {
 
-        let data = await furnitureServices.getFurnitureByPage(req.query.sort_by, req.query.page);
+        let data = await furnitureServices.userGetFurnitureByPage(req.query.sort_by, req.query.page);
         return res.status(data.status).json(data);
     },
 
-    furnitureById: async (req, res) => {
+    userFurnitureById: async (req, res) => {
 
-        let data = await furnitureServices.getFurnitureById(req.params.id);
+        let data = await furnitureServices.userGetFurnitureById(req.params.id);
+        return res.status(data.status).json(data);
+    },
+
+    adminFurnitureByPage: async (req, res) => {
+        //TODO: Create admin service and then call it here
+        let data = await furnitureServices.userGetFurnitureByPage(req.query.sort_by, req.query.page);
+        return res.status(data.status).json(data);
+    },
+
+    adminFurnitureById: async (req, res) => {
+
+        let data = await furnitureServices.adminGetFurnitureById(req.params.id);
         return res.status(data.status).json(data);
     },
 

@@ -121,9 +121,9 @@ import { isAdmin, verifyToken } from '../middleware/authen';
 const FurnitureRouter = (app) => {
     const router = express.Router();
 
-    router.get('/price/', furnitureController.furnitureByPage);
-    router.get('/price/:page/:asc', furnitureController.furnitureByPage);
-    router.get('/price/:asc', furnitureController.furnitureByPage);
+    router.get('/price/', furnitureController.userFurnitureByPage);
+    router.get('/price/:page/:asc', furnitureController.userFurnitureByPage);
+    router.get('/price/:asc', furnitureController.userFurnitureByPage);
     router.get('/type/', furnitureController.furnitureByType);
     router.get('/type/:type', furnitureController.furnitureByType);
     router.get('/classification/type/', furnitureController.furnitureByClassificationByType);
@@ -142,8 +142,8 @@ const FurnitureRouter = (app) => {
     *  get:
     *      tags:
     *           - Furnitures
-    *      summary: Get furniture by id
-    *      description: This endpoint is for getting furniture by id
+    *      summary: User get furniture by id
+    *      description: This endpoint is for user getting furniture by id
     *      parameters:
     *          - in: path
     *            name: id
@@ -245,8 +245,122 @@ const FurnitureRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
-    router.get('/:id', furnitureController.furnitureById);
-    router.get('/', furnitureController.furnitureById);
+    router.get('/:id', furnitureController.userFurnitureById);
+    router.get('/', furnitureController.userFurnitureByPage);
+
+    /**
+    * @swagger
+    * /api/furniture/ad/{id}:
+    *  get:
+    *      security:
+    *          - bearerAuth: []
+    *      tags:
+    *           - Furnitures
+    *      summary: Admin get furniture by id
+    *      description: This endpoint is for admin getting furniture by id
+    *      parameters:
+    *          - in: path
+    *            name: id
+    *            required: true
+    *            description: Id required
+    *            schema:
+    *               type: string
+    *      responses:
+    *          200:
+    *              description: OK
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                                   properties:
+    *                                       id:
+    *                                           type: string
+    *                                       name:
+    *                                           type: string
+    *                                       imgURL:
+    *                                           type: array
+    *                                           items:
+    *                                               type: string
+    *                                       materials:
+    *                                           type: array
+    *                                           items:
+    *                                               type: object
+    *                                               properties:
+    *                                                   name:
+    *                                                       type: string
+    *                                       colors:
+    *                                           type: array
+    *                                           items:
+    *                                               type: object
+    *                                               properties:
+    *                                                   name:
+    *                                                       type: string
+    *                                       sizes:
+    *                                           type: string
+    *                                       price:
+    *                                           type: number
+    *                                       type:
+    *                                           type: string
+    *                                       classifications:
+    *                                           type: array
+    *                                           items:
+    *                                               type: object
+    *                                               properties:
+    *                                                   classificationName:
+    *                                                       type: string
+    *                                       delivery:
+    *                                           type: object
+    *                                           properties:
+    *                                               description:
+    *                                                   type: string
+    *                                               noCharge:
+    *                                                   type: string
+    *                                               surcharge:
+    *                                                   type: string
+    *                                       description:
+    *                                           type: string
+    *                                       nonReturnExchangeCases:
+    *                                           type: array
+    *                                           items:
+    *                                               type: string
+    *                                       returnExchangeCases:
+    *                                           type: array
+    *                                           items:
+    *                                               type: string
+    *                               message:
+    *                                   type: string
+    *          400:
+    *              description: Bad Request
+    *              content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               data:
+    *                                   type: object
+    *                               messageError:
+    *                                   type: string
+    *          500:
+    *               description: Server error
+    *               content:
+    *                   application/json:
+    *                       schema:
+    *                           type: object
+    *                           properties:
+    *                               status:
+    *                                   type: number
+    *                               messageError:
+    *                                   type: string
+    */
+    router.get('/ad/:id', isAdmin, furnitureController.adminFurnitureById);
+    router.get('/ad', isAdmin, furnitureController.userFurnitureByPage);
 
     /**
      * @swagger
@@ -736,7 +850,7 @@ const ShopRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
-    router.get('/', furnitureController.furnitureByPage);
+    router.get('/', furnitureController.userFurnitureByPage);
 
     return app.use('/api/shop', router);
 }
