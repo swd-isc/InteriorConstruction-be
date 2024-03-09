@@ -264,7 +264,7 @@ const FurnitureRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
-    router.get('/ad', isAdmin, furnitureController.adminFurnitureByPage);
+    router.get('/ad', verifyToken, isAdmin, furnitureController.adminFurnitureByPage);
 
     /**
     * @swagger
@@ -283,30 +283,6 @@ const FurnitureRouter = (app) => {
     *            description: Id required
     *            schema:
     *               type: string
-    *          - in: query
-    *            name: page
-    *            required: false
-    *            description: For pagination, default = 1
-    *            schema:
-    *               type: string
-    *          - in: query
-    *            name: sort_by
-    *            required: false
-    *            description: For sorting furniture by price, default = ASC
-    *            schema:
-    *               type: string
-    *               enum:
-    *                   - ASC
-    *                   - DESC
-    *          - in: query
-    *            name: type
-    *            required: false
-    *            description: For filter furniture by type, default <=> find all
-    *            schema:
-    *               type: string
-    *               enum:
-    *                   - DEFAULT
-    *                   - CUSTOM
     *      responses:
     *          200:
     *              description: OK
@@ -401,7 +377,7 @@ const FurnitureRouter = (app) => {
     *                               messageError:
     *                                   type: string
     */
-    router.get('/ad/:id', isAdmin, furnitureController.adminFurnitureById);
+    router.get('/ad/:id', verifyToken, isAdmin, furnitureController.adminFurnitureById);
 
     /**
     * @swagger
@@ -648,7 +624,6 @@ const FurnitureRouter = (app) => {
     *                                   type: string
     */
     router.get('/:id', furnitureController.userFurnitureById);
-
 
     /**
      * @swagger

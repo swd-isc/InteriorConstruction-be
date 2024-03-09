@@ -80,12 +80,14 @@ const router = express.Router();
 const DesignRouter = (app) => {
   /**
    * @swagger
-   * /api/design:
+   * /api/design/ad:
    *  get:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Designs
-   *    summary: Get design by classificationId
-   *    description: This endpoint is for getting design by classificationId
+   *    summary: Admin get design by page
+   *    description: This endpoint is for admin getting design by page
    *    parameters:
    *      - in: query
    *        name: page
@@ -153,16 +155,18 @@ const DesignRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.get("/client/", designService.getDesigns); //This router just for type = "DEFAULT"
+  router.get("/ad/", verifyToken, isAdmin, designService.getDesignsForAdmin)
 
   /**
    * @swagger
-   * /api/design/{id}:
+   * /api/design/ad/{id}:
    *  get:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Designs
-   *    summary: Get design by Id
-   *    description: This endpoint is for getting design by Id
+   *    summary: Admin get design by Id
+   *    description: This endpoint is for admin getting design by Id
    *    parameters:
    *      - in: path
    *        name: id
@@ -209,7 +213,140 @@ const DesignRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.get("/client/:id", designService.getDesignById);
+  router.get("/ad/:id", verifyToken, isAdmin, designService.getDesignByIdForAdmin)
+
+  /**
+   * @swagger
+   * /api/design:
+   *  get:
+   *    tags:
+   *      - Designs
+   *    summary: User get design by page
+   *    description: This endpoint is for user getting design by page
+   *    parameters:
+   *      - in: query
+   *        name: page
+   *        required: false
+   *        description: For pagination
+   *        schema:
+   *          type: number
+   *      - in: query
+   *        name: sort_by
+   *        required: false
+   *        description: For sorting
+   *        schema:
+   *          type: string
+   *      - in: query
+   *        name: classificationId
+   *        required: false
+   *        description: For filter
+   *        schema:
+   *          type: string
+   *    responses:
+   *      200:
+   *        description: Ok
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  type: object
+   *                  properties:
+   *                    designs:
+   *                      type: array
+   *                      items:
+   *                        type: object
+   *                        properties:
+   *                           id:
+   *                            type: string
+   *                           designName:
+   *                            type: string
+   *                           description:
+   *                            type: string
+   *                           designURL:
+   *                            type: string
+   *                           classifications:
+   *                            type: array
+   *                            items:
+   *                              type: string
+   *                    page:
+   *                      type: number
+   *                    totalPages:
+   *                      type: number
+   *                message:
+   *                  type: string
+   *      400:
+   *        description: Bad request
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                messageError:
+   *                  type: string
+   */
+  router.get("/", designService.getDesigns); //This router just for type = "DEFAULT"
+
+  /**
+   * @swagger
+   * /api/design/{id}:
+   *  get:
+   *    tags:
+   *      - Designs
+   *    summary: User get design by Id
+   *    description: This endpoint is for user getting design by Id
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        description: Id required
+   *        schema:
+   *          type: string
+   *    responses:
+   *      200:
+   *        description: Ok
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  $ref: '#components/schemas/DesignDataCustom'
+   *                message:
+   *                  type: string
+   *      400:
+   *        description: Bad request
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                data:
+   *                  type: object
+   *                messageError:
+   *                  type: string
+   *      500:
+   *        description: Server error
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: number
+   *                messageError:
+   *                  type: string
+   */
+  router.get("/:id", designService.getDesignById);
 
   /**
    * @swagger
@@ -455,9 +592,6 @@ const DesignRouter = (app) => {
    */
   router.delete("/:id", verifyToken, isAdmin, designService.deleteDesign);
   router.delete("/", verifyToken, isAdmin, designService.deleteDesign);
-
-  router.get("/admin/", verifyToken, isAdmin, designService.getDesignsForAdmin)
-  router.get("/admin/:id", verifyToken, isAdmin, designService.getDesignByIdForAdmin)
 
   return app.use("/api/design", router);
 };
