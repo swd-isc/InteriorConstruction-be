@@ -57,6 +57,8 @@ const ClassificationRouter = (app) => {
      *                                       $ref: '#components/schemas/ClassificationData'                             
      *                               page:
      *                                   type: number
+     *                               totalPages:
+     *                                   type: number
      *                               message:
      *                                   type: string
      *          500:
