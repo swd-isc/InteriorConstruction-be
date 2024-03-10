@@ -386,8 +386,8 @@ const ContractRouter = (app) => {
   router.put("/:id", verifyToken, isAdmin, contractService.updateContract);
   router.put("/", verifyToken, isAdmin, contractService.updateContract);
 
-  router.delete("/:id", verifyToken, isAdmin, contractService.deleteContract);
-  router.delete("/", verifyToken, isAdmin, contractService.deleteContract);
+  // router.delete("/:id", verifyToken, isAdmin, contractService.deleteContract); //Unused
+  // router.delete("/", verifyToken, isAdmin, contractService.deleteContract); //Unused
 
   return app.use("/api/contract", router);
 };

@@ -121,19 +121,19 @@ import { isAdmin, verifyToken } from '../middleware/authen';
 const FurnitureRouter = (app) => {
     const router = express.Router();
 
-    router.get('/price/', furnitureController.userFurnitureByPage);
-    router.get('/price/:page/:asc', furnitureController.userFurnitureByPage);
-    router.get('/price/:asc', furnitureController.userFurnitureByPage);
-    router.get('/type/', furnitureController.furnitureByType);
-    router.get('/type/:type', furnitureController.furnitureByType);
-    router.get('/classification/type/', furnitureController.furnitureByClassificationByType);
-    router.get('/classification/type/:type', furnitureController.furnitureByClassificationByType);
-    router.get('/classification/name/', furnitureController.furnitureByClassificationByName);
-    router.get('/classification/name/:name', furnitureController.furnitureByClassificationByName);
-    router.get('/material/', furnitureController.furnitureByMaterial);
-    router.get('/material/:materialName', furnitureController.furnitureByMaterial);
-    router.get('/color/', furnitureController.furnitureByColor);
-    router.get('/color/:colorName', furnitureController.furnitureByColor);
+    // router.get('/price/', furnitureController.userFurnitureByPage); //Unused
+    // router.get('/price/:page/:asc', furnitureController.userFurnitureByPage); //Unused
+    // router.get('/price/:asc', furnitureController.userFurnitureByPage); //Unused
+    // router.get('/type/', furnitureController.furnitureByType); //Unused
+    // router.get('/type/:type', furnitureController.furnitureByType); //Unused
+    // router.get('/classification/type/', furnitureController.furnitureByClassificationByType); //Unused
+    // router.get('/classification/type/:type', furnitureController.furnitureByClassificationByType); //Unused
+    // router.get('/classification/name/', furnitureController.furnitureByClassificationByName); //Unused
+    // router.get('/classification/name/:name', furnitureController.furnitureByClassificationByName); //Unused
+    // router.get('/material/', furnitureController.furnitureByMaterial); //Unused
+    // router.get('/material/:materialName', furnitureController.furnitureByMaterial); //Unused
+    // router.get('/color/', furnitureController.furnitureByColor); //Unused
+    // router.get('/color/:colorName', furnitureController.furnitureByColor); //Unused
 
     /**
     * @swagger

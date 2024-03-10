@@ -32,17 +32,17 @@ const router = express.Router();
 
 const DesignCardRouter = (app) => {
 
-   router.get("/", designCardService.getDesignCards);
+   // router.get("/", designCardService.getDesignCards); //Unused
 
-   router.get("/:id", designCardService.getDesignCardById);
+   // router.get("/:id", designCardService.getDesignCardById); //Unused
 
-   router.post("/", verifyToken, isAdmin, designCardService.createDesignCard); //Unused
+   // router.post("/", verifyToken, isAdmin, designCardService.createDesignCard); //Unused
 
-   router.put("/:id", verifyToken, isAdmin, designCardService.updateDesignCard);
-   router.put("/", verifyToken, isAdmin, designCardService.updateDesignCard);
+   // router.put("/:id", verifyToken, isAdmin, designCardService.updateDesignCard); //Unused
+   // router.put("/", verifyToken, isAdmin, designCardService.updateDesignCard); //Unused
 
-   router.delete("/:id", verifyToken, isAdmin, designCardService.deleteDesignCard);
-   router.delete("/", verifyToken, isAdmin, designCardService.deleteDesignCard);
+   // router.delete("/:id", verifyToken, isAdmin, designCardService.deleteDesignCard); //Unused
+   // router.delete("/", verifyToken, isAdmin, designCardService.deleteDesignCard); //Unused
 
    return app.use("/api/design-card", router);
 };

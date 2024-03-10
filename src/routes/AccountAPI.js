@@ -42,7 +42,7 @@ const router = express.Router();
  *                type: string
  */
 const AccountRouter = (app) => {
-  // router.get("/insert-sample-data", accountService.insertSampleData);
+  // router.get("/insert-sample-data", accountService.insertSampleData); //Unused
 
   /**
       * @swagger
@@ -207,13 +207,13 @@ const AccountRouter = (app) => {
   router.get("/:id", verifyToken, isAdmin, accountService.getAccountById);
 
 
-  router.post("/", verifyToken, isAdmin, accountService.createAccount);
+  // router.post("/", verifyToken, isAdmin, accountService.createAccount); //Unused
 
-  router.put("/:id", verifyToken, isAdmin, accountService.updateAccountByAdmin);
-  router.put("/", verifyToken, isAdmin, accountService.updateAccountByAdmin);
+  // router.put("/:id", verifyToken, isAdmin, accountService.updateAccountByAdmin); //Unused
+  // router.put("/", verifyToken, isAdmin, accountService.updateAccountByAdmin); //Unused
 
-  router.delete("/:id", verifyToken, isAdmin, accountService.deleteAccount);
-  router.delete("/", verifyToken, isAdmin, accountService.deleteAccount);
+  // router.delete("/:id", verifyToken, isAdmin, accountService.deleteAccount); //Unused
+  // router.delete("/", verifyToken, isAdmin, accountService.deleteAccount); //Unused
 
   return app.use("/api/account", router);
 };

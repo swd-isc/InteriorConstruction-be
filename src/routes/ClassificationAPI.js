@@ -143,7 +143,6 @@ const ClassificationRouter = (app) => {
        *                              messageError:
        *                                  type: string
        */
-
     router.get('/', classificationController.getClassificationByType);
 
     /**
@@ -311,7 +310,6 @@ const ClassificationRouter = (app) => {
         */
     router.put('/', verifyToken, isAdmin, classificationController.putClassificationController);
     router.put('/:id', verifyToken, isAdmin, classificationController.putClassificationController);
-
 
     /**
     * @swagger

@@ -282,7 +282,7 @@ const ClientRouter = (app) => {
    */
   router.get("/:id", verifyToken, isAdmin, clientService.getClientById);
 
-  router.post("/", clientService.createClient);
+  // router.post("/", clientService.createClient); //Unused
 
   /**
     * @swagger
@@ -456,8 +456,8 @@ const ClientRouter = (app) => {
   router.put("/:id", verifyToken, isCurrentUser, clientService.updateClient);
   router.put("/", verifyToken, isCurrentUser, clientService.updateClient);
 
-  router.delete("/:id", verifyToken, clientService.deleteClient);
-  router.delete("/", verifyToken, clientService.deleteClient);
+  // router.delete("/:id", verifyToken, clientService.deleteClient); //Unused
+  // router.delete("/", verifyToken, clientService.deleteClient); //Unused
 
   return app.use("/api/client", router);
 };
