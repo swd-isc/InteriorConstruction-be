@@ -9,12 +9,14 @@ export const paymentService = {
 
         console.log('check ip', ipAddr);
         let date = new Date();
-        let createDate = moment(date).format('YYYYMMDDHHmmss');
-        console.log('check create date', createDate);
+        let timezoneOffsetMinutes = 7 * 60; // UTC+7
+        let adjustedDate = new Date(date.getTime() + timezoneOffsetMinutes * 60000);
+        let createDate = moment(adjustedDate).format('YYYYMMDDHHmmss');
+        console.log(createDate);
         return {
             status: 200,
             data: {
-                date,
+                adjustedDate,
                 createDate
             },
             message: "OK"

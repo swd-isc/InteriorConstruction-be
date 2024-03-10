@@ -22,8 +22,6 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
 import { PaymentRouter } from '../routes/PaymentAPI';
 
-console.log('check env', process.env.NODE_ENV);
-
 const app = express();
 
 //Config .env
