@@ -1,4 +1,4 @@
-import config from 'config';
+import moment from 'moment';
 
 export const paymentService = {
     createPayment: (req, res) => {
@@ -8,17 +8,16 @@ export const paymentService = {
             req.connection.socket.remoteAddress;
 
         console.log('check ip', ipAddr);
-        console.log('test config', config.get('vnp_ReturnUrl'));
-        if (config.get('vnp_ReturnUrl')) {
-            return {
-                status: 200,
-                message: "OK"
-            }
-        } else {
-            return {
-                status: 400,
-                message: "err"
-            }
+        let date = new Date();
+        let createDate = moment(date).format('YYYYMMDDHHmmss');
+        console.log('check create date', createDate);
+        return {
+            status: 200,
+            data: {
+                date,
+                createDate
+            },
+            message: "OK"
         }
         // var dateFormat = require('dateformat');
 
