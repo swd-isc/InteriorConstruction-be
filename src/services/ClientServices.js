@@ -88,25 +88,51 @@ export const clientRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
-      console.log('check curr', currentUser);
-      const data = await Client.findById(id)
-        .populate({
-          path: "accountId",
-          select: "-_id email role status", // Select only the fields you need
-        })
-        .populate({
-          path: "contracts",
-          select: "-_id designId contractPrice status", // Select the desired fields from the contract document
-          populate: {
-            path: "designId",
-            select: "designName", // Select the desired fields from the design document
-          },
-        });
+
+      let data = {}
+      console.log('check usId', currentUser.id.toString());
+      if (currentUser.accountId.role !== "ADMIN" || id === currentUser.id.toString()) {
+        data = await Client.findById(id)
+          .populate({
+            path: "accountId",
+            select: "-_id email role status", // Select only the fields you need
+          })
+          .populate({
+            path: "contracts",
+            select: "-_id designId contractPrice status", // Select the desired fields from the contract document
+            populate: {
+              path: "designId",
+              select: "designName", // Select the desired fields from the design document
+            },
+          });
+      } else {
+        console.log('vo day r');
+        data = await Client.find({ _id: id })
+          .populate({
+            path: "accountId",
+            match: { role: 'CLIENT' },
+            select: "-_id email role status", // Select only the fields you need
+          })
+          .populate({
+            path: "contracts",
+            select: "-_id designId contractPrice status", // Select the desired fields from the contract document
+            populate: {
+              path: "designId",
+              select: "designName", // Select the desired fields from the design document
+            },
+          });
+        if (data[0].accountId === null) {
+          return {
+            status: 403,
+            messageError: "Access forbidden.",
+          };
+        }
+      }
 
       return {
         status: 200,
         data: data,
-        message: data.length !== 0 ? "OK" : "No data",
+        message: Object.keys(data).length !== 0 ? "OK" : "No data",
       };
     } catch (error) {
       console.error(error);
