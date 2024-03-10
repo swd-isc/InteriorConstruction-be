@@ -427,13 +427,27 @@ const DesignRouter = (app) => {
    *              designURL:
    *                type: string
    *              designCard:
-   *                type: string
+   *                type: object
+   *                properties:
+   *                  title:
+   *                    type: string
+   *                  description:
+   *                    type: string
+   *                  imgURL:
+   *                    type: string
    *              designPrice:
    *                type: number
    *              classifications:
    *                type: array
    *                items:
    *                  type: string
+   *              type:
+   *                type: string
+   *                enum:
+   *                  - DEFAULT
+   *                  - CUSTOM
+   *              customBy:
+   *                type: string
    *              furnitures:
    *                type: array
    *                items:
