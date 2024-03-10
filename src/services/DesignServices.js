@@ -410,18 +410,16 @@ export const designRepository = {
 
       design.designCard = designCard._id;
 
-      try {
-        await designCard.save();
-      } catch (error) {
-        return {
-          status: 400,
-          data: {},
-          messageError: error.message,
-        };
-      }
+      const session = await mongoose.startSession();
 
       try {
-        await design.save();
+        session.startTransaction();
+
+        await designCard.save({ session });
+        await design.save({ session });
+
+        await session.commitTransaction();
+
         data = await Design.aggregate([
           {
             $match: {
@@ -470,16 +468,16 @@ export const designRepository = {
               classifications: 0,
             },
           },
-        ])
+        ]);
       } catch (error) {
-        await DesignCard.findOneAndDelete({
-          _id: new ObjectId(designCard._id),
-        });
+        await session.abortTransaction();
         return {
           status: 400,
           data: {},
           messageError: error.message,
         };
+      } finally {
+        session.endSession();
       }
 
       return {
@@ -537,31 +535,89 @@ export const designRepository = {
         };
       }
 
+      let designCard = await DesignCard.findById(design.designCard._id);
+
       // Iterate through req.body and set corresponding fields in the design object
       for (const key in reqBody) {
-        if (reqBody.hasOwnProperty(key)) {
+        if (reqBody.hasOwnProperty(key) && key != "designCard") {
           design[key] = reqBody[key];
         }
       }
 
-      if (reqBody.type) {
-        return {
-          status: 400,
-          data: {},
-          messageError: "Can not edit Type of Design",
-        };
+      for (const key in reqBody?.designCard) {
+        if (reqBody.designCard.hasOwnProperty(key)) {
+          designCard[key] = reqBody.designCard[key];
+        }
       }
 
-      try {
-        // Save the updated design
+      const session = await mongoose.startSession();
 
-        data = await design.save();
+      try {
+        session.startTransaction();
+
+        await designCard.save({ session });
+        await design.save({ session });
+
+        await session.commitTransaction();
+
+        data = await Design.aggregate([
+          {
+            $match: {
+              _id: new ObjectId(design._id), // Match the document by its _id
+            },
+          },
+          {
+            $lookup: {
+              from: "furniture",
+              localField: "furnitures",
+              foreignField: "_id",
+              as: "furnitures",
+            },
+          },
+          {
+            $addFields: {
+              furnitures: {
+                $map: {
+                  input: "$furnitures",
+                  as: "furniture",
+                  in: {
+                    _id: "$$furniture._id",
+                    name: "$$furniture.name",
+                    imgURL: "$$furniture.imgURL",
+                    price: "$$furniture.price",
+                  },
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: "design_card", // The collection to perform the lookup on
+              localField: "designCard", // The field in the Design collection
+              foreignField: "_id", // The field in the DesignCard collection
+              as: "designCard", // The name of the field to add to the Design document
+            },
+          },
+          {
+            $addFields: {
+              designCard: { $arrayElemAt: ["$designCard", 0] }, // Convert designCard array to object
+            },
+          },
+          {
+            $project: {
+              classifications: 0,
+            },
+          },
+        ]);
       } catch (error) {
+        await session.abortTransaction();
         return {
           status: 400,
           data: {},
           messageError: error.message,
         };
+      } finally {
+        session.endSession();
       }
 
       return {
@@ -614,9 +670,48 @@ export const designRepository = {
           };
         }
 
-        data = await Design.findOneAndDelete({
-          _id: new ObjectId(designId),
-        });
+        let design = await Design.findById(designId);
+
+        if (!design) {
+          return {
+            status: 404,
+            data: {},
+            messageError: "Design not found",
+          };
+        }
+
+        let designCardId = design.designCard._id;
+
+        const session = await mongoose.startSession();
+
+        try {
+          session.startTransaction();
+
+          await Design.findOneAndDelete(
+            {
+              _id: new ObjectId(designId),
+            },
+            { session }
+          );
+
+          await DesignCard.findOneAndDelete(
+            {
+              _id: new ObjectId(designCardId),
+            },
+            { session }
+          );
+
+          await session.commitTransaction();
+        } catch (error) {
+          await session.abortTransaction();
+          return {
+            status: 400,
+            data: {},
+            messageError: error.message,
+          };
+        } finally {
+          session.endSession();
+        }
       } catch (error) {
         return {
           status: 400,

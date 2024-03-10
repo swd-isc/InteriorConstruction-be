@@ -26,11 +26,7 @@ const designSchema = new Schema({
                 if (!value) {
                     throw new mongoose.Error(`Design card ID required.`); // Value is required
                 }
-
-                const designCard = await DesignCard.findById(value);
-                if (!designCard) {
-                    throw new mongoose.Error(`${value} is not a valid design card ID.`); // Invalid ObjectId reference in the array
-                }
+                
                 return true; // Return true if designCard exists, otherwise false
             },
         }
@@ -54,12 +50,14 @@ const designSchema = new Schema({
         validate: {
             validator: async function (value) {
                 const Client = mongoose.model('client');
-
-                const delivery = await Client.findById(value);
-                if (!delivery) {
+                const client = await Client.findById(value);
+                if (!client) {
                     throw new mongoose.Error(`${value} is not a valid client ID.`); // Invalid ObjectId reference in the array
                 }
-                return true; // Return true if delivery exists, otherwise false
+                if (value && this.type != "CUSTOM") {
+                    throw new mongoose.Error("Type must be CUSTOM when have customBy");
+                }
+                return true; // Return true if client exists, otherwise false
             }
         }
     },
