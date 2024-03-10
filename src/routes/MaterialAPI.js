@@ -321,7 +321,49 @@ const MaterialRouter = (app) => {
     router.delete('/:id', verifyToken, isAdmin, materialController.deleteMaterialController);
     router.delete('/', verifyToken, isAdmin, materialController.deleteMaterialController);
 
-    router.get("/:id", materialController.getMaterialById)
+    /**
+     * @swagger
+     * /api/material/{id}:
+     *  get:
+     *      tags:
+     *          - Materials
+     *      summary: Get material by Id
+     *      description: This endpoint is for getting material by Id
+     *      parameters:
+     *          - in: path
+     *            name: id
+     *            description: Id required
+     *            required: true
+     *            schema:
+     *                  type: string
+     *      responses:
+     *          200:
+     *              description: OK
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              data:
+     *                                  $ref: '#components/schemas/MaterialData'
+     *                              message:
+     *                                  type: string
+     *          400:
+     *              description: Bad request
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              messageError:
+     *                                  type: string
+     */
+    router.get("/:id", materialController.getMaterialById);
+    router.get("/", materialController.getMaterialById)
 
     return app.use('/api/material', router);
 }
