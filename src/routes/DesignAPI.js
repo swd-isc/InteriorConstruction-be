@@ -50,6 +50,8 @@ const router = express.Router();
  *                type: array
  *                items:
  *                  type: string
+ *              customBy:
+ *                type: string
  *              furnitures:
  *                type: array
  *                items:
@@ -427,14 +429,7 @@ const DesignRouter = (app) => {
    *              designURL:
    *                type: string
    *              designCard:
-   *                type: object
-   *                properties:
-   *                  title:
-   *                    type: string
-   *                  description:
-   *                    type: string
-   *                  imgURL:
-   *                    type: string
+   *                $ref: '#components/schemas/DesignCard'
    *              designPrice:
    *                type: number
    *              classifications:
