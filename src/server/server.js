@@ -20,6 +20,7 @@ import { DesignCardRouter } from '../routes/DesignCardAPI';
 import { AuthenRouter } from '../routes/AuthenAPI';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
+import { PaymentRouter } from '../routes/PaymentAPI';
 
 const app = express();
 
@@ -58,6 +59,9 @@ const options = {
 
 const swaggerSpec = swaggerJSDoc(options);
 app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec, { customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css" }));
+
+//Payment routes
+PaymentRouter(app);
 
 //Account routes
 AccountRouter(app);
