@@ -157,77 +157,7 @@ const DesignCardRouter = (app) => {
       */
    router.get("/:id", designCardService.getDesignCardById);
 
-   /**
-      * @swagger
-      * /api/design-card:
-      *  post:
-      *    security:
-      *      - bearerAuth: []
-      *    tags:
-      *      - DesignCard
-      *    summary: Create design card
-      *    description: This endpoint is for creating design card
-      *    requestBody:
-      *      required: true
-      *      content:
-      *        application/json:
-      *          schema:
-      *            $ref: '#components/schemas/DesignCard'
-      *    responses:
-      *      201:
-      *        description: Ok
-      *        content:
-      *          application/json:
-      *            schema:
-      *              type: object
-      *              properties:
-      *                status:
-      *                  type: number
-      *                data:
-      *                  $ref: '#components/schemas/DesignCardData'
-      *                message:
-      *                  type: string
-      *      400:
-      *        description: Bad request
-      *        content:
-      *          application/json:
-      *            schema:
-      *              type: object
-      *              properties:
-      *                status:
-      *                  type: number
-      *                data:
-      *                  type: object
-      *                messageError:
-      *                  type: string
-      *      500:
-      *        description: Server error
-      *        content:
-      *          application/json:
-      *            schema:
-      *              type: object
-      *              properties:
-      *                status:
-      *                  type: number
-      *                messageError:
-      *                  type: string
-      *      401:
-      *           description: Unauthorized
-      *           content:
-      *                application/json:
-      *                    schema:
-      *                        type: string
-      *      403:
-      *           description: Forbidden
-      *           content:
-      *                application/json:
-      *                    schema:
-      *                        type: object
-      *                        properties:
-      *                            messageError:
-      *                                type: string 
-      */
-   router.post("/", verifyToken, isAdmin, designCardService.createDesignCard);
+   router.post("/", verifyToken, isAdmin, designCardService.createDesignCard); //Unused
 
    /**
       * @swagger
