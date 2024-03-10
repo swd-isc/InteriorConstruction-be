@@ -404,9 +404,9 @@ export const designRepository = {
       const design = new Design(reqBody);
       const designCard = new DesignCard({});
 
-      designCard.title = reqBody.designCardTitle;
-      designCard.description = reqBody.designCardDescription;
-      designCard.imgURL = reqBody.designCardImgURL;
+      designCard.title = reqBody.designCard.title;
+      designCard.description = reqBody.designCard.description;
+      designCard.imgURL = reqBody.designCard.imgURL;
 
       design.designCard = designCard._id;
 
