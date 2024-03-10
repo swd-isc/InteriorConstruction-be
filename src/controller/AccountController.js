@@ -41,8 +41,7 @@ export const accountService = {
   },
 
   updateAccountByAdmin: async (req, res) => {
-    console.log(req.params.id)
-    let data = await accountRepository.updateAccountByAdmin(req.params.id, req.body);
+    let data = await accountRepository.updateAccountByAdmin(req.params.accountId, req.body);
     return res.status(data.status).json(data);
   },
 
