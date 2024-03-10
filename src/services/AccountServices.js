@@ -56,12 +56,13 @@ export const accountRepository = {
       // Count all documents in the collection
       const totalDocuments = await Account.countDocuments({
         logInMethod: "DEFAULT",
+        role: "CLIENT"
       });
 
       // Calculate total pages
       const totalPages = Math.ceil(totalDocuments / itemsPerPage);
 
-      data.accounts = await Account.find({ logInMethod: "DEFAULT" })
+      data.accounts = await Account.find({ logInMethod: "DEFAULT", role: "CLIENT" })
         .sort({ email: sortAsc })
         .skip(startIndex)
         .limit(itemsPerPage);
