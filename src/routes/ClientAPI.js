@@ -1,6 +1,6 @@
 import express from "express";
 import { clientService } from "../controller/ClientController";
-import { isAdmin, isCurrentUser, verifyToken } from "../middleware/authen";
+import { isAdmin, isCurrentUser, isCurrentUserOrAdmin, verifyToken } from "../middleware/authen";
 import { accountService } from "../controller/AccountController";
 
 const router = express.Router();
@@ -280,7 +280,7 @@ const ClientRouter = (app) => {
    *                            messageError:
    *                                type: string 
    */
-  router.get("/:id", verifyToken, isAdmin, clientService.getClientById);
+  router.get("/:id", verifyToken, isCurrentUserOrAdmin, clientService.getClientById);
 
   // router.post("/", clientService.createClient); //Unused
 
