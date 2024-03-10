@@ -10,9 +10,15 @@ export const paymentService = {
         console.log('check ip', ipAddr);
         console.log('test config', config.get('vnp_ReturnUrl'));
         if (config.get('vnp_ReturnUrl')) {
-            res.json('ok')
+            return {
+                status: 200,
+                message: "OK"
+            }
         } else {
-            res.json('err')
+            return {
+                status: 400,
+                message: "err"
+            }
         }
         // var dateFormat = require('dateformat');
 

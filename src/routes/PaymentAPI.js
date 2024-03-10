@@ -5,7 +5,7 @@ import { paymentController } from '../controller/PaymentController';
 const router = express.Router();
 
 const PaymentRouter = (app) => {
-    router.post('/create_payment', verifyToken, paymentController.postPayment);
+    router.post('/create_payment', paymentController.postPayment);
 
     return app.use('/api/payment', router);
 }
