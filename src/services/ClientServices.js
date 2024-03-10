@@ -273,7 +273,11 @@ export const clientRepository = {
         dbName: "interiorConstruction",
       });
 
+      const session = await mongoose.startSession();
+
       try {
+        session.startTransaction();
+
         const client = await Client.findById(clientId);
         const account = await Account.findById(client.accountId);
 
@@ -290,12 +294,16 @@ export const clientRepository = {
 
         data = await client.save();
         await account.save();
+        await session.commitTransaction();
       } catch (error) {
+        await session.abortTransaction();
         return {
           status: 400,
           data: {},
           messageError: error.message,
         };
+      } finally {
+        session.endSession();
       }
 
       return {

@@ -401,6 +401,9 @@ export const designRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
+
+      if (reqBody.customBy == "") reqBody.customBy = undefined;
+
       const design = new Design(reqBody);
       const designCard = new DesignCard({});
 
@@ -536,6 +539,8 @@ export const designRepository = {
       }
 
       let designCard = await DesignCard.findById(design.designCard._id);
+
+      if (reqBody.customBy == "") reqBody.customBy = undefined;
 
       // Iterate through req.body and set corresponding fields in the design object
       for (const key in reqBody) {

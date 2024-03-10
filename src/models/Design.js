@@ -42,6 +42,20 @@ const designSchema = new Schema({
             values: ['DEFAULT', 'CUSTOM'],
             message: '{VALUE} is not supported.'
         },
+        validate: {
+            validator: async function (value) {
+
+                if (!value) {
+                    throw new mongoose.Error(`type required`);
+                }
+
+                if (value == "CUSTOM" && !this.customBy) {
+                    throw new mongoose.Error('missing customBy');
+                }
+
+                return true;
+            }
+        },
         required: [true, 'Type required.'],
     },
     customBy: {
