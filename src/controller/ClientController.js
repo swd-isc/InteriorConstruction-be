@@ -10,7 +10,7 @@ export const clientService = {
   },
 
   getClientById: async (req, res) => {
-    let data = await clientRepository.getClientById(req.params.id);
+    let data = await clientRepository.getClientById(req.params.id, req.user);
     return res.status(data.status).json(data);
   },
 

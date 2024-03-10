@@ -27,8 +27,6 @@ const router = express.Router();
  *                properties:
  *                  email:
  *                    type: string
- *                  password:
- *                    type: string
  *                  role:
  *                    type: string
  *                    enum:
@@ -149,7 +147,32 @@ const ClientRouter = (app) => {
    *                      type: object
    *                      properties:
    *                        clients:
-   *                          $ref: '#components/schemas/Client'
+   *                          type: object
+   *                          properties:
+   *                            firstName:
+   *                              type: string
+   *                            lastName:
+   *                              type: string
+   *                            birthDate:
+   *                              type: string
+   *                            phone:
+   *                              type: string
+   *                            photoURL:
+   *                              type: string
+   *                            accountId:
+   *                              type: object
+   *                              properties:
+   *                                id:
+   *                                  type: string
+   *                                email:
+   *                                  type: string
+   *                                role:
+   *                                  type: string
+   *                                  enum:
+   *                                    - CLIENT
+   *                                    - ADMIN
+   *                                status:
+   *                                  type: string
    *                        page:
    *                          type: number
    *                        totalPages:

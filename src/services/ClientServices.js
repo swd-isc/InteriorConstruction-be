@@ -40,7 +40,7 @@ export const clientRepository = {
         .limit(itemsPerPage)
         .populate({
           path: "accountId",
-          select: "_id email role password status", // Select only the fields you need
+          select: "_id email role status", // Select only the fields you need
         })
         .populate({
           path: "contracts",
@@ -71,7 +71,7 @@ export const clientRepository = {
     }
   },
 
-  getClientById: async (id) => {
+  getClientById: async (id, currentUser) => {
     try {
       const idClientValid = await isIdValid(id, "client");
 
@@ -88,11 +88,11 @@ export const clientRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
-
+      console.log('check curr', currentUser);
       const data = await Client.findById(id)
         .populate({
           path: "accountId",
-          select: "-_id email role password refreshToken", // Select only the fields you need
+          select: "-_id email role status", // Select only the fields you need
         })
         .populate({
           path: "contracts",
