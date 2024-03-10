@@ -40,6 +40,51 @@ export const materialServices = {
         }
     },
 
+    getMaterialById: async (id) => {
+        try {
+            let data = {};
+            //Validate classificationId
+            const idMaterialValid = await isIdValid(id, 'material');
+
+            if (!idMaterialValid.isValid) {
+                return {
+                    status: idMaterialValid.status,
+                    data: {},
+                    messageError: idMaterialValid.messageError
+                }
+            }
+
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+            try {
+                data = await Material.findById(id);
+            } catch (error) {
+                return {
+                    status: 400,
+                    data: {},
+                    messageError: error.message
+                }
+
+            }
+
+            return {
+                status: 200,
+                data: data !== null ? data : {},
+                message: data !== null ? "OK" : "No data"
+            };
+        } catch (error) {
+            console.error('error ne', error);
+            return {
+                status: 500,
+                messageError: error.toString(),
+            }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
+        }
+    },
+
     createMaterial: async (reqBody) => {
         try {
             let data = [];

@@ -1,4 +1,5 @@
 import Design from "../models/Design";
+import DesignCard from "../models/DesignCard";
 import mongoose from "mongoose";
 import Classification from "../models/Classification";
 import Contract from "../models/Contract";
@@ -232,7 +233,7 @@ export const designRepository = {
           match.type = type;
         }
       }
-      
+
       // Count all documents in the collection
       const totalDocuments = await Design.countDocuments(match);
 
@@ -401,10 +402,79 @@ export const designRepository = {
         dbName: "interiorConstruction",
       });
       const design = new Design(reqBody);
+      const designCard = new DesignCard({});
+
+      designCard.title = reqBody.designCardTitle;
+      designCard.description = reqBody.designCardDescription;
+      designCard.imgURL = reqBody.designCardImgURL;
+
+      design.designCard = designCard._id;
 
       try {
-        data = await design.save();
+        await designCard.save();
       } catch (error) {
+        return {
+          status: 400,
+          data: {},
+          messageError: error.message,
+        };
+      }
+
+      try {
+        await design.save();
+        data = await Design.aggregate([
+          {
+            $match: {
+              _id: new ObjectId(design._id), // Match the document by its _id
+            },
+          },
+          {
+            $lookup: {
+              from: "furniture",
+              localField: "furnitures",
+              foreignField: "_id",
+              as: "furnitures",
+            },
+          },
+          {
+            $addFields: {
+              furnitures: {
+                $map: {
+                  input: "$furnitures",
+                  as: "furniture",
+                  in: {
+                    _id: "$$furniture._id",
+                    name: "$$furniture.name",
+                    imgURL: "$$furniture.imgURL",
+                    price: "$$furniture.price",
+                  },
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: "design_card", // The collection to perform the lookup on
+              localField: "designCard", // The field in the Design collection
+              foreignField: "_id", // The field in the DesignCard collection
+              as: "designCard", // The name of the field to add to the Design document
+            },
+          },
+          {
+            $addFields: {
+              designCard: { $arrayElemAt: ["$designCard", 0] }, // Convert designCard array to object
+            },
+          },
+          {
+            $project: {
+              classifications: 0,
+            },
+          },
+        ])
+      } catch (error) {
+        await DesignCard.findOneAndDelete({
+          _id: new ObjectId(designCard._id),
+        });
         return {
           status: 400,
           data: {},

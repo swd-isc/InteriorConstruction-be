@@ -7,6 +7,13 @@ export const materialController = {
         return res.status(data.status).json(data);
     },
 
+    getMaterialById: async (req, res) => {
+
+        let data = await materialServices.getMaterialById(req.params.id);
+        return res.status(data.status).json(data);
+    },
+
+
     postMaterial: async (req, res) => {
         let data = await materialServices.createMaterial(req.body);
         return res.status(data.status).json(data);

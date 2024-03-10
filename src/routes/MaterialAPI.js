@@ -274,6 +274,8 @@ const MaterialRouter = (app) => {
     router.delete('/:id', verifyToken, isAdmin, materialController.deleteMaterialController);
     router.delete('/', verifyToken, isAdmin, materialController.deleteMaterialController);
 
+    router.get("/:id", materialController.getMaterialById)
+
     return app.use('/api/material', router);
 }
 
