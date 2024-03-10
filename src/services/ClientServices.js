@@ -25,7 +25,10 @@ export const clientRepository = {
       });
 
       // Count all documents in the collection
-      const totalDocuments = await Client.countDocuments();
+      const totalDocuments = (await Account.countDocuments({
+        logInMethod: "DEFAULT",
+        role: "CLIENT"
+      })) - 1;
 
       // Calculate total pages
       const totalPages = Math.ceil(totalDocuments / itemsPerPage);
