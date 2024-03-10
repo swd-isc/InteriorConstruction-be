@@ -25,8 +25,6 @@ const router = express.Router();
  *              accountId:
  *                type: object
  *                properties:
- *                  id:
- *                    type: string
  *                  email:
  *                    type: string
  *                  password:

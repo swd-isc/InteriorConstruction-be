@@ -119,6 +119,54 @@ export const isCurrentUserOrAdmin = async (req, res, next) => {
     }
 }
 
+export const isCurrentUserAndAdmin = async (req, res, next) => {
+    const authHeader = req.header('Authorization')
+    const token = authHeader && authHeader.split(' ')[1]
+    if (!token) {
+        return res.status(401).json("Don't have token.") //Unauthorized(ko có token gửi từ client về)
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        let data = {}
+
+        const reqId = req.params.id;
+        if (reqId !== decoded._id) {
+            return res.status(403).json({
+                messageError: "Access forbidden. Not current user."
+            }) //forbidden not an current user or admin
+        }
+
+        try {
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+            data = await Client.findById(decoded._id)
+                .populate({
+                    path: 'accountId',
+                    select: '_id email role logInMethod status'
+                });
+        } catch (error) {
+            return res.status(500).json({
+                messageError: error
+            })
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
+        }
+
+        if (data.accountId.role === "ADMIN") {
+
+            next()
+        }
+
+    } catch (err) {
+        return res.status(403).json({
+            error: err.name,
+            messageError: err.message
+        }) //forbidden(Invalid token)
+    }
+}
+
 export const isAdmin = async (req, res, next) => {
     const authHeader = req.header('Authorization')
     const token = authHeader && authHeader.split(' ')[1]
