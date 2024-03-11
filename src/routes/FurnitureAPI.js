@@ -199,6 +199,8 @@ const FurnitureRouter = (app) => {
     *                                           type: string
     *                                       name:
     *                                           type: string
+    *                                       type: 
+    *                                           type: string
     *                                       imgURL:
     *                                           type: array
     *                                           items:
