@@ -3,24 +3,12 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema(
   {
-    amount: {
-      type: Number,
-      required: [true, "amount required."],
-    },
-    bankCode: {
-      type: String,
-      required: [true, "bankCode required."],
-    },
-    cardType: {
-      type: String,
-      required: [true, "cardType required."],
-    },
-    orderInfo: {
+    orderId: {
       type: String,
       required: [true, "orderInfo required."],
     },
     payDate: {
-      type: Date,
+      type: String,
       required: [true, "payDate required."],
     },
     clientId: {
@@ -64,10 +52,6 @@ const orderSchema = new Schema(
         },
         message: (props) => `${props.value} is not a valid contract ID.`,
       },
-    },
-    status: {
-      type: Boolean,
-      required: [true, "status required."],
     },
   },
   {
