@@ -7,6 +7,12 @@ export const colorController = {
         return res.status(data.status).json(data);
     },
 
+    getAllColor: async (req, res) => {
+
+        let data = await colorServices.getAllColor();
+        return res.status(data.status).json(data);
+    },
+
     getColorById: async (req, res) => {
 
         let data = await colorServices.colorById(req.params.id);

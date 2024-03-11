@@ -14,7 +14,7 @@ export const furnitureController = {
     },
 
     adminFurnitureByPage: async (req, res) => {
-        let data = await furnitureServices.adminGetFurnitureByPage(req.query.sort_by, req.query.page, req.query.type);
+        let data = await furnitureServices.adminGetFurnitureByPage(req.query.sort_by, req.query.page, req.query.type, req.query.classificationId);
         return res.status(data.status).json(data);
     },
 

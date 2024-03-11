@@ -12,6 +12,32 @@ const ObjectId = mongoose.Types.ObjectId;
 // import { designData } from '../sample-data/DesignData';
 
 export const colorServices = {
+
+    getAllColor: async () => {
+        try {
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+            const currentPageData = await Color.find({});
+
+            return {
+                status: 200,
+                data: currentPageData,
+                message: currentPageData.length !== 0 ? "OK" : "No data"
+            };
+
+        } catch (error) {
+            console.error(error);
+            return {
+                status: 500,
+                messageError: error,
+            }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
+        }
+    },
+
     getColorByPage: async (pageReq) => {
         try {
             const itemsPerPage = 10;

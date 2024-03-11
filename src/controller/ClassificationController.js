@@ -7,6 +7,24 @@ export const classificationController = {
         return res.status(data.status).json(data);
     },
 
+    getClassification: async(req, res) => {
+        if (!req.query.all || req.query.all == '0') {
+            let data = await classificationServices.classificationByType(req.query.type, req.query.sort_by);
+            return res.status(data.status).json(data);
+        }
+        else {
+            let data = await classificationServices.getClassificationAll();
+            return res.status(data.status).json(data);
+        }
+    },
+
+    getClassificationAll: async (req, res) => {
+
+        let data = await classificationServices.getClassificationAll();
+        return res.status(data.status).json(data);
+
+    },
+
     getClassificationByType: async (req, res) => {
 
         let data = await classificationServices.classificationByType(req.query.type, req.query.sort_by);

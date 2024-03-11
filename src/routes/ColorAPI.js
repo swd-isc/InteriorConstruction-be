@@ -119,7 +119,9 @@ const ColorRouter = (app) => {
      *                                  type: string
      */
     router.get('/:id', colorController.getColorById);
-    router.get('/', colorController.getColorById);
+    
+    //TODO: swagger here
+    router.get('/', colorController.getAllColor);
 
     /**
     * @swagger
