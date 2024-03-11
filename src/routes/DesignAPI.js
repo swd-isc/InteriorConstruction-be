@@ -84,7 +84,9 @@ const router = express.Router();
  *                  properties:
  *                    id:
  *                      type: string
- *                    name:
+ *                    classificationName:
+ *                      type: string
+ *                    type:
  *                      type: string
  */
 
