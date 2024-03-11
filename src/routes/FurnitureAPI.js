@@ -336,6 +336,8 @@ const FurnitureRouter = (app) => {
     *                                           items:
     *                                               type: object
     *                                               properties:
+    *                                                   id:
+    *                                                       type: string
     *                                                   name:
     *                                                       type: string
     *                                       colors:
@@ -343,6 +345,8 @@ const FurnitureRouter = (app) => {
     *                                           items:
     *                                               type: object
     *                                               properties:
+    *                                                   id:
+    *                                                       type: string
     *                                                   name:
     *                                                       type: string
     *                                       sizes:
@@ -356,6 +360,8 @@ const FurnitureRouter = (app) => {
     *                                           items:
     *                                               type: object
     *                                               properties:
+    *                                                   id:
+    *                                                       type: string
     *                                                   classificationName:
     *                                                       type: string
     *                                       delivery:
