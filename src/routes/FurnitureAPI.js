@@ -170,6 +170,12 @@ const FurnitureRouter = (app) => {
     *               enum:
     *                   - DEFAULT
     *                   - CUSTOM
+    *          - in: query
+    *            name: classificationId
+    *            required: false
+    *            description: For filter furniture by classificationId
+    *            schema:
+    *               type: string
     *      responses:
     *          200:
     *              description: OK
