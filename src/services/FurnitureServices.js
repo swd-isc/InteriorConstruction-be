@@ -496,11 +496,11 @@ export const furnitureServices = {
             const data = await Furniture.findById(id)
                 .populate({
                     path: 'colors',
-                    select: '-_id name',
+                    select: '_id name',
                 })
                 .populate({
                     path: 'materials',
-                    select: '-_id name',
+                    select: '_id name',
                 })
                 .populate({
                     path: 'delivery',
@@ -508,7 +508,7 @@ export const furnitureServices = {
                 })
                 .populate({
                     path: 'classifications',
-                    select: '-_id classificationName',
+                    select: '_id classificationName',
                 })
             if (data) {
                 return {
