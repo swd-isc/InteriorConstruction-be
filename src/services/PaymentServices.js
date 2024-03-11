@@ -110,7 +110,7 @@ export const paymentService = {
         const date = new Date();
         const timezoneOffsetMinutes = 7 * 60; // UTC+7
         const adjustedDate = new Date(date.getTime() + timezoneOffsetMinutes * 60000);
-        const vnp_RequestId = moment(adjustedDate).format('HHmmss');
+        const vnp_RequestId = moment(adjustedDate).format('YYYYMMDDHHmmss');
 
         const vnp_Version = '2.1.0';
         const vnp_Command = 'querydr';
@@ -182,7 +182,7 @@ export const paymentService = {
         const vnp_RequestId = moment(adjustedDate).format('HHmmss');
         const vnp_Version = '2.1.0';
         const vnp_Command = 'refund';
-        const vnp_OrderInfo = 'refund order: ' + vnp_TxnRef;
+        const vnp_OrderInfo = 'Refund order: ' + vnp_TxnRef;
         const vnp_IpAddr = req.headers['x-forwarded-for'] ||
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
