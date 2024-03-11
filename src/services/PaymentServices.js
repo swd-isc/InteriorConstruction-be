@@ -14,12 +14,15 @@ export const paymentService = {
         const timezoneOffsetMinutes = 7 * 60; // UTC+7
         const adjustedDate = new Date(date.getTime() + timezoneOffsetMinutes * 60000);
         const createDate = moment(adjustedDate).format('YYYYMMDDHHmmss');
+        // Tạo một giá trị số ngẫu nhiên (ví dụ: từ 0 đến 999)
+        const randomValue = Math.floor(Math.random() * 1000);
 
         const tmnCode = vnPay.vnp_TmnCode;
         const secretKey = vnPay.vnp_HashSecret;
         let vnpUrl = vnPay.vnp_Url;
         const returnUrl = vnPay.vnp_ReturnUrl;
-        const orderId = req.body.contractId;
+        const contractId = req.body.contractId;
+        const orderId = `${createDate.toString()}${randomValue.toString()}`;
         const amount = req.body.amount;
         const bankCode = req.body.bankCode;
         console.log('check req', bankCode, ',', req.body.language);
@@ -36,7 +39,7 @@ export const paymentService = {
         vnp_Params['vnp_Locale'] = locale;
         vnp_Params['vnp_CurrCode'] = currCode;
         vnp_Params['vnp_TxnRef'] = orderId;
-        vnp_Params['vnp_OrderInfo'] = 'Payment for contract: ' + orderId;
+        vnp_Params['vnp_OrderInfo'] = 'Payment for contract: ' + contractId;
         vnp_Params['vnp_OrderType'] = 'other';
         vnp_Params['vnp_Amount'] = amount * 100; //merchant cần nhân thêm 100 lần (khử phần thập phân)
         vnp_Params['vnp_ReturnUrl'] = returnUrl;
@@ -92,6 +95,13 @@ export const paymentService = {
                 code: '97'
             }
         }
+    },
+
+    queryPayment: async (req) => {
+        const vnp_TmnCode = vnPay.vnp_TmnCode;
+        const secretKey = vnPay.vnp_HashSecret;
+        const vnp_Api = vnPay.vnp_Api;
+
     }
 }
 
