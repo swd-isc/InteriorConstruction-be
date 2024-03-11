@@ -2,6 +2,9 @@ import moment from 'moment';
 import { vnPay } from '../config/vnpayConfig';
 import queryString from 'qs';
 import crypto from 'crypto';
+import request from 'request';
+import util from 'util';
+const requestPromise = util.promisify(request);
 
 export const paymentService = {
     createPayment: async (req) => {
@@ -14,15 +17,13 @@ export const paymentService = {
         const timezoneOffsetMinutes = 7 * 60; // UTC+7
         const adjustedDate = new Date(date.getTime() + timezoneOffsetMinutes * 60000);
         const createDate = moment(adjustedDate).format('YYYYMMDDHHmmss');
-        // Tạo một giá trị số ngẫu nhiên (ví dụ: từ 0 đến 999)
-        const randomValue = Math.floor(Math.random() * 1000);
 
         const tmnCode = vnPay.vnp_TmnCode;
         const secretKey = vnPay.vnp_HashSecret;
         let vnpUrl = vnPay.vnp_Url;
         const returnUrl = vnPay.vnp_ReturnUrl;
         const contractId = req.body.contractId;
-        const orderId = `${createDate.toString()}${randomValue.toString()}`;
+        const orderId = req.body.contractId;
         const amount = req.body.amount;
         const bankCode = req.body.bankCode;
         console.log('check req', bankCode, ',', req.body.language);
@@ -46,6 +47,7 @@ export const paymentService = {
         vnp_Params['vnp_IpAddr'] = ipAddr;
         vnp_Params['vnp_CreateDate'] = createDate;
 
+        console.log('check ', orderId);
         if (bankCode !== null && bankCode !== '' && bankCode !== undefined) {
             vnp_Params['vnp_BankCode'] = bankCode;
         }
@@ -137,31 +139,22 @@ export const paymentService = {
             'vnp_IpAddr': vnp_IpAddr,
             'vnp_SecureHash': vnp_SecureHash
         };
-        console.log('here');
 
         // /merchant_webapi/api/transaction
-        request({
-            url: vnp_Api,
-            method: "POST",
-            json: true,
-            body: dataObj
-        }, function (error, response, body) {
-            console.log('check res', response);
-        });
-        // try {
-        //     const response = await request({
-        //         url: vnp_Api,
-        //         method: "POST",
-        //         json: true,
-        //         body: dataObj
-        //     });
+        try {
+            const response = await requestPromise({
+                url: vnp_Api,
+                method: "POST",
+                json: true,
+                body: dataObj
+            });
 
-        //     console.log('check res', response);
-        //     return response;
-        // } catch (error) {
-        //     console.error('Error in queryPayment:', error);
-        //     throw error;
-        // }
+            console.log('check res', response.body);
+            return response.body;
+        } catch (error) {
+            console.error('Error in queryPayment:', error);
+            throw error;
+        }
     }
 }
 
