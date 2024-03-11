@@ -370,10 +370,18 @@ export const designRepository = {
           },
         },
         {
-          $project: {
-            classifications: 0,
+          $lookup: {
+            from: "classification", // The collection to perform the lookup on
+            localField: "classifications", // The field in the Design collection
+            foreignField: "_id", // The field in the DesignCard collection
+            as: "classifications", // The name of the field to add to the Design document
           },
         },
+        // {
+        //   $project: {
+        //     classifications: 0,
+        //   },
+        // },
       ]);
 
       return {
