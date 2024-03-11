@@ -25,6 +25,7 @@ import { AuthenRouter } from "../routes/AuthenAPI";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import { PaymentRouter } from "../routes/PaymentAPI";
+import { OrderRouter } from "../routes/OrderAPI";
 
 const app = express();
 
@@ -111,14 +112,12 @@ DeliveryRouter(app);
 //DesignCard routes
 DesignCardRouter(app);
 
+OrderRouter(app);
+
 AuthenRouter(app);
 
 app.get("/", (req, res) => {
   res.end(`Hello kiet`);
-});
-
-app.get("/test/success", (req, res) => {
-  res.render("success", { code: "97" });
 });
 
 const port = process.env.PORT || 8888;
