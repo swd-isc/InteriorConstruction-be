@@ -200,7 +200,7 @@ export const furnitureServices = {
         }
     },
 
-    adminGetFurnitureByPage: async (mode, pageReq, type) => {
+    adminGetFurnitureByPage: async (mode, pageReq, type, classificationIds) => {
         try {
             const typeCheck = await checkType(type);
             const sortAsc = sortByInput(mode);
@@ -212,9 +212,12 @@ export const furnitureServices = {
             // Calculate start and end indices for the current page
             const startIndex = (page - 1) * itemsPerPage;
 
+            const classificationArray = classificationIds ? classificationIds.split(',').map(id => new ObjectId(id)) : [];
             // Get the data for the current page
             const url = process.env.URL_DB;
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+            console.log(classificationArray)
 
             data = await Furniture.aggregate([
                 ...(type === 'default' ? [
@@ -229,6 +232,13 @@ export const furnitureServices = {
                         $match: {
                             'type': 'CUSTOM',
                         },
+                    }
+                ] : []),
+                ...(classificationArray.length > 0 ? [
+                    {
+                        $match: {
+                            'classifications': { $all: classificationArray }
+                        }
                     }
                 ] : []),
                 {
