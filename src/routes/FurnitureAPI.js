@@ -147,6 +147,12 @@ const FurnitureRouter = (app) => {
     *      description: This endpoint is for admin getting furniture by page
     *      parameters:
     *          - in: query
+    *            name: all
+    *            required: false
+    *            description: For find all, default = 0
+    *            schema:
+    *               type: string
+    *          - in: query
     *            name: page
     *            required: false
     *            description: For pagination, default = 1

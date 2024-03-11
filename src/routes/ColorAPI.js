@@ -119,8 +119,41 @@ const ColorRouter = (app) => {
      *                                  type: string
      */
     router.get('/:id', colorController.getColorById);
-    
-    //TODO: swagger here
+
+    /**
+     * @swagger
+     * /api/color/:
+     *  get:
+     *      tags:
+     *          - Colors
+     *      summary: Get all colors
+     *      description: This endpoint is for getting all colors
+     *      responses:
+     *          200:
+     *              description: OK
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              data:
+     *                                  $ref: '#components/schemas/ColorData'
+     *                              message:
+     *                                  type: string
+     *          400:
+     *              description: Bad request
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              messageError:
+     *                                  type: string
+     */
     router.get('/', colorController.getAllColor);
 
     /**

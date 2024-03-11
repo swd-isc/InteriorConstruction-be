@@ -363,7 +363,42 @@ const MaterialRouter = (app) => {
      *                                  type: string
      */
     router.get("/:id", materialController.getMaterialById);
-    router.get("/", materialController.getAllMaterial)
+
+    /**
+     * @swagger
+     * /api/material/:
+     *  get:
+     *      tags:
+     *          - Materials
+     *      summary: Get all materials
+     *      description: This endpoint is for getting all materials
+     *      responses:
+     *          200:
+     *              description: OK
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              data:
+     *                                  $ref: '#components/schemas/MaterialData'
+     *                              message:
+     *                                  type: string
+     *          400:
+     *              description: Bad request
+     *              content:
+     *                  application/json:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              status:
+     *                                  type: number
+     *                              messageError:
+     *                                  type: string
+     */
+    router.get("/", materialController.getAllMaterial);
 
     return app.use('/api/material', router);
 }

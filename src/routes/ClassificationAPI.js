@@ -81,9 +81,18 @@ const ClassificationRouter = (app) => {
        *  get:
        *      tags:
        *           - Classifications
-       *      summary: Get classification by type
-       *      description: This endpoint is for getting classification by type
+       *      summary: Get classification
+       *      description: This endpoint is for getting classification
        *      parameters:
+       *          - in: query
+       *            name: all
+       *            required: false
+       *            description: For finding all classifications
+       *            schema:
+       *               type: number
+       *               enum:
+       *                - 0
+       *                - 1
        *          - in: query
        *            name: type
        *            required: false
