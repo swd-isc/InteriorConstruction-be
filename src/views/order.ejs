@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <div class="navbar bg-body-tertiary" style="width: 100%">
+          <div
+            class="container-fluid d-flex justify-content-between align-items-center"
+          >
+            <span style="font-weight: bold; font-size: 24px">VNPAY</span>
+            <a class="btn btn-primary" href="/api/payment/create_payment"
+              >Tạo mới GD thanh toán</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-3">
+      <div style="font-size: 24px; font-weight: 500"><%= title %></div>
+    </div>
+    <div class="container">
+      <div class="table-responsive">
+        <form id="createOrder" action="create_payment_url" method="POST">
+          <div class="form-group">
+            <label for="amount">Số tiền</label>
+            <input
+              class="form-control"
+              type="text"
+              id="amount"
+              name="amount"
+              placeholder="Số tiền"
+              value="<%= amount %>"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Chọn Phương thức thanh toán:</label>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="bankCode"
+                id="defaultPaymentMethod"
+                value=""
+                checked
+              />
+              <label class="form-check-label" for="defaultPaymentMethod">
+                Cổng thanh toán VNPAYQR
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="bankCode"
+                id="vnpayqrPaymentMethod"
+                value="VNPAYQR"
+              />
+              <label class="form-check-label" for="vnpayqrPaymentMethod">
+                Thanh toán qua ứng dụng hỗ trợ VNPAYQR
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="bankCode"
+                id="vnbankPaymentMethod"
+                value="VNBANK"
+              />
+              <label class="form-check-label" for="vnbankPaymentMethod">
+                Thanh toán qua ATM-Tài khoản ngân hàng nội địa
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="bankCode"
+                id="intcardPaymentMethod"
+                value="INTCARD"
+              />
+              <label class="form-check-label" for="intcardPaymentMethod">
+                Thanh toán qua thẻ quốc tế
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="language">Ngôn ngữ</label>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="language"
+                id="vnLanguage"
+                value="vn"
+                checked
+              />
+              <label class="form-check-label" for="vnLanguage">
+                Tiếng việt
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="language"
+                id="enLanguage"
+                value="en"
+              />
+              <label class="form-check-label" for="enLanguage">
+                Tiếng anh
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btnPopup" type="submit">
+            Thanh toán
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

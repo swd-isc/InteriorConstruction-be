@@ -124,7 +124,7 @@ const port = process.env.PORT || 8888;
 
 var path = require("path");
 app.set("views", path.join(__dirname, "../views"));
-app.set("view engine", "pug");
+app.set("view engine", "ejs");
 
 app.listen(port, () => {
   console.log("Server is running on port: ", port);
