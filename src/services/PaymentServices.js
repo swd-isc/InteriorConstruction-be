@@ -25,7 +25,7 @@ export const paymentService = {
         console.log('check req', bankCode, ',', req.body.language);
 
         let locale = req.body.language;
-        if (locale === null || locale === '') {
+        if (locale === null || locale === '' || locale === undefined) {
             locale = 'vn';
         }
         const currCode = 'VND';
@@ -43,7 +43,7 @@ export const paymentService = {
         vnp_Params['vnp_IpAddr'] = ipAddr;
         vnp_Params['vnp_CreateDate'] = createDate;
 
-        if (bankCode !== null && bankCode !== '') {
+        if (bankCode !== null && bankCode !== '' && bankCode !== undefined) {
             vnp_Params['vnp_BankCode'] = bankCode;
         }
 
