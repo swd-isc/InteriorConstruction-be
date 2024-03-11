@@ -7,6 +7,8 @@ const router = express.Router();
 const PaymentRouter = (app) => {
     router.post('/create_payment', paymentController.postPayment);
 
+    router.get('/return', paymentController.returnPayment);
+
     return app.use('/api/payment', router);
 }
 

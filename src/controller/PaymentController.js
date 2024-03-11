@@ -1,8 +1,13 @@
 import { paymentService } from "../services/PaymentServices";
 
 export const paymentController = {
-    postPayment: (req, res, next) => {
-        let data = paymentService.createPayment(req, res);
-        return res.status(data.status).json(data);
+    postPayment: async (req, res, next) => {
+        const vnpUrl = await paymentService.createPayment(req);
+        return res.redirect(vnpUrl);
+    },
+
+    returnPayment: async (req, res, next) => {
+        const data = await paymentService.returnPayment(req);
+        return res.render('success', { code: data.code });
     }
 }
