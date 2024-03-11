@@ -17,6 +17,7 @@ export const paymentController = {
     },
 
     postQuery: async (req, res, next) => {
-
+        const data = await paymentService.queryPayment(req);
+        return res.status(200).json(data);
     }
 }

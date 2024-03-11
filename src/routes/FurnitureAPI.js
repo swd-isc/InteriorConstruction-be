@@ -364,6 +364,8 @@ const FurnitureRouter = (app) => {
     *                                                       type: string
     *                                                   classificationName:
     *                                                       type: string
+    *                                                   type:
+    *                                                       type: string
     *                                       delivery:
     *                                           type: object
     *                                           properties:

@@ -102,6 +102,66 @@ export const paymentService = {
         const secretKey = vnPay.vnp_HashSecret;
         const vnp_Api = vnPay.vnp_Api;
 
+        const vnp_TxnRef = req.body.orderId;
+        const vnp_TransactionDate = req.body.transDate;
+
+        const date = new Date();
+        const timezoneOffsetMinutes = 7 * 60; // UTC+7
+        const adjustedDate = new Date(date.getTime() + timezoneOffsetMinutes * 60000);
+        const vnp_RequestId = moment(adjustedDate).format('HHmmss');
+
+        const vnp_Version = '2.1.0';
+        const vnp_Command = 'querydr';
+        const vnp_OrderInfo = 'Query order: ' + vnp_TxnRef;
+
+        const vnp_IpAddr = req.headers['x-forwarded-for'] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            req.connection.socket.remoteAddress;
+
+        const vnp_CreateDate = moment(adjustedDate).format('YYYYMMDDHHmmss');
+
+        const data = vnp_RequestId + "|" + vnp_Version + "|" + vnp_Command + "|" + vnp_TmnCode + "|" + vnp_TxnRef + "|" + vnp_TransactionDate + "|" + vnp_CreateDate + "|" + vnp_IpAddr + "|" + vnp_OrderInfo;
+        const hmac = crypto.createHmac("sha512", secretKey);
+        const vnp_SecureHash = hmac.update(new Buffer(data, 'utf-8')).digest("hex");
+
+        const dataObj = {
+            'vnp_RequestId': vnp_RequestId,
+            'vnp_Version': vnp_Version,
+            'vnp_Command': vnp_Command,
+            'vnp_TmnCode': vnp_TmnCode,
+            'vnp_TxnRef': vnp_TxnRef,
+            'vnp_OrderInfo': vnp_OrderInfo,
+            'vnp_TransactionDate': vnp_TransactionDate,
+            'vnp_CreateDate': vnp_CreateDate,
+            'vnp_IpAddr': vnp_IpAddr,
+            'vnp_SecureHash': vnp_SecureHash
+        };
+        console.log('here');
+
+        // /merchant_webapi/api/transaction
+        // request({
+        //     url: vnp_Api,
+        //     method: "POST",
+        //     json: true,
+        //     body: dataObj
+        // }, function (error, response, body) {
+        //     console.log('check res', response);
+        // });
+        try {
+            const response = await request({
+                url: vnp_Api,
+                method: "POST",
+                json: true,
+                body: dataObj
+            });
+
+            console.log('check res', response);
+            return response;
+        } catch (error) {
+            console.error('Error in queryPayment:', error);
+            throw error;
+        }
     }
 }
 
