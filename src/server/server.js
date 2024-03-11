@@ -118,7 +118,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/test/success", (req, res) => {
-  res.render("success", { code: "100" });
+  res.render("success", { code: "97" });
 });
 
 const port = process.env.PORT || 8888;
