@@ -212,12 +212,10 @@ export const furnitureServices = {
             // Calculate start and end indices for the current page
             const startIndex = (page - 1) * itemsPerPage;
 
-            const classificationArray = classificationIds ? classificationIds.split(',').map(id => new ObjectId(id)) : [];
+            const classificationArray = classificationIds ? [...new Set(classificationIds.split(',').map(id => new ObjectId(id)))] : [];
             // Get the data for the current page
             const url = process.env.URL_DB;
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-
-            console.log(classificationArray)
 
             data = await Furniture.aggregate([
                 ...(type === 'default' ? [

@@ -14,6 +14,12 @@ export const materialController = {
     },
 
 
+    getAllMaterial: async (req, res) => {
+
+        let data = await materialServices.getAllMaterial();
+        return res.status(data.status).json(data);
+    },
+
     postMaterial: async (req, res) => {
         let data = await materialServices.createMaterial(req.body);
         return res.status(data.status).json(data);

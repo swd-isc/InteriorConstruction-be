@@ -363,7 +363,7 @@ const MaterialRouter = (app) => {
      *                                  type: string
      */
     router.get("/:id", materialController.getMaterialById);
-    router.get("/", materialController.getMaterialById)
+    router.get("/", materialController.getAllMaterial)
 
     return app.use('/api/material', router);
 }
