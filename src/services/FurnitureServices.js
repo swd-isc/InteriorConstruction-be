@@ -511,7 +511,7 @@ export const furnitureServices = {
                 })
                 .populate({
                     path: 'classifications',
-                    select: '_id classificationName',
+                    select: '_id classificationName type',
                 })
             if (data) {
                 return {
