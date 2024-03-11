@@ -356,6 +356,130 @@ export const furnitureServices = {
         }
     },
 
+    adminGetFurnitureAll: async (type,classificationIds) => {
+        try {
+            let data = [];
+
+            const classificationArray = classificationIds ? [...new Set(classificationIds.split(',').map(id => new ObjectId(id)))] : [];
+            // Get the data for the current page
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+
+            data = await Furniture.aggregate([
+                ...(type === 'default' ? [
+                    {
+                        $match: {
+                            'type': 'DEFAULT',
+                        },
+                    }
+                ] : []),
+                ...(type === 'custom' ? [
+                    {
+                        $match: {
+                            'type': 'CUSTOM',
+                        },
+                    }
+                ] : []),
+                ...(classificationArray.length > 0 ? [
+                    {
+                        $match: {
+                            'classifications': { $all: classificationArray }
+                        }
+                    }
+                ] : []),
+                {
+                    $lookup: {
+                        from: 'color', // Assuming your color schema collection is named 'color'
+                        localField: 'colors',
+                        foreignField: '_id',
+                        as: 'colorsData',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'material', // Assuming your material schema collection is named 'material'
+                        localField: 'materials',
+                        foreignField: '_id',
+                        as: 'materialsData',
+                    },
+                },
+                { // Separate the groups for colors, materials and furnitures
+                    $facet: {
+                        colors: [
+                            {
+                                $unwind: '$colorsData', // Unwind the colors array
+                            },
+                            {
+                                $group: {
+                                    _id: '$colorsData._id',
+                                    name: { $first: '$colorsData.name' },
+                                    count: { $sum: 1 },
+                                },
+                            },
+                            {
+                                $sort: {
+                                    // Specify the field you want to use for sorting, e.g., '_id'
+                                    'name': 1,
+                                },
+                            },
+                        ],
+                        materials: [
+                            {
+                                $unwind: '$materialsData', // Unwind the materials array
+                            },
+                            {
+                                $group: {
+                                    _id: '$materialsData._id',
+                                    name: { $first: '$materialsData.name' },
+                                    count: { $sum: 1 },
+                                },
+                            },
+                            {
+                                $sort: {
+                                    // Specify the field you want to use for sorting, e.g., '_id'
+                                    'name': 1,
+                                },
+                            },
+                        ],
+                        furnitures: [
+                            {
+                                $group: {
+                                    _id: '$_id',
+                                    name: { $first: '$name' },
+                                    imgURL: { $first: '$imgURL' },
+                                    price: { $first: '$price' },
+                                },
+                            },
+                        ],
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        furnitures: 1,
+                        materials: 1,
+                        colors: 1,
+                    },
+                },
+            ]);
+            return {
+                status: 200,
+                data: data[0],
+                message: data.length !== 0 ? "OK" : "No data"
+            };
+
+        } catch (error) {
+            console.error(error);
+            return {
+                status: 500,
+                messageError: error.toString(),
+            }
+        } finally {
+            // Close the database connection
+            mongoose.connection.close();
+        }
+    },
+
     adminGetFurnitureById: async (id) => {
         try {
             const idValid = await isIdValid(id, 'furniture');
