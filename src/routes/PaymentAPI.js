@@ -98,6 +98,8 @@ const PaymentRouter = (app) => {
 
     router.post('/querydr', paymentController.postQuery);
 
+    router.post('/refund', paymentController.postRefund);
+
     router.get('/return', paymentController.returnPayment);
 
     router.get('/', function (req, res, next) {
