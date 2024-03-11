@@ -140,28 +140,28 @@ export const paymentService = {
         console.log('here');
 
         // /merchant_webapi/api/transaction
-        // request({
-        //     url: vnp_Api,
-        //     method: "POST",
-        //     json: true,
-        //     body: dataObj
-        // }, function (error, response, body) {
-        //     console.log('check res', response);
-        // });
-        try {
-            const response = await request({
-                url: vnp_Api,
-                method: "POST",
-                json: true,
-                body: dataObj
-            });
-
+        request({
+            url: vnp_Api,
+            method: "POST",
+            json: true,
+            body: dataObj
+        }, function (error, response, body) {
             console.log('check res', response);
-            return response;
-        } catch (error) {
-            console.error('Error in queryPayment:', error);
-            throw error;
-        }
+        });
+        // try {
+        //     const response = await request({
+        //         url: vnp_Api,
+        //         method: "POST",
+        //         json: true,
+        //         body: dataObj
+        //     });
+
+        //     console.log('check res', response);
+        //     return response;
+        // } catch (error) {
+        //     console.error('Error in queryPayment:', error);
+        //     throw error;
+        // }
     }
 }
 
