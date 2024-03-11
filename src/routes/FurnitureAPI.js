@@ -291,7 +291,7 @@ const FurnitureRouter = (app) => {
     *                                messageError:
     *                                    type: string 
     */
-    router.get('/ad', verifyToken, isAdmin, furnitureController.adminFurnitureByPage);
+    router.get('/ad', verifyToken, isAdmin, furnitureController.adminFurniture);
 
     /**
     * @swagger

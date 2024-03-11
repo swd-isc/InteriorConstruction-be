@@ -13,6 +13,17 @@ export const furnitureController = {
         return res.status(data.status).json(data);
     },
 
+    adminFurniture: async(req, res) => {
+        if (!req.query.all || req.query.all == '0') {
+            let data = await furnitureServices.adminGetFurnitureByPage(req.query.sort_by, req.query.page, req.query.type, req.query.classificationId);
+            return res.status(data.status).json(data);
+        }
+        else {
+            let data = await furnitureServices.adminGetFurnitureAll(req.query.type, req.query.classificationId);
+            return res.status(data.status).json(data);
+        }
+    },
+
     adminFurnitureByPage: async (req, res) => {
         let data = await furnitureServices.adminGetFurnitureByPage(req.query.sort_by, req.query.page, req.query.type, req.query.classificationId);
         return res.status(data.status).json(data);
