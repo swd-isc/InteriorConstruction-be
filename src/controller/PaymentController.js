@@ -2,9 +2,13 @@ import { paymentService } from "../services/PaymentServices";
 
 export const paymentController = {
     postPayment: async (req, res, next) => {
-        console.log('check: ', req.body.contractId);
         const vnpUrl = await paymentService.createPayment(req);
-        return res.redirect(vnpUrl);
+        // return res.redirect(vnpUrl);
+        return res.status(200).json({
+            status: 200,
+            paymentURL: vnpUrl,
+            message: "ok"
+        });
     },
 
     returnPayment: async (req, res, next) => {

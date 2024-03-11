@@ -22,6 +22,7 @@ export const paymentService = {
         const orderId = req.body.contractId;
         const amount = req.body.amount;
         const bankCode = req.body.bankCode;
+        console.log('check req', bankCode, ',', req.body.language);
 
         let locale = req.body.language;
         if (locale === null || locale === '') {
