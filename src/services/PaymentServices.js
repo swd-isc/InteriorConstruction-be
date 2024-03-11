@@ -56,7 +56,6 @@ export const paymentService = {
 
         vnpUrl += '?' + queryString.stringify(vnp_Params, { encode: false });
 
-        console.log('check url:', vnpUrl);
         return vnpUrl;
     },
 
@@ -77,6 +76,8 @@ export const paymentService = {
         const hmac = crypto.createHmac("sha512", secretKey);
         const signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
 
+
+        console.log('check vnp_Params', vnp_Params);
         if (secureHash === signed) {
             //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
             console.log('check code: ', vnp_Params['vnp_ResponseCode']);
