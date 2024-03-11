@@ -77,6 +77,15 @@ const router = express.Router();
  *                type: array
  *                items:
  *                  $ref: '#components/schemas/FurnitureData'
+ *              classifications:
+ *                type: array
+ *                items:
+ *                  type: object
+ *                  properties:
+ *                    id:
+ *                      type: string
+ *                    name:
+ *                      type: string
  */
 
 const DesignRouter = (app) => {
