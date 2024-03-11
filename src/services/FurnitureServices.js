@@ -208,7 +208,6 @@ export const furnitureServices = {
             // Parse query parameters
             const page = parseInt(pageReq) || 1;
             let data = [];
-
             // Calculate start and end indices for the current page
             const startIndex = (page - 1) * itemsPerPage;
 
@@ -218,14 +217,14 @@ export const furnitureServices = {
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
             data = await Furniture.aggregate([
-                ...(type === 'default' ? [
+                ...(typeCheck === 'default' ? [
                     {
                         $match: {
                             'type': 'DEFAULT',
                         },
                     }
                 ] : []),
-                ...(type === 'custom' ? [
+                ...(typeCheck === 'custom' ? [
                     {
                         $match: {
                             'type': 'CUSTOM',
@@ -300,6 +299,7 @@ export const furnitureServices = {
                                     name: { $first: '$name' },
                                     imgURL: { $first: '$imgURL' },
                                     price: { $first: '$price' },
+                                    type: {$first: '$type'}
                                 },
                             },
                             {
@@ -360,20 +360,22 @@ export const furnitureServices = {
         try {
             let data = [];
 
+            const typeCheck = await checkType(type);
+
             const classificationArray = classificationIds ? [...new Set(classificationIds.split(',').map(id => new ObjectId(id)))] : [];
             // Get the data for the current page
             const url = process.env.URL_DB;
             await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
 
             data = await Furniture.aggregate([
-                ...(type === 'default' ? [
+                ...(typeCheck === 'default' ? [
                     {
                         $match: {
                             'type': 'DEFAULT',
                         },
                     }
                 ] : []),
-                ...(type === 'custom' ? [
+                ...(typeCheck === 'custom' ? [
                     {
                         $match: {
                             'type': 'CUSTOM',
@@ -448,6 +450,7 @@ export const furnitureServices = {
                                     name: { $first: '$name' },
                                     imgURL: { $first: '$imgURL' },
                                     price: { $first: '$price' },
+                                    type: {$first: '$type'}
                                 },
                             },
                         ],
