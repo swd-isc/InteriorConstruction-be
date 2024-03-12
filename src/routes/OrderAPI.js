@@ -11,12 +11,26 @@ const router = express.Router();
  *          Order:
  *            type: object
  *            properties:
- *              orderId:
+ *              vnp_Amount:
+ *                type: number
+ *              vnp_BankCode:
+ *                 type: string
+ *              vnp_BankTranNo:
+ *                 type: string
+ *              vnp_CardType:
  *                type: string
- *              payDate:
- *                 type: string
+ *              vnp_PayDate:
+ *                type: string
+ *              vnp_OrderInfo:
+ *                type: string
+ *              vnp_TransactionNo:
+ *                type: string
+ *              vnp_TransactionStatus:
+ *                type: string
+ *              vnp_TxnRef:
+ *                type: string
  *              clientId:
- *                 type: string
+ *                type: string
  *              contractId:
  *                type: string
  *          OrderData:
@@ -24,15 +38,35 @@ const router = express.Router();
  *            properties:
  *              _id:
  *                type: string
- *              orderId:
+ *              vnp_Amount:
+ *                type: number
+ *              vnp_BankCode:
+ *                 type: string
+ *              vnp_BankTranNo:
+ *                 type: string
+ *              vnp_CardType:
  *                type: string
- *              payDate:
- *                 type: string
+ *              vnp_PayDate:
+ *                type: string
+ *              vnp_OrderInfo:
+ *                type: string
+ *              vnp_TransactionNo:
+ *                type: string
+ *              vnp_TransactionStatus:
+ *                type: string
+ *              vnp_TxnRef:
+ *                type: string
  *              clientId:
- *                 type: string
+ *                type: object
+ *                properties:
+ *                  id:
+ *                    type: string
+ *                  firstName:
+ *                    type: string
+ *                  lastName:
+ *                    type: string
  *              contractId:
  *                type: string
- *                  
  */
 
 

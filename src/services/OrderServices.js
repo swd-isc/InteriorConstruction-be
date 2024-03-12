@@ -16,8 +16,12 @@ export const orderRepository = {
 
       const data = await Order.find()
         .populate({
-          path: "clientId",
-          select: "-contracts",
+          path: 'clientId',
+          select: '-contracts',
+          populate: {
+            path: 'accountId',
+            select: '-password -refreshToken',
+          }
         })
         .populate({
           path: "contractId",
@@ -50,13 +54,17 @@ export const orderRepository = {
 
       const data = await Order.findById(id)
         .populate({
-          path: "clientId",
-          select: "-contracts",
+          path: 'clientId',
+          select: '-contracts',
+          populate: {
+            path: 'accountId',
+            select: '-password -refreshToken',
+          }
         })
         .populate({
           path: "contractId",
         });
-        
+
       return {
         status: 200,
         data: data,
