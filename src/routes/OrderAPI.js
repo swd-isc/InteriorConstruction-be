@@ -112,6 +112,57 @@ const router = express.Router();
  *                        type: string
  *              contractId:
  *                $ref: '#components/schemas/ContractSchema'
+ *          RefundData:
+ *            type: object
+ *            properties:
+ *              _id:
+ *                type: string
+ *              vnp_TxnRef:
+ *                type: string
+ *              vnp_Amount:
+ *                 type: number
+ *              vnp_OrderInfo:
+ *                 type: string
+ *              vnp_BankCode:
+ *                type: string
+ *              vnp_PayDate:
+ *                type: string
+ *              vnp_TransactionNo:
+ *                type: string
+ *              vnp_TransactionType:
+ *                type: string
+ *              vnp_TransactionStatus:
+ *                type: string
+ *              clientId:
+ *                type: object
+ *                properties:
+ *                  id:
+ *                    type: string
+ *                  firstName:
+ *                    type: string
+ *                  lastName:
+ *                    type: string
+ *                  birthDate:
+ *                    type: string
+ *                  phone:
+ *                    type: string
+ *                  photoURL:
+ *                    type: string
+ *                  accountId:
+ *                    type: object
+ *                    properties:
+ *                      id:
+ *                        type: string
+ *                      email:
+ *                        type: string
+ *                      role:
+ *                        type: string
+ *                      logInMethod:
+ *                        type: string
+ *                      status:
+ *                        type: string
+ *              contractId:
+ *                $ref: '#components/schemas/ContractSchema'
  */
 
 

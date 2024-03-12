@@ -43,9 +43,8 @@ const router = express.Router();
  *              id:
  *                type: string
  *              furnitures:
- *                type: arrays
+ *                type: array
  *                items:
- *                  schema:
  *                    type: object
  *                    properties:
  *                      furnitureId:
