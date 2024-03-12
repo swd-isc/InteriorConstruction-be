@@ -17,10 +17,10 @@ const ObjectId = mongoose.Types.ObjectId;
 
 export const paymentService = {
   createPayment: async (req) => {
-    const cart = req.body.cart;
     const contractReq = {
       clientId: req.user.id.toString(),
-      furnitures: cart,
+      furnitures: req.body.furnitures,
+      designs: req.body.designs,
       contractPrice: req.body.amount
     }
 
