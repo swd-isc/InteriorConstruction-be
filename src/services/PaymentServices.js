@@ -4,6 +4,7 @@ import queryString from 'qs';
 import crypto from 'crypto';
 import request from 'request';
 import util from 'util';
+import { orderRepository } from './OrderServices';
 const requestPromise = util.promisify(request);
 
 export const paymentService = {
@@ -84,6 +85,21 @@ export const paymentService = {
 
 
         console.log('check vnp_Params', vnp_Params);
+        const reqBody = {
+            vnp_Amount: vnp_Params['vnp_Amount'],
+            vnp_BankCode: vnp_Params['vnp_BankCode'],
+            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
+            vnp_CardType: vnp_Params['vnp_CardType'],
+            vnp_PayDate: vnp_Params['vnp_PayDate'],
+            vnp_OrderInfo: vnp_Params['vnp_OrderInfo'],
+            vnp_TransactionNo: vnp_Params['vnp_TransactionNo'],
+            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
+            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
+            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
+            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
+            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
+        }
+        const data = orderRepository.createOrder()
         if (secureHash === signed) {
             //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
             console.log('check code: ', vnp_Params['vnp_ResponseCode']);
