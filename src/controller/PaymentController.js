@@ -16,7 +16,7 @@ export const paymentController = {
         // return res.render('success', { code: data.code });
         const data = await paymentService.returnPayment(req);
         console.log('check encoded data', data);
-        return res.redirect(`http://your-react-app-url/payment/success?data=${data}`);
+        return res.redirect(`http://localhost:3000?data=${data}`);
     },
 
     postQuery: async (req, res, next) => {
