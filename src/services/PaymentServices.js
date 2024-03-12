@@ -9,8 +9,6 @@ import Contract from "../models/Contract";
 import Client from "../models/Client";
 import { orderRepository } from './OrderServices';
 import Order from '../models/Order';
-import Contract from "../models/Contract";
-import Client from "../models/Client";
 import mongoose from 'mongoose';
 const requestPromise = util.promisify(request);
 

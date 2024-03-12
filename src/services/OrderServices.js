@@ -14,7 +14,14 @@ export const orderRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Order.find();
+      const data = await Order.find()
+        .populate({
+          path: "clientId",
+          select: "-contracts",
+        })
+        .populate({
+          path: "contractId",
+        });
 
       return {
         status: 200,
@@ -35,15 +42,21 @@ export const orderRepository = {
 
   getOrderById: async (id) => {
     try {
-
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
         dbName: "interiorConstruction",
       });
 
-      const data = await Order.findById(id);
-
+      const data = await Order.findById(id)
+        .populate({
+          path: "clientId",
+          select: "-contracts",
+        })
+        .populate({
+          path: "contractId",
+        });
+        
       return {
         status: 200,
         data: data,
