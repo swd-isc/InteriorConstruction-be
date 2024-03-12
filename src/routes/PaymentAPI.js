@@ -1,5 +1,5 @@
 import express from 'express';
-import { isCurrentUser, verifyToken } from '../middleware/authen';
+import { isClient, isCurrentUser, verifyToken } from '../middleware/authen';
 import { paymentController } from '../controller/PaymentController';
 
 const router = express.Router();
@@ -94,7 +94,7 @@ const PaymentRouter = (app) => {
      *                                type: string 
      */
     // router.post('/create_payment', verifyToken, isCurrentUser, paymentController.postPayment);
-    router.post('/create_payment', verifyToken, paymentController.postPayment);
+    router.post('/create_payment', verifyToken, isClient, paymentController.postPayment);
 
     router.post('/querydr', paymentController.postQuery);
 

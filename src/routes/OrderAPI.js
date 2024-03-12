@@ -30,9 +30,35 @@ const router = express.Router();
  *              vnp_TxnRef:
  *                type: string
  *              clientId:
- *                type: string
+ *                type: object
+ *                properties:
+ *                  id:
+ *                    type: string
+ *                  firstName:
+ *                    type: string
+ *                  lastName:
+ *                    type: string
+ *                  birthDate:
+ *                    type: string
+ *                  phone:
+ *                    type: string
+ *                  photoURL:
+ *                    type: string
+ *                  accountId:
+ *                    type: object
+ *                    properties:
+ *                      id:
+ *                        type: string
+ *                      email:
+ *                        type: string
+ *                      role:
+ *                        type: string
+ *                      logInMethod:
+ *                        type: string
+ *                      status:
+ *                        type: string
  *              contractId:
- *                type: string
+ *                $ref: '#components/schemas/ContractSchema'
  *          OrderData:
  *            type: object
  *            properties:
@@ -65,8 +91,27 @@ const router = express.Router();
  *                    type: string
  *                  lastName:
  *                    type: string
+ *                  birthDate:
+ *                    type: string
+ *                  phone:
+ *                    type: string
+ *                  photoURL:
+ *                    type: string
+ *                  accountId:
+ *                    type: object
+ *                    properties:
+ *                      id:
+ *                        type: string
+ *                      email:
+ *                        type: string
+ *                      role:
+ *                        type: string
+ *                      logInMethod:
+ *                        type: string
+ *                      status:
+ *                        type: string
  *              contractId:
- *                type: string
+ *                $ref: '#components/schemas/ContractSchema'
  */
 
 

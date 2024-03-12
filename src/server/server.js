@@ -49,11 +49,14 @@ const options = {
     openapi: "3.0.0",
     info: {
       title: "Interior Construction API Documents",
-      version: "1.1.2",
+      version: "1.1.3",
     },
     servers: [
+      // {
+      //   url: "https://kietpt.vn/",
+      // },
       {
-        url: "https://kietpt.vn/",
+        url: "http://localhost:8080/",
       },
     ],
   },

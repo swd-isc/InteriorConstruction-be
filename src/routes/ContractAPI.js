@@ -29,7 +29,26 @@ const router = express.Router();
  *                  contractPrice:
  *                      type: number
  *                  contractFileURL:
- *                      type: string         
+ *                      type: string     
+ *          ContractSchema:
+ *            type: object
+ *            properties:
+ *              id:
+ *                type: string
+ *              furnitures:
+ *                type: arrays
+ *                items:
+ *                  schema:
+ *                    type: object
+ *                    properties:
+ *                      furnitureId:
+ *                        type: string
+ *                      count:
+ *                        type: number
+ *              contractPrice:
+ *                  type: number
+ *              status:
+ *                  type: string 
  */
 
 const ContractRouter = (app) => {

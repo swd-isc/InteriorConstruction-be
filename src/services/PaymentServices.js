@@ -10,10 +10,30 @@ import Client from "../models/Client";
 import { orderRepository } from './OrderServices';
 import Order from '../models/Order';
 import mongoose from 'mongoose';
+import { contractRepository } from './ContractServices';
 const requestPromise = util.promisify(request);
 
 export const paymentService = {
     createPayment: async (req) => {
+        const cart = req.body.cart;
+        const contractReq = {
+            clientId: req.user.id.toString(),
+            furnitures: cart,
+            contractPrice: req.body.amount
+        }
+
+        const data = await contractRepository.createContract(contractReq);
+
+        if (data.status !== 201) {
+            return {
+                status: data.status,
+                data: {},
+                messageError: data.messageError
+            }
+        }
+
+
+
         const ipAddr = req.headers['x-forwarded-for'] ||
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
@@ -368,50 +388,50 @@ export const paymentService = {
 
             if (responseCode == '00') {
                 const transactionType =
-                  response.body.vnp_TransactionType == "02"
-                    ? "Giao dịch hoàn trả toàn phần"
-                    : "Giao dịch hoàn trả một phần";
+                    response.body.vnp_TransactionType == "02"
+                        ? "Giao dịch hoàn trả toàn phần"
+                        : "Giao dịch hoàn trả một phần";
 
                 let transactionStatus = "";
 
                 switch (response.body.vnp_TransactionStatus) {
-                  case "00":
-                    transactionStatus = "Giao dịch thanh toán thành công";
-                    break;
+                    case "00":
+                        transactionStatus = "Giao dịch thanh toán thành công";
+                        break;
 
-                  case "01":
-                    transactionStatus = "Giao dịch chưa hoàn tất";
-                    break;
+                    case "01":
+                        transactionStatus = "Giao dịch chưa hoàn tất";
+                        break;
 
-                  case "02":
-                    transactionStatus = "Giao dịch bị lỗi";
-                    break;
+                    case "02":
+                        transactionStatus = "Giao dịch bị lỗi";
+                        break;
 
-                  case "04":
-                    transactionStatus =
-                      "Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)";
-                    break;
+                    case "04":
+                        transactionStatus =
+                            "Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)";
+                        break;
 
-                  case "05":
-                    transactionStatus =
-                      "VNPAY đang xử lý giao dịch này (GD hoàn tiền)";
-                    break;
+                    case "05":
+                        transactionStatus =
+                            "VNPAY đang xử lý giao dịch này (GD hoàn tiền)";
+                        break;
 
-                  case "06":
-                    transactionStatus =
-                      "VNPAY đã gửi yêu cầu hoàn tiền sang Ngân hàng (GD hoàn tiền)";
-                    break;
+                    case "06":
+                        transactionStatus =
+                            "VNPAY đã gửi yêu cầu hoàn tiền sang Ngân hàng (GD hoàn tiền)";
+                        break;
 
-                  case "07":
-                    transactionStatus = "Giao dịch bị nghi ngờ gian lận";
-                    break;
+                    case "07":
+                        transactionStatus = "Giao dịch bị nghi ngờ gian lận";
+                        break;
 
-                  case "09":
-                    transactionStatus = "GD Hoàn trả bị từ chối";
-                    break;
+                    case "09":
+                        transactionStatus = "GD Hoàn trả bị từ chối";
+                        break;
 
-                  default:
-                    break;
+                    default:
+                        break;
                 }
 
                 const dateString = response.body.vnp_PayDate;
@@ -421,7 +441,7 @@ export const paymentService = {
                 const hours = dateString.substring(8, 10);
                 const minutes = dateString.substring(10, 12);
                 const seconds = dateString.substring(12, 14);
-                
+
                 const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
                 console.log("date " + formattedDate);
@@ -448,30 +468,30 @@ export const paymentService = {
                 console.log("ref " + refund);
 
                 try {
-                  const url = process.env.URL_DB;
-                  await mongoose.connect(url, {
-                    family: 4,
-                    dbName: "interiorConstruction",
-                  });
+                    const url = process.env.URL_DB;
+                    await mongoose.connect(url, {
+                        family: 4,
+                        dbName: "interiorConstruction",
+                    });
 
-                  const data = await refund.save();
+                    const data = await refund.save();
 
-                  return {
-                    status: 200,
-                    data: data,
-                    message: data.length !== 0 ? "OK" : "No data",
-                  };
+                    return {
+                        status: 200,
+                        data: data,
+                        message: data.length !== 0 ? "OK" : "No data",
+                    };
                 } catch (error) {
-                  console.error(error);
-                  return {
-                    status: 400,
-                    messageError: error.toString(),
-                  };
+                    console.error(error);
+                    return {
+                        status: 400,
+                        messageError: error.toString(),
+                    };
                 } finally {
-                  // Close the database connection
-                  mongoose.connection.close();
+                    // Close the database connection
+                    mongoose.connection.close();
                 }
-                
+
 
             } else {
                 let messageError = '';
@@ -479,7 +499,7 @@ export const paymentService = {
                     case '02':
                         messageError = 'Mã định danh kết nối không hợp lệ';
                         break;
-                        
+
                     case '03':
                         messageError = 'Dữ liệu gửi sang không đúng định dạng';
                         break;
@@ -491,15 +511,15 @@ export const paymentService = {
                     case '94':
                         messageError = 'Giao dịch đã được gửi yêu cầu hoàn tiền trước đó. Yêu cầu này VNPAY đang xử lý';
                         break;
-                    
+
                     case '95':
                         messageError = 'Giao dịch này không thành công bên VNPAY. VNPAY từ chối xử lý yêu cầu';
                         break;
 
                     case '97':
                         messageError = 'Checksum không hợp lệ';
-                        break;  
-                        
+                        break;
+
                     case '99':
                         messageError = 'Các lỗi khác';
                         break;
