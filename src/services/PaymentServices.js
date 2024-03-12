@@ -31,7 +31,7 @@ export const paymentService = {
                 messageError: data.messageError
             }
         }
-
+        console.log('check data: ', data.data);
 
 
         const ipAddr = req.headers['x-forwarded-for'] ||
@@ -48,20 +48,22 @@ export const paymentService = {
         const secretKey = vnPay.vnp_HashSecret;
         let vnpUrl = vnPay.vnp_Url;
         const returnUrl = vnPay.vnp_ReturnUrl;
-        const contractId = req.body.contractId;
-        const orderId = req.body.contractId;
+        // const contractId = req.body.contractId;
+        // const orderId = req.body.contractId;
+        const contractId = data.data._id;
+        const orderId = data.data._id;
         const amount = req.body.amount;
         const bankCode = req.body.bankCode;
         console.log('check req', bankCode, ',', req.body.language);
 
-        const isValid = await isIdValid(req.body.contractId, 'contract');
-        if (!isValid.isValid) {
-            return {
-                status: isValid.status,
-                data: {},
-                messageError: isValid.messageError
-            }
-        }
+        // const isValid = await isIdValid(req.body.contractId, 'contract');
+        // if (!isValid.isValid) {
+        //     return {
+        //         status: isValid.status,
+        //         data: {},
+        //         messageError: isValid.messageError
+        //     }
+        // }
 
         let locale = req.body.language;
         if (locale === null || locale === '' || locale === undefined) {
