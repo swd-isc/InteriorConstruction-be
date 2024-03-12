@@ -34,13 +34,32 @@ const router = express.Router();
  *                        quantity:
  *                          type: number
  *                  contractPrice:
- *                    type: number
- *                  status:
- *                    type: string
- *                    enum:
- *                      - CANCEL
- *                      - PROCESSING
- *                      - SUCCESS      
+ *                      type: number
+ *                  contractFileURL:
+ *                      type: string     
+ *          ContractSchema:
+ *            type: object
+ *            properties:
+ *              id:
+ *                type: string
+ *              furnitures:
+ *                type: arrays
+ *                items:
+ *                  schema:
+ *                    type: object
+ *                    properties:
+ *                      furnitureId:
+ *                        type: string
+ *                      count:
+ *                        type: number
+ *              contractPrice:
+ *                  type: number
+ *              status:
+ *                  type: string 
+ *                  enum:
+ *                   - CANCEL
+ *                   - PROCESSING
+ *                   - SUCCESS  
  */
 
 const ContractRouter = (app) => {
