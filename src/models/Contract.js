@@ -23,25 +23,42 @@ const contractSchema = new Schema({
         },
         ref: 'client'
     },
-    designId: {
-        type: Schema.Types.ObjectId,
-        required: [true, 'Design ID required.'],
+    furnitures: {
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'furniture', // Reference to the Furniture schema
+        }],
         validate: {
             validator: async function (value) {
-                const Design = mongoose.model('design');
+                const Furniture = mongoose.model('furniture');
 
-                if (!value) {
-                    throw new mongoose.Error(`Design ID required.`); // Value is required
+                if (!Array.isArray(value)) {
+                    throw new mongoose.Error(`Furnitures must be an array.`);
                 }
 
-                const design = await Design.findById(value);
-                if (!design) {
-                    throw new mongoose.Error(`${value} is not a valid design ID.`); // Invalid ObjectId reference in the array
+                if (value.length == 0) { //empty array
+                    throw new mongoose.Error(`Empty furnitures array`);
                 }
-                return true; // Return true if design exists, otherwise false
+                
+                for (const furnitureId of value) {
+                    const furniture = await Furniture.findById(furnitureId);
+
+                    if (!furniture) {
+                        throw new mongoose.Error(`Invalid furnitureId: ${furnitureId}`); // Invalid ObjectId reference in the array
+                    }
+                }
+
+                // Check for duplicate furniture ObjectId in the array
+                for (let i = 0; i < value.length - 1; i++) {
+                    for (let j = i + 1; j < value.length; j++) {
+                        if (value[i].toString() === value[j].toString()) {
+                            throw new mongoose.Error(`Duplicate furnitureId: ${value[i].toString()}`);
+                        }
+                    }
+                }
+                return true;
             }
-        },
-        ref: 'design'
+        }
     },
     contractPrice: {
         type: Number,
