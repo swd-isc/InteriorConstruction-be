@@ -22,9 +22,15 @@ const router = express.Router();
  *          ContractData:
  *              type: object
  *              properties:
+ *                  _id:
+ *                    type: string
+ *                  quantity:
+ *                    type: number 
  *                  clientId:
- *                      type: string
- *                  designId:
+ *                    type: string
+ *                  furnitures:
+ *                    type: array
+ *                    items:
  *                      type: string
  *                  contractPrice:
  *                      type: number
@@ -49,6 +55,10 @@ const router = express.Router();
  *                  type: number
  *              status:
  *                  type: string 
+ *                  enum:
+ *                   - CANCEL
+ *                   - PROCESSING
+ *                   - SUCCESS  
  */
 
 const ContractRouter = (app) => {

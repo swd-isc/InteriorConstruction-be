@@ -42,13 +42,12 @@ const router = express.Router();
  *                items:
  *                  type: object
  *                  properties:
- *                    designId:
- *                      type: object
- *                      properties:
- *                        id:
- *                          type: string
- *                        designName:
- *                          type: string
+ *                    furnitures:
+ *                      type: array
+ *                      items:
+ *                        type: string
+ *                    quantity:
+ *                      type: number
  *                    contractPrice:
  *                      type: number
  *                    status:
@@ -96,14 +95,13 @@ const router = express.Router();
  *                items:
  *                  type: object
  *                  properties:
- *                    designId:
- *                      type: object
- *                      properties:
- *                        id:
- *                          type: string
- *                        designName:
- *                          type: string
+ *                    furnitures:
+ *                      type: array
+ *                      items:
+ *                        type: string
  *                    contractPrice:
+ *                      type: number
+ *                    quantity:
  *                      type: number
  *                    status:
  *                      type: string
@@ -147,32 +145,40 @@ const ClientRouter = (app) => {
    *                      type: object
    *                      properties:
    *                        clients:
-   *                          type: object
-   *                          properties:
-   *                            firstName:
-   *                              type: string
-   *                            lastName:
-   *                              type: string
-   *                            birthDate:
-   *                              type: string
-   *                            phone:
-   *                              type: string
-   *                            photoURL:
-   *                              type: string
-   *                            accountId:
-   *                              type: object
-   *                              properties:
-   *                                id:
+   *                          type: array
+   *                          items: 
+   *                            type: object
+   *                            properties:
+   *                              _id:
+   *                                type: string
+   *                              firstName:
+   *                                type: string
+   *                              lastName:
+   *                                type: string
+   *                              birthDate:
+   *                                type: string
+   *                              phone:
+   *                                type: string
+   *                              photoURL:
+   *                                type: string
+   *                              contracts:
+   *                                type: array
+   *                                items:
    *                                  type: string
-   *                                email:
-   *                                  type: string
-   *                                role:
-   *                                  type: string
-   *                                  enum:
-   *                                    - CLIENT
-   *                                    - ADMIN
-   *                                status:
-   *                                  type: string
+   *                              accountId:
+   *                                type: object
+   *                                properties:
+   *                                  id:
+   *                                    type: string
+   *                                  email:
+   *                                    type: string
+   *                                  role:
+   *                                    type: string
+   *                                    enum:
+   *                                      - CLIENT
+   *                                      - ADMIN
+   *                                  status:
+   *                                    type: string
    *                        page:
    *                          type: number
    *                        totalPages:
