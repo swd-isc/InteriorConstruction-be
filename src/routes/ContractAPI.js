@@ -11,27 +11,28 @@ const router = express.Router();
  *          Contract:
  *              type: object
  *              properties:
- *                  designId:
- *                      type: string
  *                  contractPrice:
  *                      type: number
- *                  contractFileURL:
- *                      type: string
- *                  status: 
- *                      type: string
+ *                  status:
+ *                    type: string
+ *                    enum:
+ *                      - CANCEL
+ *                      - PROCESSING
+ *                      - SUCCESS  
  *          ContractData:
  *              type: object
  *              properties:
- *                  _id:
- *                    type: string
- *                  quantity:
- *                    type: number 
  *                  clientId:
  *                    type: string
  *                  furnitures:
  *                    type: array
  *                    items:
- *                      type: string
+ *                      type: object
+ *                      properties:
+ *                        furnitureId:
+ *                          type: string
+ *                        quantity:
+ *                          type: number
  *                  contractPrice:
  *                    type: number
  *                  status:
