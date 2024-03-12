@@ -24,6 +24,9 @@ const PaymentRouter = (app) => {
      *          - `bankCode`: The bank code, possible values are " ", "VNBANK", "INTCARD".
      *          - `language`: The language, possible values are " ", "vn", "en".
      *          Authorization is required, and the token should be provided in the request header.
+     *          This endpoint is for Client only, Admin cannot access this endpoint
+     *          - `amount`: Total prices
+     *          - `cart`: Array of furnitures. Ex: [{"furnitureId": "12345678","quantity": 2}]
      *      requestBody:
      *          required: true
      *          content:
@@ -31,8 +34,16 @@ const PaymentRouter = (app) => {
      *              schema:
      *                type: object
      *                properties:
-     *                  contractId:
-     *                    type: string
+     *                  cart:
+     *                    type: array
+     *                    items:
+     *                      schema:
+     *                          type: object
+     *                          properties:
+     *                              furnitureId:
+     *                                  type: string
+     *                              quantity:
+     *                                  type: number
      *                  amount:
      *                    type: number
      *                  bankCode:
