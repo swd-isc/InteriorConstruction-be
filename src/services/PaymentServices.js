@@ -4,6 +4,9 @@ import queryString from 'qs';
 import crypto from 'crypto';
 import request from 'request';
 import util from 'util';
+import Refund from "../models/Refund";
+import Contract from "../models/Contract";
+import Client from "../models/Client";
 const requestPromise = util.promisify(request);
 
 export const paymentService = {
@@ -214,6 +217,8 @@ export const paymentService = {
             'vnp_SecureHash': vnp_SecureHash
         };
 
+        console.log(dataObj)
+
         try {
             const response = await requestPromise({
                 url: vnp_Api,
@@ -222,7 +227,158 @@ export const paymentService = {
                 body: dataObj
             });
 
-            return response;
+            console.log(response.body);
+
+            const responseCode = response.body.vnp_ResponseCode;
+
+            if (responseCode == '00') {
+                const transactionType =
+                  response.body.vnp_TransactionType == "02"
+                    ? "Giao dịch hoàn trả toàn phần"
+                    : "Giao dịch hoàn trả một phần";
+
+                let transactionStatus = "";
+
+                switch (response.body.vnp_TransactionStatus) {
+                  case "00":
+                    transactionStatus = "Giao dịch thanh toán thành công";
+                    break;
+
+                  case "01":
+                    transactionStatus = "Giao dịch chưa hoàn tất";
+                    break;
+
+                  case "02":
+                    transactionStatus = "Giao dịch bị lỗi";
+                    break;
+
+                  case "04":
+                    transactionStatus =
+                      "Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)";
+                    break;
+
+                  case "05":
+                    transactionStatus =
+                      "VNPAY đang xử lý giao dịch này (GD hoàn tiền)";
+                    break;
+
+                  case "06":
+                    transactionStatus =
+                      "VNPAY đã gửi yêu cầu hoàn tiền sang Ngân hàng (GD hoàn tiền)";
+                    break;
+
+                  case "07":
+                    transactionStatus = "Giao dịch bị nghi ngờ gian lận";
+                    break;
+
+                  case "09":
+                    transactionStatus = "GD Hoàn trả bị từ chối";
+                    break;
+
+                  default:
+                    break;
+                }
+
+                const dateString = response.body.vnp_PayDate;
+                const year = dateString.substring(0, 4);
+                const month = dateString.substring(4, 6);
+                const day = dateString.substring(6, 8);
+                const hours = dateString.substring(8, 10);
+                const minutes = dateString.substring(10, 12);
+                const seconds = dateString.substring(12, 14);
+                
+                const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+                console.log("date " + formattedDate);
+
+                console.log("txnRef: " + response.body.vnp_TxnRef);
+
+                const contract = await Contract.findById(response.body.vnp_TxnRef);
+
+                console.log("contract " + contract);
+
+                const refund = new Refund({
+                    vnp_TxnRef: response.body.vnp_TxnRef,
+                    vnp_Amount: response.body.Amount,
+                    vnp_OrderInfo: response.body.OrderInfo,
+                    vnp_BankCode: response.body.BankCode,
+                    vnp_PayDate: formattedDate,
+                    vnp_TransactionNo: response.body.TransactionNo,
+                    vnp_TransactionType: transactionType,
+                    vnp_TransactionStatus: transactionStatus,
+                    contractId: contract._id,
+                    clientId: contract.clientId
+                })
+
+                console.log("ref " + refund);
+
+                try {
+                  const url = process.env.URL_DB;
+                  await mongoose.connect(url, {
+                    family: 4,
+                    dbName: "interiorConstruction",
+                  });
+
+                  const data = await refund.save();
+
+                  return {
+                    status: 200,
+                    data: data,
+                    message: data.length !== 0 ? "OK" : "No data",
+                  };
+                } catch (error) {
+                  console.error(error);
+                  return {
+                    status: 400,
+                    messageError: error.toString(),
+                  };
+                } finally {
+                  // Close the database connection
+                  mongoose.connection.close();
+                }
+                
+
+            } else {
+                let messageError = '';
+                switch (responseCode) {
+                    case '02':
+                        messageError = 'Mã định danh kết nối không hợp lệ';
+                        break;
+                        
+                    case '03':
+                        messageError = 'Dữ liệu gửi sang không đúng định dạng';
+                        break;
+
+                    case '91':
+                        messageError = 'Không tìm thấy giao dịch yêu cầu hoàn trả';
+                        break;
+
+                    case '94':
+                        messageError = 'Giao dịch đã được gửi yêu cầu hoàn tiền trước đó. Yêu cầu này VNPAY đang xử lý';
+                        break;
+                    
+                    case '95':
+                        messageError = 'Giao dịch này không thành công bên VNPAY. VNPAY từ chối xử lý yêu cầu';
+                        break;
+
+                    case '97':
+                        messageError = 'Checksum không hợp lệ';
+                        break;  
+                        
+                    case '99':
+                        messageError = 'Các lỗi khác';
+                        break;
+
+                    default:
+                        break;
+                }
+                return {
+                    status: 400,
+                    data: {},
+                    messageError
+                }
+            }
+
         } catch (error) {
             console.log("error in refund: " + error);
         }
