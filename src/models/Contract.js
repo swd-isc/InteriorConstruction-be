@@ -26,8 +26,22 @@ const contractSchema = new Schema(
     },
     furnitures: [
       {
-        furnitureId: { type: String, required: true },
-        quantity: { type: Number, required: true },
+        furnitureId: {
+          type: Schema.Types.ObjectId,
+          required: [true, "furnitureId required."],
+          ref: "furniture",
+        },
+        quantity: { type: Number, required: [true, "quantity for furniture required."] },
+      },
+    ],
+    designs: [
+      {
+        designId: {
+          type: Schema.Types.ObjectId,
+          required: [true, "designId required."],
+          ref: "design",
+        },
+        quantity: { type: Number, required: [true, "quantity for design required."] },
       },
     ],
     contractPrice: {
