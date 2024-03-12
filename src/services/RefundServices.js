@@ -14,7 +14,7 @@ export const refundRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Refund.find();
+      const data = await Refund.find().populate('clientId').populate('contractId');
 
       return {
         status: 200,
@@ -42,7 +42,7 @@ export const refundRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Refund.findById(id);
+      const data = await Refund.findById(id).populate('clientId').populate('contractId');
 
       return {
         status: 200,

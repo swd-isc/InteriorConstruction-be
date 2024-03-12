@@ -328,220 +328,250 @@ export const paymentService = {
     },
 
     refund: async (req) => {
-        const vnp_TmnCode = vnPay.vnp_TmnCode;
-        const secretKey = vnPay.vnp_HashSecret;
-        const vnp_Api = vnPay.vnp_Api;
+      const vnp_TmnCode = vnPay.vnp_TmnCode;
+      const secretKey = vnPay.vnp_HashSecret;
+      const vnp_Api = vnPay.vnp_Api;
 
-        const date = new Date();
-        const vnp_TxnRef = req.body.orderId;
-        const vnp_TransactionDate = req.body.transDate;
-        const vnp_Amount = req.body.amount * 100;
-        const vnp_TransactionType = req.body.transType;
-        const vnp_CreateBy = req.body.user;
+      const date = new Date();
+      const vnp_TxnRef = req.body.orderId;
+      const vnp_TransactionDate = req.body.transDate;
+      const vnp_Amount = req.body.amount * 100;
+      const vnp_TransactionType = req.body.transType;
+      const vnp_CreateBy = req.body.user;
 
-        const timezoneOffsetMinutes = 7 * 60; // UTC+7
-        const adjustedDate = new Date(date.getTime() + timezoneOffsetMinutes * 60000);
-        const vnp_RequestId = moment(adjustedDate).format('HHmmss');
-        const vnp_Version = '2.1.0';
-        const vnp_Command = 'refund';
-        const vnp_OrderInfo = 'Refund order: ' + vnp_TxnRef;
-        const vnp_IpAddr = req.headers['x-forwarded-for'] ||
-            req.connection.remoteAddress ||
-            req.socket.remoteAddress ||
-            req.connection.socket.remoteAddress;
+      const timezoneOffsetMinutes = 7 * 60; // UTC+7
+      const adjustedDate = new Date(
+        date.getTime() + timezoneOffsetMinutes * 60000
+      );
+      const vnp_RequestId = moment(adjustedDate).format("HHmmss");
+      const vnp_Version = "2.1.0";
+      const vnp_Command = "refund";
+      const vnp_OrderInfo = "Refund order: " + vnp_TxnRef;
+      const vnp_IpAddr =
+        req.headers["x-forwarded-for"] ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.connection.socket.remoteAddress;
 
+      const vnp_CreateDate = moment(adjustedDate).format("YYYYMMDDHHmmss");
 
-        const vnp_CreateDate = moment(adjustedDate).format('YYYYMMDDHHmmss')
+      const vnp_TransactionNo = "0";
 
-        const vnp_TransactionNo = '0';
+      const data =
+        vnp_RequestId +
+        "|" +
+        vnp_Version +
+        "|" +
+        vnp_Command +
+        "|" +
+        vnp_TmnCode +
+        "|" +
+        vnp_TransactionType +
+        "|" +
+        vnp_TxnRef +
+        "|" +
+        vnp_Amount +
+        "|" +
+        vnp_TransactionNo +
+        "|" +
+        vnp_TransactionDate +
+        "|" +
+        vnp_CreateBy +
+        "|" +
+        vnp_CreateDate +
+        "|" +
+        vnp_IpAddr +
+        "|" +
+        vnp_OrderInfo;
+      const hmac = crypto.createHmac("sha512", secretKey);
+      const vnp_SecureHash = hmac
+        .update(new Buffer(data, "utf-8"))
+        .digest("hex");
 
-        const data = vnp_RequestId + "|" + vnp_Version + "|" + vnp_Command + "|" + vnp_TmnCode + "|" + vnp_TransactionType + "|" + vnp_TxnRef + "|" + vnp_Amount + "|" + vnp_TransactionNo + "|" + vnp_TransactionDate + "|" + vnp_CreateBy + "|" + vnp_CreateDate + "|" + vnp_IpAddr + "|" + vnp_OrderInfo;
-        const hmac = crypto.createHmac("sha512", secretKey);
-        const vnp_SecureHash = hmac.update(new Buffer(data, 'utf-8')).digest("hex");
+      const dataObj = {
+        vnp_RequestId: vnp_RequestId,
+        vnp_Version: vnp_Version,
+        vnp_Command: vnp_Command,
+        vnp_TmnCode: vnp_TmnCode,
+        vnp_TransactionType: vnp_TransactionType,
+        vnp_TxnRef: vnp_TxnRef,
+        vnp_Amount: vnp_Amount,
+        vnp_TransactionNo: vnp_TransactionNo,
+        vnp_CreateBy: vnp_CreateBy,
+        vnp_OrderInfo: vnp_OrderInfo,
+        vnp_TransactionDate: vnp_TransactionDate,
+        vnp_CreateDate: vnp_CreateDate,
+        vnp_IpAddr: vnp_IpAddr,
+        vnp_SecureHash: vnp_SecureHash,
+      };
 
-        const dataObj = {
-            'vnp_RequestId': vnp_RequestId,
-            'vnp_Version': vnp_Version,
-            'vnp_Command': vnp_Command,
-            'vnp_TmnCode': vnp_TmnCode,
-            'vnp_TransactionType': vnp_TransactionType,
-            'vnp_TxnRef': vnp_TxnRef,
-            'vnp_Amount': vnp_Amount,
-            'vnp_TransactionNo': vnp_TransactionNo,
-            'vnp_CreateBy': vnp_CreateBy,
-            'vnp_OrderInfo': vnp_OrderInfo,
-            'vnp_TransactionDate': vnp_TransactionDate,
-            'vnp_CreateDate': vnp_CreateDate,
-            'vnp_IpAddr': vnp_IpAddr,
-            'vnp_SecureHash': vnp_SecureHash
-        };
+      console.log(dataObj);
 
-        console.log(dataObj)
+      try {
+        const response = await requestPromise({
+          url: vnp_Api,
+          method: "POST",
+          json: true,
+          body: dataObj,
+        });
 
-        try {
-            const response = await requestPromise({
-                url: vnp_Api,
-                method: "POST",
-                json: true,
-                body: dataObj
+        console.log(response.body);
+
+        const responseCode = response.body.vnp_ResponseCode;
+
+        if (responseCode == "00") {
+          try {
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, {
+              family: 4,
+              dbName: "interiorConstruction",
             });
 
-            console.log(response.body);
+            const transactionType =
+              response.body.vnp_TransactionType == "02"
+                ? "Giao dịch hoàn trả toàn phần"
+                : "Giao dịch hoàn trả một phần";
 
-            const responseCode = response.body.vnp_ResponseCode;
+            let transactionStatus = "";
 
-            if (responseCode == '00') {
-                const transactionType =
-                    response.body.vnp_TransactionType == "02"
-                        ? "Giao dịch hoàn trả toàn phần"
-                        : "Giao dịch hoàn trả một phần";
+            switch (response.body.vnp_TransactionStatus) {
+              case "00":
+                transactionStatus = "Giao dịch thanh toán thành công";
+                break;
 
-                let transactionStatus = "";
+              case "01":
+                transactionStatus = "Giao dịch chưa hoàn tất";
+                break;
 
-                switch (response.body.vnp_TransactionStatus) {
-                    case "00":
-                        transactionStatus = "Giao dịch thanh toán thành công";
-                        break;
+              case "02":
+                transactionStatus = "Giao dịch bị lỗi";
+                break;
 
-                    case "01":
-                        transactionStatus = "Giao dịch chưa hoàn tất";
-                        break;
+              case "04":
+                transactionStatus =
+                  "Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)";
+                break;
 
-                    case "02":
-                        transactionStatus = "Giao dịch bị lỗi";
-                        break;
+              case "05":
+                transactionStatus =
+                  "VNPAY đang xử lý giao dịch này (GD hoàn tiền)";
+                break;
 
-                    case "04":
-                        transactionStatus =
-                            "Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)";
-                        break;
+              case "06":
+                transactionStatus =
+                  "VNPAY đã gửi yêu cầu hoàn tiền sang Ngân hàng (GD hoàn tiền)";
+                break;
 
-                    case "05":
-                        transactionStatus =
-                            "VNPAY đang xử lý giao dịch này (GD hoàn tiền)";
-                        break;
+              case "07":
+                transactionStatus = "Giao dịch bị nghi ngờ gian lận";
+                break;
 
-                    case "06":
-                        transactionStatus =
-                            "VNPAY đã gửi yêu cầu hoàn tiền sang Ngân hàng (GD hoàn tiền)";
-                        break;
+              case "09":
+                transactionStatus = "GD Hoàn trả bị từ chối";
+                break;
 
-                    case "07":
-                        transactionStatus = "Giao dịch bị nghi ngờ gian lận";
-                        break;
-
-                    case "09":
-                        transactionStatus = "GD Hoàn trả bị từ chối";
-                        break;
-
-                    default:
-                        break;
-                }
-
-                // const dateString = response.body.vnp_PayDate;
-                // const year = dateString.substring(0, 4);
-                // const month = dateString.substring(4, 6);
-                // const day = dateString.substring(6, 8);
-                // const hours = dateString.substring(8, 10);
-                // const minutes = dateString.substring(10, 12);
-                // const seconds = dateString.substring(12, 14);
-
-                // const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-                const formattedDate = response.body.vnp_PayDate;
-
-                const contract = await Contract.findById(new ObjectId(response.body.vnp_TxnRef.toString()));
-
-                const refund = new Refund({
-                    vnp_TxnRef: response.body.vnp_TxnRef,
-                    vnp_Amount: response.body.vnp_Amount / 100,
-                    vnp_OrderInfo: response.body.vnp_OrderInfo,
-                    vnp_BankCode: response.body.vnp_BankCode,
-                    vnp_PayDate: formattedDate,
-                    vnp_TransactionNo: response.body.vnp_TransactionNo,
-                    vnp_TransactionType: transactionType,
-                    vnp_TransactionStatus: transactionStatus,
-                    contractId: contract._id,
-                    clientId: contract.clientId
-                })
-
-                try {
-                    const url = process.env.URL_DB;
-                    await mongoose.connect(url, {
-                        family: 4,
-                        dbName: "interiorConstruction",
-                    });
-
-                    const data = await refund.save();
-
-                    return {
-                        status: 200,
-                        data: data,
-                        message: data.length !== 0 ? "OK" : "No data",
-                    };
-                } catch (error) {
-                    console.error(error);
-                    return {
-                        status: 400,
-                        messageError: error.toString(),
-                    };
-                } finally {
-                    // Close the database connection
-                    mongoose.connection.close();
-                }
-
-
-            } else {
-                let messageError = '';
-                switch (responseCode) {
-                  case "02":
-                    messageError = "Mã định danh kết nối không hợp lệ";
-                    break;
-
-                  case "03":
-                    messageError = "Dữ liệu gửi sang không đúng định dạng";
-                    break;
-
-                  case "91":
-                    messageError = "Không tìm thấy giao dịch yêu cầu hoàn trả";
-                    break;
-
-                  case "93":
-                    messageError = "Số tiền hoàn trả lớn hơn số tiền đã giao dịch";
-                    break;
-
-                  case "94":
-                    messageError =
-                      "Giao dịch đã được gửi yêu cầu hoàn tiền trước đó. Yêu cầu này VNPAY đang xử lý";
-                    break;
-
-                  case "95":
-                    messageError =
-                      "Giao dịch này không thành công bên VNPAY. VNPAY từ chối xử lý yêu cầu";
-                    break;
-
-                  case "97":
-                    messageError = "Checksum không hợp lệ";
-                    break;
-
-                  case "99":
-                    messageError = "Các lỗi khác";
-                    break;
-
-                  default:
-                    break;
-                }
-                return {
-                    status: 400,
-                    data: {},
-                    messageError
-                }
+              default:
+                break;
             }
 
-        } catch (error) {
-            console.log("error in refund: " + error);
-        }
+            // const dateString = response.body.vnp_PayDate;
+            // const year = dateString.substring(0, 4);
+            // const month = dateString.substring(4, 6);
+            // const day = dateString.substring(6, 8);
+            // const hours = dateString.substring(8, 10);
+            // const minutes = dateString.substring(10, 12);
+            // const seconds = dateString.substring(12, 14);
 
+            // const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+            const formattedDate = response.body.vnp_PayDate;
+
+            const contract = await Contract.findById(
+              new ObjectId(response.body.vnp_TxnRef.toString())
+            );
+
+            const refund = new Refund({
+              vnp_TxnRef: response.body.vnp_TxnRef,
+              vnp_Amount: response.body.vnp_Amount / 100,
+              vnp_OrderInfo: response.body.vnp_OrderInfo,
+              vnp_BankCode: response.body.vnp_BankCode,
+              vnp_PayDate: formattedDate,
+              vnp_TransactionNo: response.body.vnp_TransactionNo,
+              vnp_TransactionType: transactionType,
+              vnp_TransactionStatus: transactionStatus,
+              contractId: contract._id,
+              clientId: contract.clientId,
+            });
+
+            let data = await refund.save();
+            data = await Refund.findById(data._id)
+              .populate("clientId")
+              .populate("contractId");
+
+            return {
+              status: 200,
+              data: data,
+              message: data.length !== 0 ? "OK" : "No data",
+            };
+          } catch (error) {
+            console.error(error);
+            return {
+              status: 400,
+              messageError: error.toString(),
+            };
+          } finally {
+            // Close the database connection
+            mongoose.connection.close();
+          }
+        } else {
+          let messageError = "";
+          switch (responseCode) {
+            case "02":
+              messageError = "Mã định danh kết nối không hợp lệ";
+              break;
+
+            case "03":
+              messageError = "Dữ liệu gửi sang không đúng định dạng";
+              break;
+
+            case "91":
+              messageError = "Không tìm thấy giao dịch yêu cầu hoàn trả";
+              break;
+
+            case "93":
+              messageError = "Số tiền hoàn trả lớn hơn số tiền đã giao dịch";
+              break;
+
+            case "94":
+              messageError =
+                "Giao dịch đã được gửi yêu cầu hoàn tiền trước đó. Yêu cầu này VNPAY đang xử lý";
+              break;
+
+            case "95":
+              messageError =
+                "Giao dịch này không thành công bên VNPAY. VNPAY từ chối xử lý yêu cầu";
+              break;
+
+            case "97":
+              messageError = "Checksum không hợp lệ";
+              break;
+
+            case "99":
+              messageError = "Các lỗi khác";
+              break;
+
+            default:
+              break;
+          }
+          return {
+            status: 400,
+            data: {},
+            messageError,
+          };
+        }
+      } catch (error) {
+        console.log("error in refund: " + error);
+      }
     }
 }
 
