@@ -37,50 +37,54 @@ const router = express.Router();
 
 
 const OrderRouter = (app) => {
-/**
-   * @swagger
-   * /api/order:
-   *  get:
-   *    tags:
-   *      - Orders
-   *    summary: Get order
-   *    description: This endpoint is for getting order
-   *    responses:
-   *      200:
-   *        description: Ok
-   *        content:
-   *          application/json:
-   *            schema:
-   *              type: object
-   *              properties:
-   *                status:
-   *                  type: number
-   *                data:
-   *                  type: array
-   *                  items:
-   *                    $ref: '#components/schemas/OrderData'
-   *                message:
-   *                  type: string
-   *      400:
-   *        description: Bad request
-   *        content:
-   *          application/json:
-   *            schema:
-   *              type: object
-   *              properties:
-   *                status:
-   *                  type: number
-   *                data:
-   *                  type: object
-   *                messageError:
-   *                  type: string
-   */
-  router.get("/", orderService.getOrders);
+  /**
+     * @swagger
+     * /api/order:
+     *  get:
+     *    security:
+     *      - bearerAuth: []
+     *    tags:
+     *      - Orders
+     *    summary: Get order
+     *    description: This endpoint is for getting order
+     *    responses:
+     *      200:
+     *        description: Ok
+     *        content:
+     *          application/json:
+     *            schema:
+     *              type: object
+     *              properties:
+     *                status:
+     *                  type: number
+     *                data:
+     *                  type: array
+     *                  items:
+     *                    $ref: '#components/schemas/OrderData'
+     *                message:
+     *                  type: string
+     *      400:
+     *        description: Bad request
+     *        content:
+     *          application/json:
+     *            schema:
+     *              type: object
+     *              properties:
+     *                status:
+     *                  type: number
+     *                data:
+     *                  type: object
+     *                messageError:
+     *                  type: string
+     */
+  router.get("/", verifyToken, orderService.getOrders);
 
   /**
    * @swagger
    * /api/order/{id}:
    *  get:
+   *    security:
+   *      - bearerAuth: []
    *    tags:
    *      - Orders
    *    summary: Get order by Id
@@ -131,7 +135,7 @@ const OrderRouter = (app) => {
    *                messageError:
    *                  type: string
    */
-  router.get("/:id", orderService.getOrderById);
+  router.get("/:id", verifyToken, orderService.getOrderById);
 
   /**
    * @swagger
@@ -203,7 +207,7 @@ const OrderRouter = (app) => {
    *                            messageError:
    *                                type: string 
    */
-  router.post("/", orderService.createOrder);
+  router.post("/", verifyToken, orderService.createOrder);
 
   /**
    * @swagger
@@ -282,7 +286,7 @@ const OrderRouter = (app) => {
    *                            messageError:
    *                                type: string 
    */
-  router.put("/:id", orderService.updateOrder);
+  router.put("/:id", verifyToken, orderService.updateOrder);
 
   /**
    * @swagger
@@ -355,7 +359,7 @@ const OrderRouter = (app) => {
    *                            messageError:
    *                                type: string 
    */
-  router.delete("/:id", orderService.deleteOrder);
+  router.delete("/:id", verifyToken, orderService.deleteOrder);
 
   return app.use("/api/order", router);
 };

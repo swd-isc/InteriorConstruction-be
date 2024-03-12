@@ -3,13 +3,41 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema(
   {
-    orderId: {
-      type: String,
-      required: [true, "orderInfo required."],
+    vnp_Amount: {
+      type: Number,
+      required: [true, "Amount required."],
     },
-    payDate: {
+    vnp_BankCode: {
       type: String,
-      required: [true, "payDate required."],
+      required: [true, "Bank code required."],
+    },
+    vnp_BankTranNo: {
+      type: String,
+      required: [true, "Bank transaction number required."],
+    },
+    vnp_CardType: {
+      type: String,
+      required: [true, "Card type required."],
+    },
+    vnp_PayDate: {
+      type: String,
+      required: [true, "Pay date required."],
+    },
+    vnp_OrderInfo: {
+      type: String,
+      required: [true, "Order information required."],
+    },
+    vnp_TransactionNo: {
+      type: String,
+      required: [true, "Transaction number required."],
+    },
+    vnp_TransactionStatus: {
+      type: String,
+      required: [true, "Transaction status required."],
+    },
+    vnp_TxnRef: {
+      type: String,
+      required: [true, "TxnRef required."],
     },
     clientId: {
       type: Schema.Types.ObjectId,
@@ -60,6 +88,6 @@ const orderSchema = new Schema(
   }
 );
 
-let Color = mongoose.model("order", orderSchema);
+let Order = mongoose.model("order", orderSchema);
 
-module.exports = Color;
+module.exports = Order;
