@@ -5,6 +5,10 @@ import crypto from 'crypto';
 import request from 'request';
 import util from 'util';
 import { orderRepository } from './OrderServices';
+import Order from '../models/Order';
+import Contract from "../models/Contract";
+import Client from "../models/Client";
+import mongoose from 'mongoose';
 const requestPromise = util.promisify(request);
 
 export const paymentService = {
@@ -28,6 +32,15 @@ export const paymentService = {
         const amount = req.body.amount;
         const bankCode = req.body.bankCode;
         console.log('check req', bankCode, ',', req.body.language);
+
+        const isValid = await isIdValid(req.body.contractId, 'contract');
+        if (!isValid.isValid) {
+            return {
+                status: isValid.status,
+                data: {},
+                messageError: isValid.messageError
+            }
+        }
 
         let locale = req.body.language;
         if (locale === null || locale === '' || locale === undefined) {
@@ -69,50 +82,158 @@ export const paymentService = {
     returnPayment: async (req) => {
         let vnp_Params = req.query;
 
-        const secureHash = vnp_Params['vnp_SecureHash'];
-
         delete vnp_Params['vnp_SecureHash'];
         delete vnp_Params['vnp_SecureHashType'];
 
         vnp_Params = sortObject(vnp_Params);
 
-        const tmnCode = vnPay.vnp_TmnCode;
-        const secretKey = vnPay.vnp_HashSecret;
-
-        const signData = queryString.stringify(vnp_Params, { encode: false });
-        const hmac = crypto.createHmac("sha512", secretKey);
-        const signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
-
-
+        let reqBody = {};
         console.log('check vnp_Params', vnp_Params);
-        const reqBody = {
-            vnp_Amount: vnp_Params['vnp_Amount'],
-            vnp_BankCode: vnp_Params['vnp_BankCode'],
-            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
-            vnp_CardType: vnp_Params['vnp_CardType'],
-            vnp_PayDate: vnp_Params['vnp_PayDate'],
-            vnp_OrderInfo: vnp_Params['vnp_OrderInfo'],
-            vnp_TransactionNo: vnp_Params['vnp_TransactionNo'],
-            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
-            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
-            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
-            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
-            vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
-        }
-        const data = orderRepository.createOrder()
-        if (secureHash === signed) {
-            //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-            console.log('check code: ', vnp_Params['vnp_ResponseCode']);
-            return {
-                code: vnp_Params['vnp_ResponseCode']
-            }
-        } else {
-            console.log('check code: 97');
 
-            return {
-                code: '97'
-            }
+        let message = "";
+        let responseData = {}
+        switch (vnp_Params['vnp_ResponseCode']) {
+            case '00':
+                try {
+                    message = "Giao dịch thành công";
+                    const url = process.env.URL_DB;
+                    await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
+                    const data = await Contract.findById(vnp_Params['vnp_TxnRef']);
+
+                    if (data) {
+                        data.status = "SUCCESS";
+
+                        await data.save();
+                    }
+                    const orderInfo = decodePaymentString(vnp_Params['vnp_OrderInfo'].replace(/\+/g, ' '));
+
+                    const amount = vnp_Params['vnp_Amount'] / 100;
+
+                    let transactionStatus = '';
+                    switch (vnp_Params['vnp_TransactionStatus']) {
+                        case '00':
+                            transactionStatus = "Giao dịch thành công";
+                            break;
+                        case '01':
+                            transactionStatus = "Giao dịch chưa hoàn tất";
+                            break;
+                        case '02':
+                            transactionStatus = "Giao dịch bị lỗi";
+                            break;
+                        case '04':
+                            transactionStatus = "Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)";
+                            break;
+                        case '05':
+                            transactionStatus = "VNPAY đang xử lý giao dịch này (GD hoàn tiền)";
+                            break;
+                        case '06':
+                            transactionStatus = "VNPAY đã gửi yêu cầu hoàn tiền sang Ngân hàng (GD hoàn tiền)";
+                            break;
+                        case '07':
+                            transactionStatus = "Giao dịch bị nghi ngờ gian lận";
+                            break;
+                        case '09':
+                            transactionStatus = "GD Hoàn trả bị từ chối";
+                            break;
+
+                        default:
+                            transactionStatus = "Something with server";
+                            break;
+                    }
+                    reqBody = {
+                        vnp_Amount: amount,
+                        vnp_BankCode: vnp_Params['vnp_BankCode'],
+                        vnp_BankTranNo: vnp_Params['vnp_BankTranNo'],
+                        vnp_CardType: vnp_Params['vnp_CardType'],
+                        vnp_PayDate: vnp_Params['vnp_PayDate'],
+                        vnp_OrderInfo: orderInfo,
+                        vnp_TransactionNo: vnp_Params['vnp_TransactionNo'],
+                        vnp_TransactionStatus: transactionStatus,
+                        vnp_TxnRef: vnp_Params['vnp_TxnRef'],
+                        clientId: data.clientId,
+                        contractId: vnp_Params['vnp_TxnRef'],
+                    }
+
+                    const order = new Order(reqBody);
+                    await order.save();
+                    responseData.message = message;
+                    responseData.clientId = data.clientId.toString();
+                    // const orderData = await order.save();
+                    // const responseData = await Order.findById(orderData.id)
+                    //     .populate({
+                    //         path: 'clientId',
+                    //         select: '-contracts',
+                    //         populate: {
+                    //             path: 'accountId',
+                    //             select: '-password -refreshToken',
+                    //         }
+                    //     });
+                    // console.log('check data', responseData);
+                } catch (error) {
+                    console.log('err: ', error);
+                    responseData.message = "Something wrong with DB"
+                } finally {
+                    // Close the database connection
+                    mongoose.connection.close();
+                }
+
+                break;
+            case '07':
+                message = 'Trừ tiền thành công. Giao dịch bị nghi ngờ (liên quan tới lừa đảo, giao dịch bất thường).'
+                responseData.message = message;
+                break;
+            case '09':
+                message = 'Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng chưa đăng ký dịch vụ InternetBanking tại ngân hàng.'
+                responseData.message = message;
+                break;
+            case '10':
+                message = 'Giao dịch không thành công do: Khách hàng xác thực thông tin thẻ/tài khoản không đúng quá 3 lần'
+                responseData.message = message;
+                break;
+            case '11':
+                message = 'Giao dịch không thành công do: Đã hết hạn chờ thanh toán. Xin quý khách vui lòng thực hiện lại giao dịch.'
+                responseData.message = message;
+                break;
+            case '12':
+                message = 'Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng bị khóa.'
+                responseData.message = message;
+                break;
+            case '13':
+                message = 'Giao dịch không thành công do Quý khách nhập sai mật khẩu xác thực giao dịch (OTP). Xin quý khách vui lòng thực hiện lại giao dịch.'
+                responseData.message = message;
+                break;
+            case '24':
+                message = 'Giao dịch không thành công do: Khách hàng hủy giao dịch'
+                responseData.message = message;
+                break;
+            case '51':
+                message = 'Giao dịch không thành công do: Tài khoản của quý khách không đủ số dư để thực hiện giao dịch.'
+                responseData.message = message;
+                break;
+            case '65':
+                message = 'Giao dịch không thành công do: Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày.'
+                responseData.message = message;
+                break;
+            case '75':
+                message = 'Ngân hàng thanh toán đang bảo trì.'
+                responseData.message = message;
+                break;
+            case '79':
+                message = 'Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch'
+                responseData.message = message;
+                break;
+            case '99	':
+                message = 'Các lỗi khác (lỗi còn lại, không có trong danh sách mã lỗi đã liệt kê)'
+                responseData.message = message;
+                break;
+
+            default:
+                message = 'Something wrong with BE'
+                responseData.message = message;
+                break;
         }
+        console.log('check responseData ', responseData);
+        return encodeURIComponent(JSON.stringify(responseData));
     },
 
     queryPayment: async (req) => {
@@ -260,4 +381,80 @@ function sortObject(obj) {
         sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
     }
     return sorted;
+}
+
+async function isIdValid(id, model) {
+    if (id === null || id === undefined) {
+        return {
+            status: 400,
+            isValid: false,
+            messageError: `ObjectId ${model} required.`,
+        };
+    }
+    try {
+        const url = process.env.URL_DB;
+        await mongoose.connect(url, {
+            family: 4,
+            dbName: "interiorConstruction",
+        });
+
+        const isValidObjectId = mongoose.Types.ObjectId.isValid(id);
+
+        if (!isValidObjectId) {
+            // The provided id is not a valid ObjectId
+            return {
+                status: 400,
+                isValid: false,
+                messageError: `Not a valid ${model} ObjectId.`,
+            };
+        }
+
+        let data = null;
+
+        switch (model) {
+            case "contract":
+                // Check if the classification with the given ObjectId exists in the database
+                data = await Contract.findById(id);
+                break;
+            case "client":
+                // Check if the classification with the given ObjectId exists in the database
+                data = await Client.findById(id);
+                break;
+            default:
+                break;
+        }
+
+        if (data !== null) {
+            return {
+                isValid: true,
+            };
+        } else {
+            return {
+                status: 400,
+                isValid: false,
+                messageError: "ObjectId not found.",
+            };
+        }
+        return data !== null; // Returns true if data exists, false otherwise
+    } catch (error) {
+        console.error("Error checking ObjectId:", error);
+        return {
+            status: 500,
+            isValid: false,
+            messageError: error,
+        };
+    } finally {
+        // Close the database connection
+        mongoose.connection.close();
+    }
+}
+
+function decodePaymentString(encodedString) {
+    // Giải mã URL
+    const decodedString = decodeURIComponent(encodedString);
+
+    // Thay thế "%3A" bằng ":"
+    const formattedString = decodedString.replace(/%3A/g, ":");
+
+    return formattedString;
 }

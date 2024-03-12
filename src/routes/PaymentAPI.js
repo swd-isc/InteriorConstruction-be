@@ -94,7 +94,7 @@ const PaymentRouter = (app) => {
      *                                type: string 
      */
     // router.post('/create_payment', verifyToken, isCurrentUser, paymentController.postPayment);
-    router.post('/create_payment', paymentController.postPayment);
+    router.post('/create_payment', verifyToken, paymentController.postPayment);
 
     router.post('/querydr', paymentController.postQuery);
 
