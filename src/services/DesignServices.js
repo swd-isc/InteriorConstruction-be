@@ -671,17 +671,17 @@ export const designRepository = {
       });
 
       try {
-        const contractWithDesign = await Contract.findOne({
-          designId: designId,
-        });
-        if (contractWithDesign) {
-          return {
-            status: 400,
-            data: {},
-            messageError:
-              "Cannot delete design because it is referenced by one or more contracts.",
-          };
-        }
+        // const contractWithDesign = await Contract.findOne({
+        //   designId: designId,
+        // });
+        // if (contractWithDesign) {
+        //   return {
+        //     status: 400,
+        //     data: {},
+        //     messageError:
+        //       "Cannot delete design because it is referenced by one or more contracts.",
+        //   };
+        // }
 
         let design = await Design.findById(designId);
 
