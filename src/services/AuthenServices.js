@@ -140,10 +140,10 @@ export const authenServices = {
 const generateToken = async (data) => {
     const { _id, firstName, lastName, birthDate, phone, photoURL, accountId } = data
     const accessToken = jwt.sign({ _id, firstName, lastName, birthDate, phone, photoURL, accountId }, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: '1d'
+        expiresIn: '15m'
     });
     const refreshToken = jwt.sign({ _id, firstName, lastName, birthDate, phone, photoURL, accountId }, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: '3d'
+        expiresIn: '30m'
     })
     return { accessToken, refreshToken }
 }
