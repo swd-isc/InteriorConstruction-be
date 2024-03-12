@@ -13,6 +13,8 @@ import mongoose from 'mongoose';
 import { contractRepository } from './ContractServices';
 const requestPromise = util.promisify(request);
 
+const ObjectId = mongoose.Types.ObjectId;
+
 export const paymentService = {
     createPayment: async (req) => {
         const cart = req.body.cart;
@@ -436,38 +438,32 @@ export const paymentService = {
                         break;
                 }
 
-                const dateString = response.body.vnp_PayDate;
-                const year = dateString.substring(0, 4);
-                const month = dateString.substring(4, 6);
-                const day = dateString.substring(6, 8);
-                const hours = dateString.substring(8, 10);
-                const minutes = dateString.substring(10, 12);
-                const seconds = dateString.substring(12, 14);
+                // const dateString = response.body.vnp_PayDate;
+                // const year = dateString.substring(0, 4);
+                // const month = dateString.substring(4, 6);
+                // const day = dateString.substring(6, 8);
+                // const hours = dateString.substring(8, 10);
+                // const minutes = dateString.substring(10, 12);
+                // const seconds = dateString.substring(12, 14);
 
-                const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                // const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-                console.log("date " + formattedDate);
+                const formattedDate = response.body.vnp_PayDate;
 
-                console.log("txnRef: " + response.body.vnp_TxnRef);
-
-                const contract = await Contract.findById(response.body.vnp_TxnRef);
-
-                console.log("contract " + contract);
+                const contract = await Contract.findById(new ObjectId(response.body.vnp_TxnRef.toString()));
 
                 const refund = new Refund({
                     vnp_TxnRef: response.body.vnp_TxnRef,
-                    vnp_Amount: response.body.Amount,
-                    vnp_OrderInfo: response.body.OrderInfo,
-                    vnp_BankCode: response.body.BankCode,
+                    vnp_Amount: response.body.vnp_Amount / 100,
+                    vnp_OrderInfo: response.body.vnp_OrderInfo,
+                    vnp_BankCode: response.body.vnp_BankCode,
                     vnp_PayDate: formattedDate,
-                    vnp_TransactionNo: response.body.TransactionNo,
+                    vnp_TransactionNo: response.body.vnp_TransactionNo,
                     vnp_TransactionType: transactionType,
                     vnp_TransactionStatus: transactionStatus,
                     contractId: contract._id,
                     clientId: contract.clientId
                 })
-
-                console.log("ref " + refund);
 
                 try {
                     const url = process.env.URL_DB;
@@ -498,36 +494,42 @@ export const paymentService = {
             } else {
                 let messageError = '';
                 switch (responseCode) {
-                    case '02':
-                        messageError = 'Mã định danh kết nối không hợp lệ';
-                        break;
+                  case "02":
+                    messageError = "Mã định danh kết nối không hợp lệ";
+                    break;
 
-                    case '03':
-                        messageError = 'Dữ liệu gửi sang không đúng định dạng';
-                        break;
+                  case "03":
+                    messageError = "Dữ liệu gửi sang không đúng định dạng";
+                    break;
 
-                    case '91':
-                        messageError = 'Không tìm thấy giao dịch yêu cầu hoàn trả';
-                        break;
+                  case "91":
+                    messageError = "Không tìm thấy giao dịch yêu cầu hoàn trả";
+                    break;
 
-                    case '94':
-                        messageError = 'Giao dịch đã được gửi yêu cầu hoàn tiền trước đó. Yêu cầu này VNPAY đang xử lý';
-                        break;
+                  case "93":
+                    messageError = "Số tiền hoàn trả lớn hơn số tiền đã giao dịch";
+                    break;
 
-                    case '95':
-                        messageError = 'Giao dịch này không thành công bên VNPAY. VNPAY từ chối xử lý yêu cầu';
-                        break;
+                  case "94":
+                    messageError =
+                      "Giao dịch đã được gửi yêu cầu hoàn tiền trước đó. Yêu cầu này VNPAY đang xử lý";
+                    break;
 
-                    case '97':
-                        messageError = 'Checksum không hợp lệ';
-                        break;
+                  case "95":
+                    messageError =
+                      "Giao dịch này không thành công bên VNPAY. VNPAY từ chối xử lý yêu cầu";
+                    break;
 
-                    case '99':
-                        messageError = 'Các lỗi khác';
-                        break;
+                  case "97":
+                    messageError = "Checksum không hợp lệ";
+                    break;
 
-                    default:
-                        break;
+                  case "99":
+                    messageError = "Các lỗi khác";
+                    break;
+
+                  default:
+                    break;
                 }
                 return {
                     status: 400,

@@ -123,6 +123,29 @@ app.get("/", (req, res) => {
   res.end(`Hello kiet`);
 });
 
+// 65effc97051bb05b0a7e63e7
+
+import mongoose from "mongoose";
+import Contract from "../models/Contract";
+
+
+const url = process.env.URL_DB;
+mongoose
+  .connect(url, {
+    family: 4,
+    dbName: "interiorConstruction",
+  })
+  .then(() => console.log("ok"));
+
+  const ObjectId = mongoose.Types.ObjectId;
+const doSomething = async () => {
+  const data = await Contract.findById(new ObjectId('65effc97051bb05b0a7e63e7'));
+  console.log(data);
+};
+
+
+doSomething();
+
 const port = process.env.PORT || 8888;
 
 var path = require("path");
