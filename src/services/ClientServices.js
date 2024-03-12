@@ -44,11 +44,7 @@ export const clientRepository = {
         })
         .populate({
           path: "contracts",
-          select: "-_id designId contractPrice status", // Select the desired fields from the contract document
-          populate: {
-            path: "designId",
-            select: "designName", // Select the desired fields from the design document
-          },
+          select: "-clientId", // Select the desired fields from the contract document
         });
 
       data.page = page;
@@ -99,11 +95,7 @@ export const clientRepository = {
           })
           .populate({
             path: "contracts",
-            select: "-_id designId contractPrice status", // Select the desired fields from the contract document
-            populate: {
-              path: "designId",
-              select: "designName", // Select the desired fields from the design document
-            },
+            select: "-clientId", // Select the desired fields from the contract document
           });
       } else {
         console.log('vo day r');
@@ -115,11 +107,7 @@ export const clientRepository = {
           })
           .populate({
             path: "contracts",
-            select: "-_id designId contractPrice status", // Select the desired fields from the contract document
-            populate: {
-              path: "designId",
-              select: "designName", // Select the desired fields from the design document
-            },
+            select: "-clientId", // Select the desired fields from the contract document
           });
         if (data[0].accountId === null) {
           return {
