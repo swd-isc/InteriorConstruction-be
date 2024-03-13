@@ -4,6 +4,7 @@ import Furniture from "../models/Furniture";
 import Design from "../models/Design";
 import mongoose from "mongoose";
 import moment from 'moment';
+import { paymentService } from "./PaymentServices";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -239,10 +240,20 @@ export const contractRepository = {
       });
 
       try {
-        const contract = await Contract.findById(contractId);
-
+        const contract = await Contract.findById(contractId).populate('orderId');
+        const order = contract.orderId;
         if (reqBody.status) contract.status = reqBody.status;
-        if (reqBody.orderId) contract.orderId = reqBody.orderId;
+
+        if (req.user.role == "ADMIN" && reqBody.status == "CANCEL") {
+          await paymentService.refund({
+            vnp_TxnRef: order.vnp_TxnRef,
+            vnp_TransactionDate: order.PayDate,
+            vnp_Amount: order.vnp_Amount,
+            vnp_TransactionType: "02",
+            vnp_CreateBy: "ADMIN",
+            contractId: contract._id
+          })
+        } 
 
         data = await contract.save();
       } catch (error) {
