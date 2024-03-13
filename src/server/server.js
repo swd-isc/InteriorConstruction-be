@@ -28,6 +28,7 @@ import { PaymentRouter } from "../routes/PaymentAPI";
 import { OrderRouter } from "../routes/OrderAPI";
 import { requestRepository } from "../services/RequestServices";
 import { RequestRouter } from "../routes/RequestAPI";
+import { contractRepository } from "../services/ContractServices";
 
 const app = express();
 
@@ -136,5 +137,6 @@ app.set("view engine", "ejs");
 app.listen(port, () => {
   console.log("Server is running on port: ", port);
 });
+
 
 module.exports = app;

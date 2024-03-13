@@ -246,6 +246,8 @@ const ContractRouter = (app) => {
   router.get("/:id", verifyToken, isCurrentUserOrAdmin, contractService.getContractById);
 
 
+  router.get('/client/:id', contractService.getContractsByClientId)
+
   /**
   * @swagger
   * /api/contract:
