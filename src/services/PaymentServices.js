@@ -128,7 +128,7 @@ export const paymentService = {
           const data = await Contract.findById(contractId);
 
           if (data) {
-            data.status = "SUCCESS";
+            data.status = "PROCCESSING";
 
             await data.save();
           }

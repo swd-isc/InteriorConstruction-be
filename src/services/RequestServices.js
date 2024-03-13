@@ -101,7 +101,20 @@ export const requestRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
-      const request = new Request(reqBody);
+
+      const date = new Date();
+      const timezoneOffsetMinutes = 7 * 60; // UTC+7
+      const adjustedDate = new Date(date.getTime() + timezoneOffsetMinutes * 60000);
+      const createDate = moment(adjustedDate).format('YYYYMMDDHHmmss');
+
+      const requestBody = {
+        clientId: reqBody.clientId,
+        contractId: reqBody.contractId,
+        refundAmount: reqBody.refundAmount,
+        date: createDate
+      }
+
+      const request = new Request(requestBody);
 
       try {
         data = await request.save();

@@ -189,7 +189,7 @@ const RequestRouter = (app) => {
       *                              messageError:
       *                                  type: string
       */
-   router.post("/", verifyToken, requestService.createRequest);
+   router.post("/", verifyToken, isClient, requestService.createRequest);
 
    /**
       * @swagger
