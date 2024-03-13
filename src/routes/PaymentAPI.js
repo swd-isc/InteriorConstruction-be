@@ -17,30 +17,41 @@ const PaymentRouter = (app) => {
      *          - bearerAuth: []
      *      tags:
      *          - Payments
-     *      summary: Create payment URL
+     *      summary: Create contract and payment URL
      *      description: |
-     *          This endpoint is used to create a payment URL.
+     *          This endpoint is used to create contract and payment URL.
      *          The following parameters are expected in the request:
+     *          - `contractId`: For create payment URL only. If don't have this param will create new contract
      *          - `bankCode`: The bank code, possible values are `" "`, `"VNBANK"`, `"INTCARD"`.
      *          - `language`: The language, possible values are `" "`, `"vn"`, `"en"`.
      *          Authorization is required, and the token should be provided in the request header.
      *          This endpoint is for `Client only`, Admin cannot access this endpoint
      *          - `amount`: Total prices
-     *          - `cart`: Array of furnitures. Ex: `[{"furnitureId": "12345678","quantity": 2}]`
+     *          - `furnitures`: Array of furnitureId. Ex: `[{furnitureId: "furnitureId1", quantity: 2}, {furnitureId: "furnitureId2", quantity: 1}, {furnitureId: "furnitureId3", quantity: 4}]`
+     *          - `designs`: Array of designId. Ex: `[{designId: "designId1", quantity: 1}, {designId: "designId1", quantity: 2}, {designId: "designId1", quantity: 3}]`
      *      requestBody:
-     *          required: true
      *          content:
      *            application/json:
      *              schema:
      *                type: object
      *                properties:
-     *                  cart:
+     *                  contractId:
+     *                    type: string
+     *                  furnitures:
      *                    type: array
      *                    items:
-     *                      schema:
      *                          type: object
      *                          properties:
      *                              furnitureId:
+     *                                  type: string
+     *                              quantity:
+     *                                  type: number
+     *                  designs:
+     *                    type: array
+     *                    items:
+     *                          type: object
+     *                          properties:
+     *                              designId:
      *                                  type: string
      *                              quantity:
      *                                  type: number
@@ -105,6 +116,7 @@ const PaymentRouter = (app) => {
      *                                type: string 
      */
     router.post('/create_payment', verifyToken, isClient, paymentController.postPayment);
+    // router.post('/create_payment', paymentController.postPayment);
 
     router.post('/querydr', paymentController.postQuery);
 

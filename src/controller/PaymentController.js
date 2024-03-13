@@ -16,7 +16,7 @@ export const paymentController = {
         // return res.render('success', { code: data.code });
         const data = await paymentService.returnPayment(req);
         console.log('check encoded data', data);
-        return res.redirect(`http://localhost:3000?data=${data}`);
+        return res.redirect(`https://interior-construction-fe.vercel.app?data=${data}`);
     },
 
     postQuery: async (req, res, next) => {
