@@ -12,11 +12,9 @@ export const paymentController = {
     },
 
     returnPayment: async (req, res, next) => {
-        // const data = await paymentService.returnPayment(req);
-        // return res.render('success', { code: data.code });
         const data = await paymentService.returnPayment(req);
-        console.log('check encoded data', data);
         return res.redirect(`https://interior-construction-fe.vercel.app?data=${data}`);
+        // return res.render('success', { code: data.code });
     },
 
     postQuery: async (req, res, next) => {

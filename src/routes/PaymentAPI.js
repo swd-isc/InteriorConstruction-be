@@ -213,6 +213,7 @@ const PaymentRouter = (app) => {
      *                                type: string 
      */
     router.post('/refund', verifyToken, isClient, paymentController.postRefund);
+    // router.post('/refund', paymentController.postRefund);
 
     router.get('/return', paymentController.returnPayment);
 

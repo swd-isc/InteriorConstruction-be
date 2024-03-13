@@ -51,8 +51,15 @@ const router = express.Router();
  *                        type: string
  *                      count:
  *                        type: number
- *              contractPrice:
- *                  type: number
+ *              designs:
+ *                type: array
+ *                items:
+ *                    type: object
+ *                    properties:
+ *                      designId:
+ *                        type: string
+ *                      count:
+ *                        type: number
  *              status:
  *                  type: string 
  *                  enum:
@@ -335,7 +342,9 @@ const ContractRouter = (app) => {
    *          This endpoint is for updating contract status and create orderId field
    *          Case usage:
    *            - Client cancel contract before payment
-   *            - Admin update contract status
+   *            - Admin dùng route này để update contract status ở chỗ "Xác nhận đơn hàng":
+   *              - Nếu mà Admin bấm Accept thì cập nhật contract status SUCCESS
+   *              - Nếu mà Admin bấm Deny thì cập nhật contract status CANCEL và refund cho người dùng
    *      requestBody:
    *           required: true
    *           content:
@@ -344,8 +353,6 @@ const ContractRouter = (app) => {
    *                       type: object
    *                       properties:
    *                          status:
-   *                            type: string
-   *                          orderId:
    *                            type: string
    *      parameters:
    *          - in: path

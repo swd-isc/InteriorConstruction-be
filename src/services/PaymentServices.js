@@ -17,6 +17,23 @@ const ObjectId = mongoose.Types.ObjectId;
 
 export const paymentService = {
   createPayment: async (req) => {
+    // const testData = {
+    //   clientId: "65e845ac4cb2b21ac2aa90ea",
+    //   furnitures: [
+    //     {
+    //       furnitureId: "65c3beba4c0026f21a53e8fc",
+    //       quantity: 2
+    //     }
+    //   ],
+    //   designs: [
+    //     {
+    //       designId: "65c473cf001c75da569f8711",
+    //       quantity: 2
+    //     }
+    //   ],
+    //   contractPrice: 250000
+    // }
+
     let contractId = req.body.contractId;
 
     if (contractId === null || contractId === '' || contractId === undefined) {
@@ -27,6 +44,7 @@ export const paymentService = {
         contractPrice: req.body.amount
       }
       const data = await contractRepository.createContract(contractReq);
+      // const data = await contractRepository.createContract(testData);
 
       if (data.status !== 201) {
         return {
@@ -35,7 +53,6 @@ export const paymentService = {
           messageError: data.messageError
         }
       }
-      console.log('check data: ', data.data);
       contractId = data.data._id;
     } else {
       const isValid = await isIdValid(contractId, 'contract');
@@ -65,7 +82,6 @@ export const paymentService = {
 
     const amount = req.body.amount;
     const bankCode = req.body.bankCode;
-    console.log('check req', bankCode, ',', req.body.language);
 
     let locale = req.body.language;
     if (locale === null || locale === '' || locale === undefined) {
@@ -112,7 +128,6 @@ export const paymentService = {
     vnp_Params = sortObject(vnp_Params);
 
     let reqBody = {};
-    console.log('check vnp_Params', vnp_Params);
 
     let message = "";
     let responseData = {}
@@ -123,12 +138,11 @@ export const paymentService = {
           const url = process.env.URL_DB;
           await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
           const contractId = extractContractId(vnp_Params['vnp_OrderInfo']);
-          console.log('check contractId', contractId);
 
           const data = await Contract.findById(contractId);
 
           if (data) {
-            data.status = "PROCCESSING";
+            data.status = "PROCESSING";
 
             await data.save();
           }
@@ -177,8 +191,8 @@ export const paymentService = {
             vnp_TransactionNo: vnp_Params['vnp_TransactionNo'],
             vnp_TransactionStatus: transactionStatus,
             vnp_TxnRef: vnp_Params['vnp_TxnRef'],
-            clientId: data.clientId,
-            contractId: vnp_Params['vnp_TxnRef'],
+            clientId: data.client.clientId,
+            contractId: data._id,
           }
 
           const order = new Order(reqBody);
@@ -188,7 +202,7 @@ export const paymentService = {
 
           responseData.message = message;
           responseData.orderId = order._id;
-          responseData.clientId = data.clientId.toString();
+          responseData.clientId = data.client.clientId.toString();
 
         } catch (error) {
           console.log('err: ', error);
@@ -253,7 +267,6 @@ export const paymentService = {
         responseData.message = message;
         break;
     }
-    console.log('check responseData ', responseData);
     return encodeURIComponent(JSON.stringify(responseData));
   },
 
@@ -349,6 +362,7 @@ export const paymentService = {
       req.connection.remoteAddress ||
       req.socket.remoteAddress ||
       req.connection.socket.remoteAddress;
+    // const vnp_IpAddr = "127.0.0.1";
 
     const vnp_CreateDate = moment(adjustedDate).format("YYYYMMDDHHmmss");
 
@@ -402,8 +416,6 @@ export const paymentService = {
       vnp_SecureHash: vnp_SecureHash,
     };
 
-    console.log(dataObj);
-
     try {
       const response = await requestPromise({
         url: vnp_Api,
@@ -411,8 +423,6 @@ export const paymentService = {
         json: true,
         body: dataObj,
       });
-
-      console.log(response.body);
 
       const responseCode = response.body.vnp_ResponseCode;
 
@@ -663,13 +673,9 @@ function decodePaymentString(encodedString) {
 }
 
 function extractContractId(inputString) {
-  const regex = /Payment for contract: (.+)/;
-  const match = inputString.match(regex);
-
-  // Kiểm tra xem chuỗi có khớp với biểu thức chính quy không
-  if (match && match[1]) {
-    return match[1];
-  } else {
-    return null; // hoặc giá trị mặc định bạn muốn trả về khi không tìm thấy contractId
+  const lastIndex = inputString.lastIndexOf('+');
+  if (lastIndex !== -1) {
+    return inputString.substring(lastIndex + 1);
   }
+  return inputString; // If no '+' found, return the original string
 }

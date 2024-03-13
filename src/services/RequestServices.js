@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Request from "../models/Request";
 import Client from "../models/Client";
 import Contract from "../models/Contract";
+import moment from "moment";
 import { paymentService } from "./PaymentServices";
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -15,7 +16,10 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.find().populate('clientId').populate('contractId');
+      const data = await Request.find().populate({
+        path: 'clientId',
+        select: 'firstName lastName'
+      });
 
       return {
         status: 200,
@@ -42,7 +46,7 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.find({"clientId": clientId}).populate('clientId').populate('contractId');
+      const data = await Request.find({ "clientId": clientId }).populate('clientId').populate('contractId');
 
       return {
         status: 200,
@@ -90,7 +94,7 @@ export const requestRepository = {
   },
 
 
-  
+
   createRequest: async (reqBody) => {
     try {
       let data = [];
@@ -99,7 +103,29 @@ export const requestRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
-      const request = new Request(reqBody);
+
+      const date = new Date();
+      const timezoneOffsetMinutes = 7 * 60; // UTC+7
+      const adjustedDate = new Date(date.getTime() + timezoneOffsetMinutes * 60000);
+      const createDate = moment(adjustedDate).format('YYYYMMDDHHmmss');
+
+      const requestBody = {
+        clientId: reqBody.clientId,
+        contractId: reqBody.contractId,
+        refundAmount: reqBody.refundAmount,
+        date: createDate
+      }
+
+      const isExist = await Request.find({ clientId: reqBody.clientId, contractId: reqBody.contractId });
+      if (isExist.length > 0) {
+        return {
+          status: 400,
+          data: {},
+          messageError: "You are refund before, please try again later.",
+        };
+      }
+
+      const request = new Request(requestBody);
 
       try {
         data = await request.save();
@@ -140,27 +166,36 @@ export const requestRepository = {
 
       const reqStatus = reqBody.status;
       try {
+        data = await Request.findByIdAndUpdate(requestId, reqBody, {
+          runValidators: true,
+          new: true,
+        }).populate({
+          path: 'contractId',
+          populate: {
+            path: 'orderId',
+          }
+        });
+        console.log('check data', data);
         if (reqStatus === "ACCEPT") {
-          console.log('vo day r');
-          data = await Request.findByIdAndUpdate(requestId, reqBody, {
-            runValidators: true,
-            new: true,
-          }).populate({
-            path: 'contractId',
-            populate: {
-              path: 'orderId',
-            }
-          });
-
-          console.log('check data', data);
+          console.log('ACCEPT');
 
           const reqRefund = {
             orderId: data.contractId.orderId._id,
             transDate: data.contractId.orderId.vnp_PayDate,
             amount: data.contractId.orderId.vnp_Amount,
             transType: "02", //Hoàn toàn phần
+            user: "Admin",
+            contractId: data.contractId._id
           }
-          paymentService.refund()
+          await paymentService.refund(reqRefund)
+
+          const contractData = await Contract.findById(data.contractId._id);
+
+          if (contractData) {
+            contractData.status = "CANCEL";
+
+            await contractData.save();
+          }
         }
       } catch (error) {
         return {
@@ -172,7 +207,6 @@ export const requestRepository = {
 
       return {
         status: 200,
-        data: data !== null ? data : {},
         message: data !== null ? "OK" : "No data",
       };
     } catch (error) {
