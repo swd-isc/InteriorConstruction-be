@@ -79,7 +79,7 @@ const clientSchema = new Schema({
                     }
 
                     // Check if the clientId in the contract matches the _id of the client
-                    if (contract.clientId.toString() !== this._id.toString()) {
+                    if (contract.client.clientId.toString() !== this._id.toString()) {
                         throw new mongoose.Error(`ClientId in the contract ${contractId} doesn't match the clientId`); // ClientId in the contract doesn't match the _id of the client
                     }
                 }
