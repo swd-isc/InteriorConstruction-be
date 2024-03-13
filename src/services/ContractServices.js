@@ -1,6 +1,9 @@
 import Contract from "../models/Contract";
 import Client from "../models/Client";
+import Furniture from "../models/Furniture";
+import Design from "../models/Design";
 import mongoose from "mongoose";
+import moment from 'moment';
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -30,7 +33,6 @@ export const contractRepository = {
 
       // Calculate total pages
       const totalPages = Math.ceil(totalDocuments / itemsPerPage);
-
 
       if (!idClientValid.isValid) {
         data.contracts = await Contract.find()
@@ -109,18 +111,78 @@ export const contractRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
-      reqBody.status = "PROCESSING";
-      const contract = new Contract(reqBody);
+
+      let createObj = {};
+
+      //client
+      const clientId = reqBody.clientId;
+      const client = await Client.findById(clientId);
+      createObj.client = {
+        clientId: new ObjectId(clientId),
+        firstName: client.firstName,
+        lastName: client.lastName,
+      };
+
+      //furnitures
+      const furnitures = [];
+      const reqFurs = reqBody.furnitures;
+
+      for (let i = 0; i < reqFurs.length; i++) {
+        const curFur = await Furniture.findById(reqFurs[i].furnitureId);
+
+        furnitures.push({
+          furnitureId: curFur._id,
+          quantity: reqFurs[i].quantity,
+          name: curFur.name,
+        });
+      }
+
+      createObj.furnitures = furnitures;
+
+      //designs
+      const designs = [];
+      const reqDes = reqBody.designs;
+
+      for (let i = 0; i < reqDes.length; i++) {
+        const curDes = await Design.findById(reqDes[i].designId).populate('furnitures');
+        const curFurs = curDes.furnitures.map((furniture) => {
+          return {
+            furnitureId: furniture._id,
+            name: furniture.name,
+          };
+        });
+
+        designs.push({
+          designId: curDes._id,
+          quantity: reqDes[i].quantity,
+          designName: curDes.designName,
+          furnitures: curFurs,
+        });
+      }
+
+      createObj.designs = designs;
+
+      //status
+      createObj.status = "UNPAID";
+
+      //price
+      createObj.contractPrice = reqBody.contractPrice;
+
+      //date
+      createObj.date = moment().format('DD/MM/YYYY HH:mm:ss').toString();
+
+      const contract = new Contract(createObj);
 
       try {
         data = await contract.save();
+
+        console.log(data._id);
 
         // Retrieve the client using the client ID from the contract request body
         const client = await Client.findById(reqBody.clientId);
 
         // Update the client's contracts array with the ID of the newly created contract
         client.contracts.push(data._id);
-
         // Save the updated client
         await client.save();
       } catch (error) {
@@ -179,13 +241,10 @@ export const contractRepository = {
       try {
         const contract = await Contract.findById(contractId);
 
-        if (reqBody.contractPrice) contract.contractPrice = reqBody.contractPrice;
         if (reqBody.status) contract.status = reqBody.status;
-        if (reqBody.contractFileURL) contract.contractFileURL = reqBody.contractFileURL;
-        if (reqBody.designId) contract.designId = reqBody.designId;
+        if (reqBody.orderId) contract.orderId = reqBody.orderId;
 
         data = await contract.save();
-
       } catch (error) {
         return {
           status: 400,

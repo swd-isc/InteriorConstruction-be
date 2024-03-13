@@ -27,6 +27,7 @@ import swaggerUI from "swagger-ui-express";
 import { PaymentRouter } from "../routes/PaymentAPI";
 import { OrderRouter } from "../routes/OrderAPI";
 import { requestRepository } from "../services/RequestServices";
+import { contractRepository } from "../services/ContractServices";
 
 const app = express();
 
@@ -134,5 +135,19 @@ app.listen(port, () => {
   console.log("Server is running on port: ", port);
 });
 
+const obj = {
+  clientId: "65e845ac4cb2b21ac2aa90ea",
+  furnitures: [
+    { furnitureId: "65c3bb7f1a2c0f07fd666fa5", quantity: 1 },
+    { furnitureId: "65c3beb84c0026f21a53e8cc", quantity: 3 },
+  ],
+  designs: [
+    { designId: "65c45ac03b41d77c07b6f0df", quantity: 1 },
+    { designId: "65c473cf001c75da569f8711", quantity: 3 },
+  ],
+  contractPrice: 3000
+};
+
+contractRepository.createContract(obj).then(res => console.log(res));
 
 module.exports = app;
