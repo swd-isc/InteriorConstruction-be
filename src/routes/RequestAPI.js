@@ -219,12 +219,17 @@ const RequestRouter = (app) => {
       *                   schema:
       *                       $ref: '#components/schemas/Request'
       *      responses:
-      *          201:
+      *          200:
       *              description: OK
       *              content:
       *                  application/json:
       *                      schema:
-      *                          $ref: '#components/schemas/RequestData'
+      *                          type: object
+      *                          properties:
+      *                             status:
+      *                                type: number
+      *                             message:
+      *                                type: string
       *          400:
       *              description: Bad request
       *              content:
