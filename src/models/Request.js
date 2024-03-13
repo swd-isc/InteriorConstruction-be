@@ -6,10 +6,14 @@ const requestSchema = new Schema(
     status: {
       type: String,
       enum: {
-        values: ["PROCESSING", "RESOLVED"],
+        values: ["DEFAULT", "ACCEPT","DENY"],
         message: "{VALUE} is not supported.",
       },
-      default: "PROCESSING",
+      default: "DEFAULT",
+      required: [true, "status required."],
+    },
+    refundAmount: {
+      type: Number,
       required: [true, "status required."],
     },
     date: {
