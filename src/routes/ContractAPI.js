@@ -22,7 +22,16 @@ const router = express.Router();
  *          ContractData:
  *              type: object
  *              properties:
- *                  clientId:
+ *                  client:
+ *                    type: object
+ *                    properties:
+ *                      clientId:
+ *                        type: string
+ *                      firstName:
+ *                        type: string
+ *                      lastName:
+ *                        type: string
+ *                  _id:
  *                    type: string
  *                  furnitures:
  *                    type: array
@@ -33,10 +42,38 @@ const router = express.Router();
  *                          type: string
  *                        quantity:
  *                          type: number
+ *                        name:
+ *                          type: string
+ *                  designs:
+ *                    type: array
+ *                    items:
+ *                      type: object
+ *                      properties:
+ *                        designId:
+ *                          type: string
+ *                        quantity:
+ *                          type: number
+ *                        designName:
+ *                          type: string
+ *                        furnitures:
+ *                          type: array
+ *                          items:
+ *                            type: object
+ *                            properties:
+ *                              furnitureId:
+ *                                type: string
+ *                              quantity:
+ *                                type: number
+ *                              name:
+ *                                type: string
  *                  contractPrice:
  *                      type: number
- *                  contractFileURL:
- *                      type: string     
+ *                  status:
+ *                      type: string
+ *                  date:
+ *                      type: string
+ *                  orderId:
+ *                      type: string
  *          ContractSchema:
  *            type: object
  *            properties:
@@ -91,22 +128,9 @@ const ContractRouter = (app) => {
   *                               status:
   *                                   type: number
   *                               data:
-  *                                   type: object
-  *                                   properties:
-  *                                       contracts:
-  *                                           type: array
-  *                                           items:
-  *                                              $ref: '#components/schemas/ContractData'
-  *                                       id:
-  *                                           type: string
-  *                                       clientId:
-  *                                           type: string
-  *                                       designId:
-  *                                           type: string
-  *                                       contractPrice:
-  *                                           type: number
-  *                                       status:
-  *                                           type: string                                                                                                                                                 
+  *                                   type: array
+  *                                   items:
+  *                                     $ref: '#components/schemas/ContractData'                                                                                                                                             
   *                               message:
   *                                   type: string
   *          400:
