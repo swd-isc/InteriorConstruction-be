@@ -78,30 +78,8 @@ const ContractRouter = (app) => {
   *           - bearerAuth: []
   *      tags:
   *           - Contracts
-  *      summary: Get contract by clientId
-  *      description: This endpoint is for getting contract by clientId (if no clientId will find all contract for admin usage)
-  *      parameters:
-  *          - in: query
-  *            name: page
-  *            required: false
-  *            description: For paging
-  *            schema:
-  *               type: number
-  *          - in: query
-  *            name: sort_by
-  *            required: false
-  *            description: For sorting
-  *            schema:
-  *               type: string
-  *               enum:
-  *                   - asc
-  *                   - desc
-  *          - in: query
-  *            name: clientId
-  *            required: false
-  *            description: For finding contract by clientId. default will find all contract by page
-  *            schema:
-  *               type: string
+  *      summary: Admin get contracts
+  *      description: This endpoint is for admin getting contracts
   *      responses:
   *          200:
   *              description: OK
@@ -169,7 +147,7 @@ const ContractRouter = (app) => {
   *                                messageError:
   *                                    type: string 
   */
-  router.get("/", verifyToken, contractService.getContracts);
+  router.get("/", verifyToken, isAdmin, contractService.getContracts);
 
   /**
      * @swagger
@@ -242,11 +220,86 @@ const ContractRouter = (app) => {
      *                            messageError:
      *                                type: string 
      */
-
   router.get("/:id", verifyToken, isCurrentUserOrAdmin, contractService.getContractById);
 
-
-  router.get('/client/:id', contractService.getContractsByClientId)
+  /**
+  * @swagger
+  * /api/contract/client:
+  *  get:
+  *      security:
+  *           - bearerAuth: []
+  *      tags:
+  *           - Contracts
+  *      summary: Client get contracts
+  *      description: This endpoint is for client getting contracts
+  *      responses:
+  *          200:
+  *              description: OK
+  *              content:
+  *                   application/json:
+  *                       schema:
+  *                           type: object
+  *                           properties:
+  *                               status:
+  *                                   type: number
+  *                               data:
+  *                                   type: object
+  *                                   properties:
+  *                                       contracts:
+  *                                           type: array
+  *                                           items:
+  *                                              $ref: '#components/schemas/ContractData'
+  *                                       id:
+  *                                           type: string
+  *                                       clientId:
+  *                                           type: string
+  *                                       designId:
+  *                                           type: string
+  *                                       contractPrice:
+  *                                           type: number
+  *                                       status:
+  *                                           type: string                                                                                                                                                 
+  *                               message:
+  *                                   type: string
+  *          400:
+  *              description: Bad Request
+  *              content:
+  *                   application/json:
+  *                       schema:
+  *                           type: object
+  *                           properties:
+  *                               status:
+  *                                   type: number
+  *                               messageError:
+  *                                   type: string
+  *          500:
+  *              description: Server error
+  *              content:
+  *                  application/json:
+  *                      schema:
+  *                          type: object
+  *                          properties:
+  *                              status:
+  *                                  type: number
+  *                              messageError:
+  *                                  type: string
+  *          401:
+  *               description: Unauthorized
+  *               content:
+  *                    application/json:
+  *                        schema:
+  *                            type: string
+  *          403:
+  *               description: Forbidden
+  *               content:
+  *                    application/json:
+  *                        schema:
+  *                            type: object
+  *                            properties:
+  *                                messageError:
+  *                                    type: string 
+  */
+  router.get('/client/', verifyToken, isClient, contractService.getContractsByClientId)
 
   /**
   * @swagger
