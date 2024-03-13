@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import Request from "../models/Request";
 import Client from "../models/Client";
 import Contract from "../models/Contract";
-import moment from "moment";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -15,10 +14,7 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.find().populate({
-        path: 'clientId',
-        select: 'firstName lastName'
-      });
+      const data = await Request.find().populate('clientId').populate('contractId');
 
       return {
         status: 200,
@@ -45,7 +41,7 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.find({ "clientId": clientId }).populate('clientId').populate('contractId');
+      const data = await Request.find({"clientId": clientId}).populate('clientId').populate('contractId');
 
       return {
         status: 200,
@@ -93,7 +89,7 @@ export const requestRepository = {
   },
 
 
-
+  
   createRequest: async (reqBody) => {
     try {
       let data = [];
@@ -102,29 +98,7 @@ export const requestRepository = {
         family: 4,
         dbName: "interiorConstruction",
       });
-
-      const date = new Date();
-      const timezoneOffsetMinutes = 7 * 60; // UTC+7
-      const adjustedDate = new Date(date.getTime() + timezoneOffsetMinutes * 60000);
-      const createDate = moment(adjustedDate).format('YYYYMMDDHHmmss');
-
-      const requestBody = {
-        clientId: reqBody.clientId,
-        contractId: reqBody.contractId,
-        refundAmount: reqBody.refundAmount,
-        date: createDate
-      }
-
-      const isExist = await Request.find({ clientId: reqBody.clientId, contractId: reqBody.contractId });
-      if (isExist.length > 0) {
-        return {
-          status: 400,
-          data: {},
-          messageError: "You are refund before, please try again later.",
-        };
-      }
-
-      const request = new Request(requestBody);
+      const request = new Request(reqBody);
 
       try {
         data = await request.save();
@@ -163,17 +137,11 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const reqStatus = reqBody;
-
       try {
-        if (reqStatus === "ACCEPT") {
-          data = await Request.findByIdAndUpdate(requestId, reqBody, {
-            runValidators: true,
-            new: true,
-          });
-
-          console.log('check data', data);
-        }
+        data = await Request.findByIdAndUpdate(requestId, reqBody, {
+          runValidators: true,
+          new: true,
+        });
       } catch (error) {
         return {
           status: 400,
