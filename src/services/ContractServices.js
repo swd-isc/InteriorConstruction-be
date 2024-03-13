@@ -1,10 +1,12 @@
 import Contract from "../models/Contract";
 import Client from "../models/Client";
+import Request from "../models/Request";
 import Furniture from "../models/Furniture";
 import Design from "../models/Design";
 import mongoose from "mongoose";
-import moment from 'moment';
+import moment from "moment";
 import { paymentService } from "./PaymentServices";
+import { requestRepository } from "./RequestServices";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -75,7 +77,14 @@ export const contractRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Contract.find({});
+      const data = await Contract.find(
+        {},
+        {
+          "furnitures._id": 0,
+          "designs._id": 0,
+          "designs.furnitures._id": 0,
+        }
+      );
       data.reverse();
 
       return {
@@ -103,7 +112,14 @@ export const contractRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Contract.find({'client.clientId': user._id});
+      const data = await Contract.find(
+        { "client.clientId": user._id },
+        {
+          "furnitures._id": 0,
+          "designs._id": 0,
+          "designs.furnitures._id": 0,
+        }
+      );
       data.reverse();
 
       return {
@@ -141,7 +157,11 @@ export const contractRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Contract.findById(id);
+      const data = await Contract.findById(id, {
+        "furnitures._id": 0,
+        "designs._id": 0,
+        "designs.furnitures._id": 0,
+      });
 
       return {
         status: 200,
@@ -201,7 +221,9 @@ export const contractRepository = {
       const reqDes = reqBody.designs;
 
       for (let i = 0; i < reqDes.length; i++) {
-        const curDes = await Design.findById(reqDes[i].designId).populate('furnitures');
+        const curDes = await Design.findById(reqDes[i].designId).populate(
+          "furnitures"
+        );
         const curFurs = curDes.furnitures.map((furniture) => {
           return {
             furnitureId: furniture._id,
@@ -226,7 +248,7 @@ export const contractRepository = {
       createObj.contractPrice = reqBody.contractPrice;
 
       //date
-      createObj.date = moment().format('DD/MM/YYYY HH:mm:ss').toString();
+      createObj.date = moment().format("DD/MM/YYYY HH:mm:ss").toString();
 
       const contract = new Contract(createObj);
 
@@ -296,21 +318,32 @@ export const contractRepository = {
       });
 
       try {
-        const contract = await Contract.findById(contractId).populate('orderId');
+        const contract = await Contract.findById(contractId).populate(
+          "orderId"
+        );
         if (reqBody.status) contract.status = reqBody.status;
 
         if (user.accountId.role == "ADMIN" && reqBody.status == "CANCEL") {
           const order = contract.orderId;
-          await paymentService.refund({
+          const res = await paymentService.refund({
             body: {
               vnp_TxnRef: order.vnp_TxnRef,
               transDate: order.vnp_PayDate,
               amount: order.vnp_Amount,
               transType: "02",
               user: "ADMIN",
-              contractId: contract._id
+              contractId: contract._id,
+            },
+          });
+          if (res.status == 400) {
+            return res;
+          } else {
+            const request = await Request.find({ contractId: contract._id });
+            if (request) {
+              request.status = "ACCEPT";
+              await request.save();
             }
-          })
+          }
         }
 
         data = await contract.save();

@@ -166,16 +166,6 @@ export const requestRepository = {
 
       const reqStatus = reqBody.status;
       try {
-        data = await Request.findByIdAndUpdate(requestId, reqBody, {
-          runValidators: true,
-          new: true,
-        }).populate({
-          path: 'contractId',
-          populate: {
-            path: 'orderId',
-          }
-        });
-        console.log('check data', data);
         if (reqStatus === "ACCEPT") {
           console.log('ACCEPT');
 
@@ -187,7 +177,19 @@ export const requestRepository = {
             user: "Admin",
             contractId: data.contractId._id
           }
-          await paymentService.refund(reqRefund)
+          const res = await paymentService.refund(reqRefund)
+
+          if (res.status == 400) return res;
+
+          data = await Request.findByIdAndUpdate(requestId, reqBody, {
+            runValidators: true,
+            new: true,
+          }).populate({
+            path: 'contractId',
+            populate: {
+              path: 'orderId',
+            }
+          });
 
           const contractData = await Contract.findById(data.contractId._id);
 
@@ -196,6 +198,16 @@ export const requestRepository = {
 
             await contractData.save();
           }
+        } else {
+          data = await Request.findByIdAndUpdate(requestId, reqBody, {
+            runValidators: true,
+            new: true,
+          }).populate({
+            path: 'contractId',
+            populate: {
+              path: 'orderId',
+            }
+          });
         }
       } catch (error) {
         return {
