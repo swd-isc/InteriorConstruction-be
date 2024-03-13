@@ -233,7 +233,8 @@ const RequestRouter = (app) => {
       *                              messageError:
       *                                  type: string
       */
-   router.put("/:id", verifyToken, isAdmin, requestService.updateRequest);
+   // router.put("/:id", verifyToken, isAdmin, requestService.updateRequest);
+   router.put("/:id", requestService.updateRequest);
 
    router.delete("/:id", verifyToken, isAdmin, requestService.deleteRequest);
 
