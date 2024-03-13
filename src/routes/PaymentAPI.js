@@ -17,10 +17,11 @@ const PaymentRouter = (app) => {
      *          - bearerAuth: []
      *      tags:
      *          - Payments
-     *      summary: Create payment URL
+     *      summary: Create contract and payment URL
      *      description: |
-     *          This endpoint is used to create a payment URL.
+     *          This endpoint is used to create contract and payment URL.
      *          The following parameters are expected in the request:
+     *          - `contractId`: For create payment URL only. If don't have this param will create new contract
      *          - `bankCode`: The bank code, possible values are `" "`, `"VNBANK"`, `"INTCARD"`.
      *          - `language`: The language, possible values are `" "`, `"vn"`, `"en"`.
      *          Authorization is required, and the token should be provided in the request header.
@@ -28,12 +29,13 @@ const PaymentRouter = (app) => {
      *          - `amount`: Total prices
      *          - `cart`: Array of furnitures. Ex: `[{"furnitureId": "12345678","quantity": 2}]`
      *      requestBody:
-     *          required: true
      *          content:
      *            application/json:
      *              schema:
      *                type: object
      *                properties:
+     *                  contractId:
+     *                    type: string
      *                  cart:
      *                    type: array
      *                    items:
@@ -105,6 +107,7 @@ const PaymentRouter = (app) => {
      *                                type: string 
      */
     router.post('/create_payment', verifyToken, isClient, paymentController.postPayment);
+    // router.post('/create_payment', paymentController.postPayment);
 
     router.post('/querydr', paymentController.postQuery);
 

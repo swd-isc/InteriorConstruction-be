@@ -17,24 +17,36 @@ const ObjectId = mongoose.Types.ObjectId;
 
 export const paymentService = {
   createPayment: async (req) => {
-    const contractReq = {
-      clientId: req.user.id.toString(),
-      furnitures: req.body.furnitures,
-      designs: req.body.designs,
-      contractPrice: req.body.amount
-    }
+    let contractId = req.body.contractId;
 
-    const data = await contractRepository.createContract(contractReq);
+    if (contractId === null || contractId === '' || contractId === undefined) {
+      const contractReq = {
+        clientId: req.user.id.toString(),
+        furnitures: req.body.furnitures,
+        designs: req.body.designs,
+        contractPrice: req.body.amount
+      }
+      const data = await contractRepository.createContract(contractReq);
 
-    if (data.status !== 201) {
-      return {
-        status: data.status,
-        data: {},
-        messageError: data.messageError
+      if (data.status !== 201) {
+        return {
+          status: data.status,
+          data: {},
+          messageError: data.messageError
+        }
+      }
+      console.log('check data: ', data.data);
+      contractId = data.data._id;
+    } else {
+      const isValid = await isIdValid(contractId, 'contract');
+      if (!isValid.isValid) {
+        return {
+          status: isValid.status,
+          data: {},
+          messageError: isValid.messageError
+        }
       }
     }
-    console.log('check data: ', data.data);
-
 
     const ipAddr = req.headers['x-forwarded-for'] ||
       req.connection.remoteAddress ||
@@ -50,10 +62,7 @@ export const paymentService = {
     const secretKey = vnPay.vnp_HashSecret;
     let vnpUrl = vnPay.vnp_Url;
     const returnUrl = vnPay.vnp_ReturnUrl;
-    // const contractId = req.body.contractId;
-    // const orderId = req.body.contractId;
-    const contractId = data.data._id;
-    const orderId = data.data._id;
+
     const amount = req.body.amount;
     const bankCode = req.body.bankCode;
     console.log('check req', bankCode, ',', req.body.language);
@@ -69,7 +78,7 @@ export const paymentService = {
     vnp_Params['vnp_TmnCode'] = tmnCode;
     vnp_Params['vnp_Locale'] = locale;
     vnp_Params['vnp_CurrCode'] = currCode;
-    vnp_Params['vnp_TxnRef'] = orderId;
+    vnp_Params['vnp_TxnRef'] = createDate;
     vnp_Params['vnp_OrderInfo'] = 'Payment for contract: ' + contractId;
     vnp_Params['vnp_OrderType'] = 'other';
     vnp_Params['vnp_Amount'] = amount * 100; //merchant cần nhân thêm 100 lần (khử phần thập phân)
@@ -77,7 +86,6 @@ export const paymentService = {
     vnp_Params['vnp_IpAddr'] = ipAddr;
     vnp_Params['vnp_CreateDate'] = createDate;
 
-    console.log('check ', orderId);
     if (bankCode !== null && bankCode !== '' && bankCode !== undefined) {
       vnp_Params['vnp_BankCode'] = bankCode;
     }
@@ -114,7 +122,10 @@ export const paymentService = {
           message = "Giao dịch thành công";
           const url = process.env.URL_DB;
           await mongoose.connect(url, { family: 4, dbName: 'interiorConstruction' });
-          const data = await Contract.findById(vnp_Params['vnp_TxnRef']);
+          const contractId = extractContractId(vnp_Params['vnp_OrderInfo']);
+          console.log('check contractId', contractId);
+
+          const data = await Contract.findById(contractId);
 
           if (data) {
             data.status = "SUCCESS";
@@ -172,20 +183,11 @@ export const paymentService = {
 
           const order = new Order(reqBody);
           await order.save();
+
           responseData.message = message;
           responseData.orderId = order._id;
           responseData.clientId = data.clientId.toString();
-          // const orderData = await order.save();
-          // const responseData = await Order.findById(orderData.id)
-          //     .populate({
-          //         path: 'clientId',
-          //         select: '-contracts',
-          //         populate: {
-          //             path: 'accountId',
-          //             select: '-password -refreshToken',
-          //         }
-          //     });
-          // console.log('check data', responseData);
+
         } catch (error) {
           console.log('err: ', error);
           responseData.message = "Something wrong with DB"
@@ -657,4 +659,16 @@ function decodePaymentString(encodedString) {
   const formattedString = decodedString.replace(/%3A/g, ":");
 
   return formattedString;
+}
+
+function extractContractId(inputString) {
+  const regex = /Payment for contract: (.+)/;
+  const match = inputString.match(regex);
+
+  // Kiểm tra xem chuỗi có khớp với biểu thức chính quy không
+  if (match && match[1]) {
+    return match[1];
+  } else {
+    return null; // hoặc giá trị mặc định bạn muốn trả về khi không tìm thấy contractId
+  }
 }
