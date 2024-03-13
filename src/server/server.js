@@ -26,6 +26,7 @@ import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import { PaymentRouter } from "../routes/PaymentAPI";
 import { OrderRouter } from "../routes/OrderAPI";
+import { requestRepository } from "../services/RequestServices";
 
 const app = express();
 
@@ -132,5 +133,8 @@ app.set("view engine", "ejs");
 app.listen(port, () => {
   console.log("Server is running on port: ", port);
 });
+
+
+// requestRepository.getRequests().then(res => console.log(res))
 
 module.exports = app;
