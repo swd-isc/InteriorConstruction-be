@@ -19,7 +19,6 @@ const contractSchema = new Schema(
         required: [true, "Last name required."],
         trim: true,
       },
-      required: [true, "Client required."],
     },
     furnitures: [
       {
@@ -30,7 +29,7 @@ const contractSchema = new Schema(
         },
         quantity: {
           type: Number,
-          required: [true, "quantity for furniture required."],
+          required: [true, "Quantity for furniture required."],
         },
         name: {
           type: String,
@@ -42,12 +41,12 @@ const contractSchema = new Schema(
       {
         designId: {
           type: Schema.Types.ObjectId,
-          required: [true, "designId required."],
+          required: [true, "Design ID required."],
           ref: "design",
         },
         quantity: {
           type: Number,
-          required: [true, "quantity for design required."],
+          required: [true, "Quantity for design required."],
         },
         designName: {
           type: String,
@@ -57,7 +56,7 @@ const contractSchema = new Schema(
           {
             furnitureId: {
               type: Schema.Types.ObjectId,
-              required: [true, "furnitureId required."],
+              required: [true, "Furniture ID required."],
               ref: "furniture",
             },
             name: {
@@ -91,6 +90,7 @@ const contractSchema = new Schema(
     versionKey: false,
   }
 );
+
 
 let Contract = mongoose.model("contract", contractSchema);
 
