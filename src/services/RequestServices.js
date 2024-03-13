@@ -112,7 +112,7 @@ export const requestRepository = {
       const requestBody = {
         clientId: reqBody.clientId,
         contractId: reqBody.contractId,
-        refundAmount: reqBody.refundAmount,
+        status: "DEFAULT",
         date: createDate
       }
 

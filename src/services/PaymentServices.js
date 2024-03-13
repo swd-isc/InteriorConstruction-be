@@ -481,16 +481,6 @@ export const paymentService = {
               break;
           }
 
-          // const dateString = response.body.vnp_PayDate;
-          // const year = dateString.substring(0, 4);
-          // const month = dateString.substring(4, 6);
-          // const day = dateString.substring(6, 8);
-          // const hours = dateString.substring(8, 10);
-          // const minutes = dateString.substring(10, 12);
-          // const seconds = dateString.substring(12, 14);
-
-          // const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
           const formattedDate = response.body.vnp_PayDate;
 
           const contract = await Contract.findById(contractId);

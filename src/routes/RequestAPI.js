@@ -19,8 +19,6 @@ const router = express.Router();
 *                      type: string
 *                  contractId:
 *                      type: string
-*                  refundAmount:
-*                      type: number
 *          RequestData:
 *              type: object
 *              properties:
@@ -190,6 +188,8 @@ const RequestRouter = (app) => {
       *                                  type: string
       */
    router.post("/", verifyToken, isClient, requestService.createRequest);
+   // router.post("/", requestService.createRequest);
+
 
    /**
       * @swagger
@@ -243,6 +243,7 @@ const RequestRouter = (app) => {
       *                                  type: string
       */
    router.put("/:id", verifyToken, isAdmin, requestService.updateRequest);
+   // router.put("/:id", requestService.updateRequest);
 
    router.delete("/:id", verifyToken, isAdmin, requestService.deleteRequest);
 
