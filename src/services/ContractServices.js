@@ -321,9 +321,10 @@ export const contractRepository = {
         const contract = await Contract.findById(contractId).populate(
           "orderId"
         );
+        const oldStatus = contract.status
         if (reqBody.status) contract.status = reqBody.status;
 
-        if (user.accountId.role == "ADMIN" && reqBody.status == "CANCEL") {
+        if (user.accountId.role == "ADMIN" && reqBody.status == "CANCEL" && oldStatus != "UNPAID") {
           const order = contract.orderId;
           const res = await paymentService.refund({
             body: {
