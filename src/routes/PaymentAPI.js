@@ -27,7 +27,8 @@ const PaymentRouter = (app) => {
      *          Authorization is required, and the token should be provided in the request header.
      *          This endpoint is for `Client only`, Admin cannot access this endpoint
      *          - `amount`: Total prices
-     *          - `cart`: Array of furnitures. Ex: `[{"furnitureId": "12345678","quantity": 2}]`
+     *          - `furnitures`: Array of furnitureId. Ex: `[{furnitureId: "furnitureId1", quantity: 2}, {furnitureId: "furnitureId2", quantity: 1}, {furnitureId: "furnitureId3", quantity: 4}]`
+     *          - `designs`: Array of designId. Ex: `[{designId: "designId1", quantity: 1}, {designId: "designId1", quantity: 2}, {designId: "designId1", quantity: 3}]`
      *      requestBody:
      *          content:
      *            application/json:
@@ -36,13 +37,21 @@ const PaymentRouter = (app) => {
      *                properties:
      *                  contractId:
      *                    type: string
-     *                  cart:
+     *                  furnitures:
      *                    type: array
      *                    items:
-     *                      schema:
      *                          type: object
      *                          properties:
      *                              furnitureId:
+     *                                  type: string
+     *                              quantity:
+     *                                  type: number
+     *                  designs:
+     *                    type: array
+     *                    items:
+     *                          type: object
+     *                          properties:
+     *                              designId:
      *                                  type: string
      *                              quantity:
      *                                  type: number
