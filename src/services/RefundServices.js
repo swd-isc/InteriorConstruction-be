@@ -47,7 +47,7 @@ export const refundRepository = {
       return {
         status: 200,
         data: data,
-        message: data.length !== 0 ? "OK" : "No data",
+        message: data !== 0 ? "OK" : "No data",
       };
     } catch (error) {
       console.error(error);

@@ -14,7 +14,34 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.find();
+      const data = await Request.find().populate('clientId').populate('contractId');
+
+      return {
+        status: 200,
+        data: data,
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 400,
+        messageError: error.toString(),
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
+  getRequestsByClientId: async (clientId) => {
+    try {
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const data = await Request.find({"clientId": clientId}).populate('clientId').populate('contractId');
 
       return {
         status: 200,
@@ -47,7 +74,7 @@ export const requestRepository = {
       return {
         status: 200,
         data: data,
-        message: data.length !== 0 ? "OK" : "No data",
+        message: data !== 0 ? "OK" : "No data",
       };
     } catch (error) {
       console.error(error);

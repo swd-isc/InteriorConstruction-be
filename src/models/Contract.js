@@ -75,7 +75,7 @@ const contractSchema = new Schema(
     status: {
       type: String,
       enum: {
-        values: ["CANCEL", "PROCESSING", "SUCCESS"],
+        values: ["CANCEL", "UNPAID" ,"PROCESSING", "SUCCESS"],
         message: "{VALUE} is not supported.",
       },
       required: [true, "Status required."],
@@ -84,6 +84,10 @@ const contractSchema = new Schema(
       type: String,
       required: [true, "Date required"],
     },
+    orderId: {
+      type: Schema.Types.ObjectId,
+      ref: "order",
+    }
   },
   {
     collection: "contract",
