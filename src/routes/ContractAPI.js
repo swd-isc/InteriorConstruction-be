@@ -347,8 +347,6 @@ const ContractRouter = (app) => {
    *                       properties:
    *                          status:
    *                            type: string
-   *                          orderId:
-   *                            type: string
    *      parameters:
    *          - in: path
    *            name: id
