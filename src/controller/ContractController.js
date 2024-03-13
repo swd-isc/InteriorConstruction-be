@@ -2,11 +2,17 @@ import { contractRepository } from "../services/ContractServices";
 
 export const contractService = {
   getContracts: async (req, res) => {
-    let data = await contractRepository.getContracts(
-      req.query.sort_by,
-      req.query.page,
-      req.query.clientId
-    );
+    let data = await contractRepository
+      .getContracts
+      // req.query.sort_by,
+      // req.query.page,
+      // req.query.clientId
+      ();
+    return res.status(data.status).json(data);
+  },
+
+  getContractsByClientId: async (req, res) => {
+    let data = await contractRepository.getContractsByClientId(req.params.id);
     return res.status(data.status).json(data);
   },
 
@@ -21,7 +27,11 @@ export const contractService = {
   },
 
   updateContract: async (req, res) => {
-    let data = await contractRepository.updateContract(req.params.id, req.body, req.user);
+    let data = await contractRepository.updateContract(
+      req.params.id,
+      req.body,
+      req.user
+    );
     return res.status(data.status).json(data);
   },
 

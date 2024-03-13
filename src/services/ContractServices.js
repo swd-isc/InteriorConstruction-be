@@ -9,46 +9,102 @@ import { paymentService } from "./PaymentServices";
 const ObjectId = mongoose.Types.ObjectId;
 
 export const contractRepository = {
-  getContracts: async (mode, pageReq, clientId) => {
+  // getContracts: async (mode, pageReq, clientId) => {
+  //   try {
+  //     let sortAsc = sortByInput(mode);
+  //     const itemsPerPage = 10;
+  //     // Parse query parameters
+  //     const page = parseInt(pageReq) || 1;
+  //     let data = {};
+
+  //     // Calculate start and end indices for the current page
+  //     const startIndex = (page - 1) * itemsPerPage;
+
+  //     const idClientValid = await isIdValid(clientId, "client");
+
+  //     // Get the data for the current page
+  //     const url = process.env.URL_DB;
+  //     await mongoose.connect(url, {
+  //       family: 4,
+  //       dbName: "interiorConstruction",
+  //     });
+
+  //     // Count all documents in the collection
+  //     const totalDocuments = await Contract.countDocuments();
+
+  //     // Calculate total pages
+  //     const totalPages = Math.ceil(totalDocuments / itemsPerPage);
+
+  //     if (!idClientValid.isValid) {
+  //       data.contracts = await Contract.find()
+  //         .sort({ price: sortAsc })
+  //         .skip(startIndex)
+  //         .limit(itemsPerPage);
+  //     } else {
+  //       data.contracts = await Contract.find({ clientId: clientId })
+  //         .sort({ price: sortAsc })
+  //         .skip(startIndex)
+  //         .limit(itemsPerPage);
+  //     }
+
+  //     data.page = page;
+  //     data.totalPages = totalPages;
+
+  //     return {
+  //       status: 200,
+  //       data: data,
+  //       message: data.length !== 0 ? "OK" : "No data",
+  //     };
+  //   } catch (error) {
+  //     console.error(error);
+  //     return {
+  //       status: 500,
+  //       messageError: error,
+  //     };
+  //   } finally {
+  //     // Close the database connection
+  //     mongoose.connection.close();
+  //   }
+  // },
+
+  getContracts: async () => {
     try {
-      let sortAsc = sortByInput(mode);
-      const itemsPerPage = 10;
-      // Parse query parameters
-      const page = parseInt(pageReq) || 1;
-      let data = {};
-
-      // Calculate start and end indices for the current page
-      const startIndex = (page - 1) * itemsPerPage;
-
-      const idClientValid = await isIdValid(clientId, "client");
-
-      // Get the data for the current page
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
         dbName: "interiorConstruction",
       });
 
-      // Count all documents in the collection
-      const totalDocuments = await Contract.countDocuments();
+      const data = await Contract.find({});
+      data.reverse();
 
-      // Calculate total pages
-      const totalPages = Math.ceil(totalDocuments / itemsPerPage);
+      return {
+        status: 200,
+        data: data,
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 500,
+        messageError: error,
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
 
-      if (!idClientValid.isValid) {
-        data.contracts = await Contract.find()
-          .sort({ price: sortAsc })
-          .skip(startIndex)
-          .limit(itemsPerPage);
-      } else {
-        data.contracts = await Contract.find({ clientId: clientId })
-          .sort({ price: sortAsc })
-          .skip(startIndex)
-          .limit(itemsPerPage);
-      }
+  getContractsByClientId: async (clientId) => {
+    try {
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
 
-      data.page = page;
-      data.totalPages = totalPages;
+      const data = await Contract.find({'client.clientId': clientId});
+      data.reverse();
 
       return {
         status: 200,

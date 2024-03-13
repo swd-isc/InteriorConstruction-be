@@ -28,6 +28,7 @@ import { PaymentRouter } from "../routes/PaymentAPI";
 import { OrderRouter } from "../routes/OrderAPI";
 import { requestRepository } from "../services/RequestServices";
 import { RequestRouter } from "../routes/RequestAPI";
+import { contractRepository } from "../services/ContractServices";
 
 const app = express();
 
@@ -136,18 +137,6 @@ app.set("view engine", "ejs");
 app.listen(port, () => {
   console.log("Server is running on port: ", port);
 });
-
-function extractLastPart(str) {
-  const lastIndex = str.lastIndexOf('+');
-  if (lastIndex !== -1) {
-      return str.substring(lastIndex + 1);
-  }
-  return str; // If no '+' found, return the original string
-}
-
-const s = "Payment+for+contract%3A+65f1a386a4be3428b8012abd";
-const extractedPart = extractLastPart(s);
-console.log(extractedPart); // Output: "65f1a386a4be3428b8012abd"
 
 
 module.exports = app;
