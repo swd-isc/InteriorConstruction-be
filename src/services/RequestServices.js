@@ -14,7 +14,10 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.find().populate('clientId');
+      const data = await Request.find().populate({
+        path: 'clientId',
+        select: 'firstName lastName'
+      });
 
       return {
         status: 200,

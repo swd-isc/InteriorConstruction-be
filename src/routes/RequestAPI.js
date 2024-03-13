@@ -19,11 +19,15 @@ const router = express.Router();
 *                      type: string
 *                  contractId:
 *                      type: string
+*                  refundAmount:
+*                      type: number
 *          RequestData:
 *              type: object
 *              properties:
 *                  id:
 *                      type: string
+*                  refundAmount:
+*                      type: number
 *                  clientId:
 *                      type: object
 *                      properties:
@@ -189,7 +193,7 @@ const RequestRouter = (app) => {
 
    /**
       * @swagger
-      * /api/request/:
+      * /api/request/{id}:
       *  put:
       *      security:
       *          - bearerAuth: []
@@ -197,6 +201,13 @@ const RequestRouter = (app) => {
       *          - Request Refund
       *      summary: Admin update status request
       *      description: This endpoint is for Admin updating status request
+      *      parameters:
+      *          - in: path
+      *            name: id
+      *            description: Id required
+      *            required: true
+      *            schema:
+      *                  type: string
       *      requestBody:
       *           required: true
       *           content:
