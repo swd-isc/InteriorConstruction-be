@@ -163,7 +163,7 @@ export const clientRepository = {
       return {
         status: 200,
         data: data[0],
-        message: data.length !== 0 ? "OK" : "No data",
+        message: data !== 0 ? "OK" : "No data",
       };
     } catch (error) {
       console.error(error);
@@ -202,7 +202,7 @@ export const clientRepository = {
       return {
         status: 200,
         data: data[0],
-        message: data.length !== 0 ? "OK" : "No data",
+        message: data !== 0 ? "OK" : "No data",
       };
     } catch (error) {
       console.error(error);

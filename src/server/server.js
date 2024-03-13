@@ -135,6 +135,4 @@ app.listen(port, () => {
 });
 
 
-// requestRepository.getRequests().then(res => console.log(res))
-
 module.exports = app;
