@@ -166,27 +166,36 @@ export const requestRepository = {
 
       const reqStatus = reqBody.status;
       try {
+        data = await Request.findByIdAndUpdate(requestId, reqBody, {
+          runValidators: true,
+          new: true,
+        }).populate({
+          path: 'contractId',
+          populate: {
+            path: 'orderId',
+          }
+        });
+        console.log('check data', data);
         if (reqStatus === "ACCEPT") {
-          console.log('vo day r');
-          data = await Request.findByIdAndUpdate(requestId, reqBody, {
-            runValidators: true,
-            new: true,
-          }).populate({
-            path: 'contractId',
-            populate: {
-              path: 'orderId',
-            }
-          });
-
-          console.log('check data', data);
+          console.log('ACCEPT');
 
           const reqRefund = {
             orderId: data.contractId.orderId._id,
             transDate: data.contractId.orderId.vnp_PayDate,
             amount: data.contractId.orderId.vnp_Amount,
             transType: "02", //Hoàn toàn phần
+            user: "Admin",
+            contractId: data.contractId._id
           }
-          paymentService.refund()
+          await paymentService.refund(reqRefund)
+
+          const contractData = await Contract.findById(data.contractId._id);
+
+          if (contractData) {
+            contractData.status = "CANCEL";
+
+            await contractData.save();
+          }
         }
       } catch (error) {
         return {
@@ -198,7 +207,6 @@ export const requestRepository = {
 
       return {
         status: 200,
-        data: data !== null ? data : {},
         message: data !== null ? "OK" : "No data",
       };
     } catch (error) {

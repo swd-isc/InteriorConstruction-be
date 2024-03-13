@@ -200,7 +200,11 @@ const RequestRouter = (app) => {
       *      tags:
       *          - Request Refund
       *      summary: Admin update status request
-      *      description: This endpoint is for Admin updating status request
+      *      description: |
+      *           This endpoint is for Admin updating status request
+      *           Case Usage:
+      *              - Admin ACCEPT refund => Update status of request to ACCEPT => refund => contract status = "CANCEL"
+      *              - Admin DENY => Update status of request to DENY
       *      parameters:
       *          - in: path
       *            name: id
@@ -233,8 +237,7 @@ const RequestRouter = (app) => {
       *                              messageError:
       *                                  type: string
       */
-   // router.put("/:id", verifyToken, isAdmin, requestService.updateRequest);
-   router.put("/:id", requestService.updateRequest);
+   router.put("/:id", verifyToken, isAdmin, requestService.updateRequest);
 
    router.delete("/:id", verifyToken, isAdmin, requestService.deleteRequest);
 
