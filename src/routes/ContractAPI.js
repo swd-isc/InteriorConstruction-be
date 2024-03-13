@@ -51,8 +51,15 @@ const router = express.Router();
  *                        type: string
  *                      count:
  *                        type: number
- *              contractPrice:
- *                  type: number
+ *              designs:
+ *                type: array
+ *                items:
+ *                    type: object
+ *                    properties:
+ *                      designId:
+ *                        type: string
+ *                      count:
+ *                        type: number
  *              status:
  *                  type: string 
  *                  enum:

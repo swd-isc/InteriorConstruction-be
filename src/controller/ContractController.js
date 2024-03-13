@@ -21,7 +21,7 @@ export const contractService = {
   },
 
   updateContract: async (req, res) => {
-    let data = await contractRepository.updateContract(req.params.id, req.body);
+    let data = await contractRepository.updateContract(req.params.id, req.body, req.user);
     return res.status(data.status).json(data);
   },
 

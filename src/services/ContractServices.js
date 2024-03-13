@@ -211,7 +211,7 @@ export const contractRepository = {
     }
   },
 
-  updateContract: async (contractId, reqBody) => {
+  updateContract: async (contractId, reqBody, user) => {
     try {
       let data = {};
 
@@ -241,19 +241,21 @@ export const contractRepository = {
 
       try {
         const contract = await Contract.findById(contractId).populate('orderId');
-        const order = contract.orderId;
         if (reqBody.status) contract.status = reqBody.status;
 
-        if (req.user.role == "ADMIN" && reqBody.status == "CANCEL") {
+        if (user.accountId.role == "ADMIN" && reqBody.status == "CANCEL") {
+          const order = contract.orderId;
           await paymentService.refund({
-            vnp_TxnRef: order.vnp_TxnRef,
-            vnp_TransactionDate: order.PayDate,
-            vnp_Amount: order.vnp_Amount,
-            vnp_TransactionType: "02",
-            vnp_CreateBy: "ADMIN",
-            contractId: contract._id
+            body: {
+              vnp_TxnRef: order.vnp_TxnRef,
+              transDate: order.vnp_PayDate,
+              amount: order.vnp_Amount,
+              transType: "02",
+              user: "ADMIN",
+              contractId: contract._id
+            }
           })
-        } 
+        }
 
         data = await contract.save();
       } catch (error) {
