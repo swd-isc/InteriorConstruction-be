@@ -335,7 +335,9 @@ const ContractRouter = (app) => {
    *          This endpoint is for updating contract status and create orderId field
    *          Case usage:
    *            - Client cancel contract before payment
-   *            - Admin update contract status
+   *            - Admin dùng route này để update contract status ở chỗ "Xác nhận đơn hàng":
+   *              - Nếu mà Admin bấm Accept thì cập nhật contract status SUCCESS
+   *              - Nếu mà Admin bấm Deny thì cập nhật contract status CANCEL và refund cho người dùng
    *      requestBody:
    *           required: true
    *           content:
