@@ -3,26 +3,23 @@ const Schema = mongoose.Schema;
 
 const contractSchema = new Schema(
   {
-    clientId: {
-      type: Schema.Types.ObjectId,
-      required: [true, "Client ID required."],
-      validate: {
-        validator: async function (value) {
-          const Client = mongoose.model("client");
-
-          if (!value) {
-            return false; // Value is required
-          }
-
-          const client = await Client.findById(value);
-          if (!client) {
-            return false; // Invalid ObjectId reference in the array
-          }
-          return true; // Return true if client exists, otherwise false
-        },
-        message: (props) => `${props.value} is not a valid client ID.`,
+    client: {
+      clientId: {
+        type: Schema.Types.ObjectId,
+        required: [true, "Client ID required."],
+        ref: "client",
       },
-      ref: "client",
+      firstName: {
+        type: String,
+        required: [true, "First name required."],
+        trim: true,
+      },
+      lastName: {
+        type: String,
+        required: [true, "Last name required."],
+        trim: true,
+      },
+      required: [true, "Client required."],
     },
     furnitures: [
       {
@@ -83,6 +80,10 @@ const contractSchema = new Schema(
         message: "{VALUE} is not supported.",
       },
       required: [true, "Status required."],
+    },
+    date: {
+      type: String,
+      required: [true, "Date required"],
     },
   },
   {
