@@ -12,10 +12,6 @@ const requestSchema = new Schema(
       default: "DEFAULT",
       required: [true, "status required."],
     },
-    refundAmount: {
-      type: Number,
-      required: [true, "status required."],
-    },
     date: {
         type: String,
         required: [true, "status required."],
