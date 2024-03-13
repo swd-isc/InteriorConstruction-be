@@ -27,6 +27,7 @@ import swaggerUI from "swagger-ui-express";
 import { PaymentRouter } from "../routes/PaymentAPI";
 import { OrderRouter } from "../routes/OrderAPI";
 import { requestRepository } from "../services/RequestServices";
+import { RequestRouter } from "../routes/RequestAPI";
 
 const app = express();
 
@@ -119,6 +120,8 @@ DesignCardRouter(app);
 OrderRouter(app);
 
 AuthenRouter(app);
+
+RequestRouter(app);
 
 app.get("/", (req, res) => {
   res.end(`Hello kiet`);

@@ -14,7 +14,7 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.find().populate('clientId').populate('contractId');
+      const data = await Request.find().populate('clientId');
 
       return {
         status: 200,
@@ -41,7 +41,7 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.find({"clientId": clientId}).populate('clientId').populate('contractId');
+      const data = await Request.find({ "clientId": clientId }).populate('clientId').populate('contractId');
 
       return {
         status: 200,
@@ -89,7 +89,7 @@ export const requestRepository = {
   },
 
 
-  
+
   createRequest: async (reqBody) => {
     try {
       let data = [];
