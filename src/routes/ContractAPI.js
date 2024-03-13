@@ -150,79 +150,6 @@ const ContractRouter = (app) => {
   router.get("/", verifyToken, isAdmin, contractService.getContracts);
 
   /**
-     * @swagger
-     * /api/contract/{id}:
-     *  get:
-     *    security:
-     *      - bearerAuth: []
-     *    tags:
-     *      - Contracts
-     *    summary: Get contract by Id
-     *    description: This endpoint is for getting contract by Id
-     *    parameters:
-     *      - in: path
-     *        name: id
-     *        required: true
-     *        description: Id required
-     *        schema:
-     *          type: string
-     *    responses:
-     *      200:
-     *        description: Ok
-     *        content:
-     *          application/json:
-     *            schema:
-     *              type: object
-     *              properties:
-     *                status:
-     *                  type: number
-     *                data:
-     *                  $ref: '#components/schemas/ContractData'
-     *                message:
-     *                  type: string
-     *      400:
-     *        description: Bad request
-     *        content:
-     *          application/json:
-     *            schema:
-     *              type: object
-     *              properties:
-     *                status:
-     *                  type: number
-     *                data:
-     *                  type: object
-     *                messageError:
-     *                  type: string
-     *      500:
-     *        description: Server error
-     *        content:
-     *          application/json:
-     *            schema:
-     *              type: object
-     *              properties:
-     *                status:
-     *                  type: number
-     *                messageError:
-     *                  type: string
-     *      401:
-     *           description: Unauthorized
-     *           content:
-     *                application/json:
-     *                    schema:
-     *                        type: string
-     *      403:
-     *           description: Forbidden
-     *           content:
-     *                application/json:
-     *                    schema:
-     *                        type: object
-     *                        properties:
-     *                            messageError:
-     *                                type: string 
-     */
-  router.get("/:id", verifyToken, isCurrentUserOrAdmin, contractService.getContractById);
-
-  /**
   * @swagger
   * /api/contract/client:
   *  get:
@@ -300,6 +227,79 @@ const ContractRouter = (app) => {
   *                                    type: string 
   */
   router.get('/client/', verifyToken, isClient, contractService.getContractsByClientId)
+
+  /**
+     * @swagger
+     * /api/contract/{id}:
+     *  get:
+     *    security:
+     *      - bearerAuth: []
+     *    tags:
+     *      - Contracts
+     *    summary: Get contract by Id
+     *    description: This endpoint is for getting contract by Id
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        required: true
+     *        description: Id required
+     *        schema:
+     *          type: string
+     *    responses:
+     *      200:
+     *        description: Ok
+     *        content:
+     *          application/json:
+     *            schema:
+     *              type: object
+     *              properties:
+     *                status:
+     *                  type: number
+     *                data:
+     *                  $ref: '#components/schemas/ContractData'
+     *                message:
+     *                  type: string
+     *      400:
+     *        description: Bad request
+     *        content:
+     *          application/json:
+     *            schema:
+     *              type: object
+     *              properties:
+     *                status:
+     *                  type: number
+     *                data:
+     *                  type: object
+     *                messageError:
+     *                  type: string
+     *      500:
+     *        description: Server error
+     *        content:
+     *          application/json:
+     *            schema:
+     *              type: object
+     *              properties:
+     *                status:
+     *                  type: number
+     *                messageError:
+     *                  type: string
+     *      401:
+     *           description: Unauthorized
+     *           content:
+     *                application/json:
+     *                    schema:
+     *                        type: string
+     *      403:
+     *           description: Forbidden
+     *           content:
+     *                application/json:
+     *                    schema:
+     *                        type: object
+     *                        properties:
+     *                            messageError:
+     *                                type: string 
+     */
+  router.get("/:id", verifyToken, isCurrentUserOrAdmin, contractService.getContractById);
 
   /**
   * @swagger
