@@ -115,6 +115,15 @@ export const requestRepository = {
         date: createDate
       }
 
+      const isExist = await Request.find({ clientId: reqBody.clientId, contractId: reqBody.contractId });
+      if (isExist.length > 0) {
+        return {
+          status: 400,
+          data: {},
+          messageError: "Your refund before, please try again later.",
+        };
+      }
+
       const request = new Request(requestBody);
 
       try {
