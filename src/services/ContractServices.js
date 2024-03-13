@@ -95,7 +95,7 @@ export const contractRepository = {
     }
   },
 
-  getContractsByClientId: async (clientId) => {
+  getContractsByClientId: async (user) => {
     try {
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
@@ -103,7 +103,7 @@ export const contractRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Contract.find({'client.clientId': clientId});
+      const data = await Contract.find({'client.clientId': user._id});
       data.reverse();
 
       return {

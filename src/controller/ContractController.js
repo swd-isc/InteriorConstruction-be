@@ -12,7 +12,7 @@ export const contractService = {
   },
 
   getContractsByClientId: async (req, res) => {
-    let data = await contractRepository.getContractsByClientId(req.params.id);
+    let data = await contractRepository.getContractsByClientId(req.user);
     return res.status(data.status).json(data);
   },
 
