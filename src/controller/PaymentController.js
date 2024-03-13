@@ -13,7 +13,8 @@ export const paymentController = {
 
     returnPayment: async (req, res, next) => {
         const data = await paymentService.returnPayment(req);
-        return res.redirect(`https://interior-construction-fe.vercel.app?data=${data}`);
+        return res.redirect(`http://localhost:3000?data=${data}`);
+        // return res.redirect(`https://interior-construction-fe.vercel.app?data=${data}`);
         // return res.render('success', { code: data.code });
     },
 
