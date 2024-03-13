@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Request from "../models/Request";
 import Client from "../models/Client";
 import Contract from "../models/Contract";
+import { paymentService } from "./PaymentServices";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -137,11 +138,30 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
+      const reqStatus = reqBody.status;
       try {
-        data = await Request.findByIdAndUpdate(requestId, reqBody, {
-          runValidators: true,
-          new: true,
-        });
+        if (reqStatus === "ACCEPT") {
+          console.log('vo day r');
+          data = await Request.findByIdAndUpdate(requestId, reqBody, {
+            runValidators: true,
+            new: true,
+          }).populate({
+            path: 'contractId',
+            populate: {
+              path: 'orderId',
+            }
+          });
+
+          console.log('check data', data);
+
+          const reqRefund = {
+            orderId: data.contractId.orderId._id,
+            transDate: data.contractId.orderId.vnp_PayDate,
+            amount: data.contractId.orderId.vnp_Amount,
+            transType: "02", //Hoàn toàn phần
+          }
+          paymentService.refund()
+        }
       } catch (error) {
         return {
           status: 400,

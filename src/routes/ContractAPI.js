@@ -1,6 +1,6 @@
 import express from "express";
 import { contractService } from "../controller/ContractController";
-import { isAdmin, isCurrentUser, isCurrentUserOrAdmin, verifyToken } from "../middleware/authen";
+import { isAdmin, isClient, isCurrentUser, isCurrentUserOrAdmin, verifyToken } from "../middleware/authen";
 
 const router = express.Router();
 
@@ -331,13 +331,22 @@ const ContractRouter = (app) => {
    *      tags:
    *           - Contracts
    *      summary: Update contract by id
-   *      description: This endpoint is for updating contract
+   *      description: |
+   *          This endpoint is for updating contract status and create orderId field
+   *          Case usage:
+   *            - Client cancel contract before payment
+   *            - Admin update contract status
    *      requestBody:
    *           required: true
    *           content:
    *               application/json:
    *                   schema:
-   *                       $ref: '#components/schemas/Contract'
+   *                       type: object
+   *                       properties:
+   *                          status:
+   *                            type: string
+   *                          orderId:
+   *                            type: string
    *      parameters:
    *          - in: path
    *            name: id
@@ -412,8 +421,8 @@ const ContractRouter = (app) => {
    *                                messageError:
    *                                    type: string 
    */
-  router.put("/:id", verifyToken, isAdmin, contractService.updateContract);
-  router.put("/", verifyToken, isAdmin, contractService.updateContract);
+  router.put("/:id", verifyToken, contractService.updateContract);
+  router.put("/", verifyToken, contractService.updateContract);
 
   // router.delete("/:id", verifyToken, isAdmin, contractService.deleteContract); //Unused
   // router.delete("/", verifyToken, isAdmin, contractService.deleteContract); //Unused

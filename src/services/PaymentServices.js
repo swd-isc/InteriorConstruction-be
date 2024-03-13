@@ -183,6 +183,8 @@ export const paymentService = {
 
           const order = new Order(reqBody);
           await order.save();
+          data.orderId = order._id;
+          await data.save();
 
           responseData.message = message;
           responseData.orderId = order._id;
@@ -327,11 +329,12 @@ export const paymentService = {
     const vnp_Api = vnPay.vnp_Api;
 
     const date = new Date();
-    const vnp_TxnRef = req.body.orderId;
+    const vnp_TxnRef = req.body.vnp_TxnRef;
     const vnp_TransactionDate = req.body.transDate;
     const vnp_Amount = req.body.amount * 100;
     const vnp_TransactionType = req.body.transType;
     const vnp_CreateBy = req.body.user;
+    const contractId = req.body.contractId;
 
     const timezoneOffsetMinutes = 7 * 60; // UTC+7
     const adjustedDate = new Date(
@@ -480,9 +483,7 @@ export const paymentService = {
 
           const formattedDate = response.body.vnp_PayDate;
 
-          const contract = await Contract.findById(
-            new ObjectId(response.body.vnp_TxnRef.toString())
-          );
+          const contract = await Contract.findById(contractId);
 
           const refund = new Refund({
             vnp_TxnRef: response.body.vnp_TxnRef,
