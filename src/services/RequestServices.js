@@ -120,7 +120,7 @@ export const requestRepository = {
         return {
           status: 400,
           data: {},
-          messageError: "Your refund before, please try again later.",
+          messageError: "You are refund before, please try again later.",
         };
       }
 
@@ -163,11 +163,17 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
+      const reqStatus = reqBody;
+
       try {
-        data = await Request.findByIdAndUpdate(requestId, reqBody, {
-          runValidators: true,
-          new: true,
-        });
+        if (reqStatus === "ACCEPT") {
+          data = await Request.findByIdAndUpdate(requestId, reqBody, {
+            runValidators: true,
+            new: true,
+          });
+
+          console.log('check data', data);
+        }
       } catch (error) {
         return {
           status: 400,
