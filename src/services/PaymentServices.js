@@ -65,11 +65,11 @@ export const paymentService = {
       }
     }
 
-    // const ipAddr = req.headers['x-forwarded-for'] ||
-    //   req.connection.remoteAddress ||
-    //   req.socket.remoteAddress ||
-    //   req.connection.socket.remoteAddress;
-    const ipAddr = "127.0.0.1";
+    const ipAddr = req.headers['x-forwarded-for'] ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress ||
+      req.connection.socket.remoteAddress;
+    // const ipAddr = "127.0.0.1";
 
     const date = new Date();
     const timezoneOffsetMinutes = 7 * 60; // UTC+7
