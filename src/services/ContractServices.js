@@ -201,45 +201,50 @@ export const contractRepository = {
       };
 
       //furnitures
-      const furnitures = [];
-      const reqFurs = reqBody.furnitures;
+      if (reqBody.furnitures && reqBody.furnitures.length != 0) {
+        const furnitures = [];
+        const reqFurs = reqBody.furnitures;
 
-      for (let i = 0; i < reqFurs.length; i++) {
-        const curFur = await Furniture.findById(reqFurs[i].furnitureId);
+        for (let i = 0; i < reqFurs.length; i++) {
+          const curFur = await Furniture.findById(reqFurs[i].furnitureId);
 
-        furnitures.push({
-          furnitureId: curFur._id,
-          quantity: reqFurs[i].quantity,
-          name: curFur.name,
-        });
+          furnitures.push({
+            furnitureId: curFur._id,
+            quantity: reqFurs[i].quantity,
+            name: curFur.name,
+          });
+        }
+
+        createObj.furnitures = furnitures;
       }
-
-      createObj.furnitures = furnitures;
-
+      
       //designs
-      const designs = [];
-      const reqDes = reqBody.designs;
+      if (reqBody.designs && reqBody.designs.length != 0) {
+        const designs = [];
+        const reqDes = reqBody.designs;
 
-      for (let i = 0; i < reqDes.length; i++) {
-        const curDes = await Design.findById(reqDes[i].designId).populate(
-          "furnitures"
-        );
-        const curFurs = curDes.furnitures.map((furniture) => {
-          return {
-            furnitureId: furniture._id,
-            name: furniture.name,
-          };
-        });
+        for (let i = 0; i < reqDes.length; i++) {
+          const curDes = await Design.findById(reqDes[i].designId).populate(
+            "furnitures"
+          );
+          const curFurs = curDes.furnitures.map((furniture) => {
+            return {
+              furnitureId: furniture._id,
+              name: furniture.name,
+            };
+          });
 
-        designs.push({
-          designId: curDes._id,
-          quantity: reqDes[i].quantity,
-          designName: curDes.designName,
-          furnitures: curFurs,
-        });
+          designs.push({
+            designId: curDes._id,
+            quantity: reqDes[i].quantity,
+            designName: curDes.designName,
+            furnitures: curFurs,
+          });
+        }
+
+        createObj.designs = designs;
       }
 
-      createObj.designs = designs;
 
       //status
       createObj.status = "UNPAID";
@@ -321,10 +326,14 @@ export const contractRepository = {
         const contract = await Contract.findById(contractId).populate(
           "orderId"
         );
-        const oldStatus = contract.status
+        const oldStatus = contract.status;
         if (reqBody.status) contract.status = reqBody.status;
 
-        if (user.accountId.role == "ADMIN" && reqBody.status == "CANCEL" && oldStatus != "UNPAID") {
+        if (
+          user.accountId.role == "ADMIN" &&
+          reqBody.status == "CANCEL" &&
+          oldStatus != "UNPAID"
+        ) {
           const order = contract.orderId;
           const res = await paymentService.refund({
             body: {
