@@ -17,7 +17,7 @@ export const contractService = {
   },
 
   getContractById: async (req, res) => {
-    let data = await contractRepository.getContractById(req.params.id);
+    let data = await contractRepository.getContractById(req.params.id, req.user);
     return res.status(data.status).json(data);
   },
 

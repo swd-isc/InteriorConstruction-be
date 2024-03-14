@@ -15,16 +15,22 @@ export const orderRepository = {
       });
 
       const data = await Order.find()
-        .populate({
-          path: 'clientId',
-          select: '-contracts',
-          populate: {
-            path: 'accountId',
-            select: '-password -refreshToken',
-          }
-        })
+        // .populate({
+        //   path: 'clientId',
+        //   select: '-contracts',
+        //   populate: {
+        //     path: 'accountId',
+        //     select: '-password -refreshToken',
+        //   }
+        // })
+        .select("-clientId")
         .populate({
           path: "contractId",
+          select: {
+            "furnitures._id": 0,
+            "designs._id": 0,
+            "designs.furnitures._id": 0,
+          },
         });
 
       return {
@@ -53,16 +59,14 @@ export const orderRepository = {
       });
 
       const data = await Order.findById(id)
-        .populate({
-          path: 'clientId',
-          select: '-contracts',
-          populate: {
-            path: 'accountId',
-            select: '-password -refreshToken',
-          }
-        })
+        .select("-clientId")
         .populate({
           path: "contractId",
+          select: {
+            "furnitures._id": 0,
+            "designs._id": 0,
+            "designs.furnitures._id": 0,
+          },
         });
 
       return {

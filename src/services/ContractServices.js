@@ -139,7 +139,7 @@ export const contractRepository = {
     }
   },
 
-  getContractById: async (id) => {
+  getContractById: async (id, user) => {
     try {
       const idContractValid = await isIdValid(id, "contract");
 
@@ -150,7 +150,7 @@ export const contractRepository = {
           messageError: idContractValid.messageError,
         };
       }
-
+      
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
@@ -162,6 +162,16 @@ export const contractRepository = {
         "designs._id": 0,
         "designs.furnitures._id": 0,
       });
+
+      if (user.accountId.role != 'ADMIN') {
+        if (data.client.clientId.toString() != user._id.toString()) {
+          return {
+            status: 403,
+            data: {},
+            messageError: "You dont have access"
+          }
+        }
+      }
 
       return {
         status: 200,
