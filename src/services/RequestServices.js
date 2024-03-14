@@ -178,12 +178,12 @@ export const requestRepository = {
 
           const reqRefund = {
             body: {
-              vnp_TxnRef: data.contractId.orderId.vnp_TxnRef.toString(),
+              vnp_TxnRef: data.contractId.orderId.vnp_TxnRef,
               transDate: data.contractId.orderId.vnp_PayDate,
               amount: data.contractId.orderId.vnp_Amount,
               transType: "02", //Hoàn toàn phần
               user: "Admin",
-              contractId: data.contractId._id.toString()
+              contractId: data.contractId._id
             }
           }
 
