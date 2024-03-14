@@ -178,12 +178,12 @@ export const requestRepository = {
 
           const reqRefund = {
             body: {
-              vnp_TxnRef: data.contractId.orderId._id,
+              vnp_TxnRef: data.contractId.orderId.vnp_TxnRef.toString(),
               transDate: data.contractId.orderId.vnp_PayDate,
               amount: data.contractId.orderId.vnp_Amount,
               transType: "02", //Hoàn toàn phần
               user: "Admin",
-              contractId: data.contractId._id
+              contractId: data.contractId._id.toString()
             }
           }
 
@@ -192,6 +192,12 @@ export const requestRepository = {
           const res = await paymentService.refund(reqRefund)
 
           if (res.status == 400) return res;
+
+          const url = process.env.URL_DB;
+          await mongoose.connect(url, {
+            family: 4,
+            dbName: "interiorConstruction",
+          });
 
           data = await Request.findByIdAndUpdate(requestId, reqBody, {
             runValidators: true,
