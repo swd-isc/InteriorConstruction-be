@@ -7,7 +7,7 @@ export const refundService = {
   },
 
   getRefundById: async (req, res) => {
-    let data = await refundRepository.getRefundById(req.params.id);
+    let data = await refundRepository.getRefundById(req.params.id, req.user);
     return res.status(data.status).json(data);
   },
 
