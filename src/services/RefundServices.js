@@ -14,7 +14,10 @@ export const refundRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Refund.find();
+      const data = await Refund.find().populate({
+        path: "clientId",
+        select: "firstName lastName",
+      });
 
       return {
         status: 200,
