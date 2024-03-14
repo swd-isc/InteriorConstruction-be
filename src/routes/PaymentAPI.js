@@ -118,7 +118,7 @@ const PaymentRouter = (app) => {
     router.post('/create_payment', verifyToken, isClient, paymentController.postPayment);
     // router.post('/create_payment', paymentController.postPayment);
 
-    router.post('/querydr', paymentController.postQuery);
+    // router.post('/querydr', paymentController.postQuery);
 
     /**
      * @swagger

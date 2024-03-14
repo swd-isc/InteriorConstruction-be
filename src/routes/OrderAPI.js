@@ -29,36 +29,51 @@ const router = express.Router();
  *                type: string
  *              vnp_TxnRef:
  *                type: string
- *              clientId:
+ *              contractId:
  *                type: object
  *                properties:
- *                  id:
- *                    type: string
- *                  firstName:
- *                    type: string
- *                  lastName:
- *                    type: string
- *                  birthDate:
- *                    type: string
- *                  phone:
- *                    type: string
- *                  photoURL:
- *                    type: string
- *                  accountId:
+ *                  client:
  *                    type: object
  *                    properties:
- *                      id:
+ *                      clientId:
  *                        type: string
- *                      email:
+ *                      firstName:
  *                        type: string
- *                      role:
+ *                      lastName:
  *                        type: string
- *                      logInMethod:
- *                        type: string
- *                      status:
- *                        type: string
- *              contractId:
- *                $ref: '#components/schemas/ContractSchema'
+ *                  _id:
+ *                    type: string
+ *                  designs:
+ *                    type: array
+ *                    items:
+ *                      type: object
+ *                      properties:
+ *                        designId:
+ *                          type: string
+ *                        quantity:
+ *                          type: number
+ *                        designName:
+ *                          type: string
+ *                        furnitures:
+ *                          type: array
+ *                          items:
+ *                            type: object
+ *                            properties:
+ *                              furnitureId:
+ *                                type: string
+ *                              name:
+ *                                type: string
+ *                  furnitures:
+ *                    type: array
+ *                    items:
+ *                      type: object
+ *                      properties:
+ *                        furnitureId:
+ *                          type: string
+ *                        quantity:
+ *                          type: number
+ *                        name:
+ *                          type: string
  *          OrderData:
  *            type: object
  *            properties:
