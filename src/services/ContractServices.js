@@ -258,7 +258,7 @@ export const contractRepository = {
       const adjustedDate = new Date(
         date.getTime() + timezoneOffsetMinutes * 60000
       );
-      const createDate = moment(adjustedDate).format("YYYYMMDDHHmmss");
+      const createDate = moment(adjustedDate).format("DD/MM/YYYY HH:mm:ss");
 
       createObj.date = createDate;
 
