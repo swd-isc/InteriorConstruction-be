@@ -91,7 +91,7 @@ const RefundRouter = (app) => {
     *                              data:
     *                                  type: array
     *                                  items:
-    *                                     $ref: '#components/schemas/Refund'
+    *                                     $ref: '#components/schemas/RefundData'
     *                              message:
     *                                  type: string
     *          400:
