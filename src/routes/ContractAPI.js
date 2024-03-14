@@ -321,7 +321,7 @@ const ContractRouter = (app) => {
      *                            messageError:
      *                                type: string 
      */
-  router.get("/:id", verifyToken, isCurrentUserOrAdmin, contractService.getContractById);
+  router.get("/:id", verifyToken, contractService.getContractById);
 
   /**
   * @swagger
