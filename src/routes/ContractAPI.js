@@ -1,6 +1,6 @@
 import express from "express";
 import { contractService } from "../controller/ContractController";
-import { isAdmin, isClient, isCurrentUser, isCurrentUserOrAdmin, verifyToken } from "../middleware/authen";
+import { isAdmin, isClient, verifyToken } from "../middleware/authen";
 
 const router = express.Router();
 
