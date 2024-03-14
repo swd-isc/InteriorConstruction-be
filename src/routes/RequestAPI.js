@@ -24,8 +24,6 @@ const router = express.Router();
 *              properties:
 *                  id:
 *                      type: string
-*                  refundAmount:
-*                      type: number
 *                  clientId:
 *                      type: object
 *                      properties:
@@ -36,7 +34,12 @@ const router = express.Router();
 *                         lastName:
 *                           type: string
 *                  contractId:
-*                      type: string
+*                      type: object
+*                      properties:
+*                          _id:
+*                             type: string
+*                           contractPrice:
+*                             type: number
 *                  date:
 *                      type: string
 *                  status:
