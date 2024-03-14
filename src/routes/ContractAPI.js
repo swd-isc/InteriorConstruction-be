@@ -33,17 +33,6 @@ const router = express.Router();
  *                        type: string
  *                  _id:
  *                    type: string
- *                  furnitures:
- *                    type: array
- *                    items:
- *                      type: object
- *                      properties:
- *                        furnitureId:
- *                          type: string
- *                        quantity:
- *                          type: number
- *                        name:
- *                          type: string
  *                  designs:
  *                    type: array
  *                    items:
@@ -62,10 +51,19 @@ const router = express.Router();
  *                            properties:
  *                              furnitureId:
  *                                type: string
- *                              quantity:
- *                                type: number
  *                              name:
  *                                type: string
+ *                  furnitures:
+ *                    type: array
+ *                    items:
+ *                      type: object
+ *                      properties:
+ *                        furnitureId:
+ *                          type: string
+ *                        quantity:
+ *                          type: number
+ *                        name:
+ *                          type: string
  *                  contractPrice:
  *                      type: number
  *                  status:
