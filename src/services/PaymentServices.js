@@ -357,12 +357,12 @@ export const paymentService = {
     const vnp_Version = "2.1.0";
     const vnp_Command = "refund";
     const vnp_OrderInfo = "Refund order: " + vnp_TxnRef;
-    // const vnp_IpAddr =
-    //   req.headers["x-forwarded-for"] ||
-    //   req.connection.remoteAddress ||
-    //   req.socket.remoteAddress ||
-    //   req.connection.socket.remoteAddress;
-    const vnp_IpAddr = "127.0.0.1";
+    const vnp_IpAddr =
+      req.headers["x-forwarded-for"] ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress ||
+      req.connection.socket.remoteAddress;
+    // const vnp_IpAddr = "127.0.0.1";
 
     const vnp_CreateDate = moment(adjustedDate).format("YYYYMMDDHHmmss");
 
