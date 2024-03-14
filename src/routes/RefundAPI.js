@@ -32,6 +32,38 @@ const router = express.Router();
 *                      type: string
 *                  contractId:
 *                      type: string
+*          RefundData:
+*              type: object
+*              properties:
+*                  _id:
+*                      type: string
+*                  vnp_TxnRef:
+*                      type: string
+*                  vnp_Amount:
+*                      type: number
+*                  vnp_OrderInfo:
+*                      type: string
+*                  vnp_BankCode:
+*                      type: string
+*                  vnp_PayDate:
+*                      type: string
+*                  vnp_TransactionNo:
+*                      type: string
+*                  vnp_TransactionType:
+*                      type: string
+*                  vnp_TransactionStatus:
+*                      type: string
+*                  clientId:
+*                      type: object
+*                      properties:
+*                         _id:
+*                           type: string
+*                         firstName:
+*                           type: string
+*                         lastName:
+*                           type: string
+*                  contractId:
+*                      type: string
 */
 
 const RefundRouter = (app) => {
@@ -148,7 +180,7 @@ const RefundRouter = (app) => {
    *                              status:
    *                                  type: number
    *                              data:
-   *                                  $ref: '#components/schemas/Refund'
+   *                                  $ref: '#components/schemas/RefundData'
    *                              message:
    *                                  type: string
    *          400:
