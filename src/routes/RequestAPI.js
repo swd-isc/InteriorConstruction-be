@@ -38,7 +38,7 @@ const router = express.Router();
 *                      properties:
 *                          _id:
 *                             type: string
-*                           contractPrice:
+*                          contractPrice:
 *                             type: number
 *                  date:
 *                      type: string
