@@ -16,10 +16,12 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.find().populate({
-        path: "clientId",
-        select: "firstName lastName",
-      });
+      const data = await Request.find()
+        .populate({
+          path: "clientId",
+          select: "firstName lastName",
+        })
+        .populate({ path: "contractId", select: "contractPrice" });
 
       return {
         status: 200,
@@ -47,8 +49,11 @@ export const requestRepository = {
       });
 
       const data = await Request.find({ clientId: clientId })
-        .populate("clientId")
-        .populate("contractId");
+        .populate({
+          path: "clientId",
+          select: "firstName lastName",
+        })
+        .populate({ path: "contractId", select: "contractPrice" });
 
       return {
         status: 200,
@@ -76,8 +81,11 @@ export const requestRepository = {
       });
 
       const data = await Request.findById(id)
-        .populate("clientId")
-        .populate("contractId");
+        .populate({
+          path: "clientId",
+          select: "firstName lastName",
+        })
+        .populate({ path: "contractId", select: "contractPrice" });
 
       return {
         status: 200,
