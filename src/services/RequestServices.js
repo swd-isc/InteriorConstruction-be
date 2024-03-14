@@ -169,14 +169,26 @@ export const requestRepository = {
         if (reqStatus === "ACCEPT") {
           console.log('ACCEPT');
 
+          data = await Request.findById(requestId).populate({
+            path: 'contractId',
+            populate: {
+              path: 'orderId',
+            }
+          });
+
           const reqRefund = {
-            orderId: data.contractId.orderId._id,
-            transDate: data.contractId.orderId.vnp_PayDate,
-            amount: data.contractId.orderId.vnp_Amount,
-            transType: "02", //Hoàn toàn phần
-            user: "Admin",
-            contractId: data.contractId._id
+            body: {
+              vnp_TxnRef: data.contractId.orderId._id,
+              transDate: data.contractId.orderId.vnp_PayDate,
+              amount: data.contractId.orderId.vnp_Amount,
+              transType: "02", //Hoàn toàn phần
+              user: "Admin",
+              contractId: data.contractId._id
+            }
           }
+
+          console.log(reqRefund)
+
           const res = await paymentService.refund(reqRefund)
 
           if (res.status == 400) return res;

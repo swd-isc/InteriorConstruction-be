@@ -339,10 +339,16 @@ export const contractRepository = {
           if (res.status == 400) {
             return res;
           } else {
+            const url = process.env.URL_DB;
+            await mongoose.connect(url, {
+              family: 4,
+              dbName: "interiorConstruction",
+            });
+
             const request = await Request.find({ contractId: contract._id });
-            if (request) {
-              request.status = "ACCEPT";
-              await request.save();
+            if (request.length != 0) {
+              request[0].status = "ACCEPT";
+              await request[0].save();
             }
           }
         }
