@@ -17,8 +17,8 @@ export const requestRepository = {
       });
 
       const data = await Request.find().populate({
-        path: 'clientId',
-        select: 'firstName lastName'
+        path: "clientId",
+        select: "firstName lastName",
       });
 
       return {
@@ -46,7 +46,9 @@ export const requestRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.find({ "clientId": clientId }).populate('clientId').populate('contractId');
+      const data = await Request.find({ clientId: clientId })
+        .populate("clientId")
+        .populate("contractId");
 
       return {
         status: 200,
@@ -67,14 +69,15 @@ export const requestRepository = {
 
   getRequestById: async (id) => {
     try {
-
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
         dbName: "interiorConstruction",
       });
 
-      const data = await Request.findById(id).populate('clientId').populate('contractId');
+      const data = await Request.findById(id)
+        .populate("clientId")
+        .populate("contractId");
 
       return {
         status: 200,
@@ -93,8 +96,6 @@ export const requestRepository = {
     }
   },
 
-
-
   createRequest: async (reqBody) => {
     try {
       let data = [];
@@ -106,17 +107,22 @@ export const requestRepository = {
 
       const date = new Date();
       const timezoneOffsetMinutes = 7 * 60; // UTC+7
-      const adjustedDate = new Date(date.getTime() + timezoneOffsetMinutes * 60000);
-      const createDate = moment(adjustedDate).format('YYYYMMDDHHmmss');
+      const adjustedDate = new Date(
+        date.getTime() + timezoneOffsetMinutes * 60000
+      );
+      const createDate = moment(adjustedDate).format("YYYYMMDDHHmmss");
 
       const requestBody = {
         clientId: reqBody.clientId,
         contractId: reqBody.contractId,
         status: "DEFAULT",
-        date: createDate
-      }
+        date: createDate,
+      };
 
-      const isExist = await Request.find({ clientId: reqBody.clientId, contractId: reqBody.contractId });
+      const isExist = await Request.find({
+        clientId: reqBody.clientId,
+        contractId: reqBody.contractId,
+      });
       if (isExist.length > 0) {
         return {
           status: 400,
@@ -167,13 +173,11 @@ export const requestRepository = {
       const reqStatus = reqBody.status;
       try {
         if (reqStatus === "ACCEPT") {
-          console.log('ACCEPT');
-
           data = await Request.findById(requestId).populate({
-            path: 'contractId',
+            path: "contractId",
             populate: {
-              path: 'orderId',
-            }
+              path: "orderId",
+            },
           });
 
           const reqRefund = {
@@ -183,13 +187,11 @@ export const requestRepository = {
               amount: data.contractId.orderId.vnp_Amount,
               transType: "02", //Hoàn toàn phần
               user: "Admin",
-              contractId: data.contractId._id
-            }
-          }
+              contractId: data.contractId._id,
+            },
+          };
 
-          console.log(reqRefund)
-
-          const res = await paymentService.refund(reqRefund)
+          const res = await paymentService.refund(reqRefund);
 
           if (res.status == 400) return res;
 
@@ -203,10 +205,10 @@ export const requestRepository = {
             runValidators: true,
             new: true,
           }).populate({
-            path: 'contractId',
+            path: "contractId",
             populate: {
-              path: 'orderId',
-            }
+              path: "orderId",
+            },
           });
 
           const contractData = await Contract.findById(data.contractId._id);
@@ -221,10 +223,10 @@ export const requestRepository = {
             runValidators: true,
             new: true,
           }).populate({
-            path: 'contractId',
+            path: "contractId",
             populate: {
-              path: 'orderId',
-            }
+              path: "orderId",
+            },
           });
         }
       } catch (error) {
