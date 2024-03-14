@@ -12,7 +12,7 @@ export const requestService = {
   },
 
   getRequestsByClientId: async (req, res) => {
-    let data = await requestRepository.getRequests(req.params.id);
+    let data = await requestRepository.getRequestsByClientId(req.params.id);
     return res.status(data.status).json(data);
   },
 

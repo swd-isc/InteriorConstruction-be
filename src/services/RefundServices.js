@@ -14,7 +14,34 @@ export const refundRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Refund.find().populate('clientId').populate('contractId');
+      const data = await Refund.find();
+
+      return {
+        status: 200,
+        data: data,
+        message: data.length !== 0 ? "OK" : "No data",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 400,
+        messageError: error.toString(),
+      };
+    } finally {
+      // Close the database connection
+      mongoose.connection.close();
+    }
+  },
+
+  getRefundsByClientId: async (user) => {
+    try {
+      const url = process.env.URL_DB;
+      await mongoose.connect(url, {
+        family: 4,
+        dbName: "interiorConstruction",
+      });
+
+      const data = await Refund.find({clientId: user._id});
 
       return {
         status: 200,
@@ -42,7 +69,7 @@ export const refundRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Refund.findById(id).populate('clientId').populate('contractId');
+      const data = await Refund.findById(id);
 
       return {
         status: 200,
