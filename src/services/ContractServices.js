@@ -217,7 +217,7 @@ export const contractRepository = {
 
         createObj.furnitures = furnitures;
       }
-      
+
       //designs
       if (reqBody.designs && reqBody.designs.length != 0) {
         const designs = [];
@@ -245,7 +245,6 @@ export const contractRepository = {
         createObj.designs = designs;
       }
 
-
       //status
       createObj.status = "UNPAID";
 
@@ -253,14 +252,21 @@ export const contractRepository = {
       createObj.contractPrice = reqBody.contractPrice;
 
       //date
-      createObj.date = moment().format("DD/MM/YYYY HH:mm:ss").toString();
+      // createObj.date = moment().format("DD/MM/YYYY HH:mm:ss").toString();
+      const date = new Date();
+      const timezoneOffsetMinutes = 7 * 60; // UTC+7
+      const adjustedDate = new Date(
+        date.getTime() + timezoneOffsetMinutes * 60000
+      );
+      const createDate = moment(adjustedDate).format("YYYYMMDDHHmmss");
+
+      createObj.date = createDate;
 
       const contract = new Contract(createObj);
 
+
       try {
         data = await contract.save();
-
-        console.log(data._id);
 
         // Retrieve the client using the client ID from the contract request body
         const client = await Client.findById(reqBody.clientId);
