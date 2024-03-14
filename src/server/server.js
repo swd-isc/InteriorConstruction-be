@@ -29,6 +29,7 @@ import { OrderRouter } from "../routes/OrderAPI";
 import { requestRepository } from "../services/RequestServices";
 import { RequestRouter } from "../routes/RequestAPI";
 import { contractRepository } from "../services/ContractServices";
+import { RefundRouter } from "../routes/RefundAPI";
 
 const app = express();
 
@@ -123,6 +124,8 @@ OrderRouter(app);
 AuthenRouter(app);
 
 RequestRouter(app);
+
+RefundRouter(app);
 
 app.get("/", (req, res) => {
   res.end(`Hello kiet`);
