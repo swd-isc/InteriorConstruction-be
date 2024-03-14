@@ -495,7 +495,7 @@ export const paymentService = {
             vnp_TransactionType: transactionType,
             vnp_TransactionStatus: transactionStatus,
             contractId: contract._id,
-            clientId: contract.clientId,
+            clientId: contract.client.clientId,
           });
 
           let data = await refund.save();
