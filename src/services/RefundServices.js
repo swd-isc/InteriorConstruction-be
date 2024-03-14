@@ -41,7 +41,7 @@ export const refundRepository = {
         dbName: "interiorConstruction",
       });
 
-      const data = await Refund.find({clientId: user._id});
+      const data = await Refund.find({ clientId: user._id });
 
       return {
         status: 200,
@@ -60,16 +60,28 @@ export const refundRepository = {
     }
   },
 
-  getRefundById: async (id) => {
+  getRefundById: async (id, user) => {
     try {
-
       const url = process.env.URL_DB;
       await mongoose.connect(url, {
         family: 4,
         dbName: "interiorConstruction",
       });
 
-      const data = await Refund.findById(id);
+      const data = await Refund.findById(id).populate({
+        path: "clientId",
+        select: "firstName lastName",
+      });
+
+      if (user.accountId.role != "ADMIN") {
+        if (data.clientId._id.toString() != user._id.toString()) {
+          return {
+            status: 403,
+            data: {},
+            messageError: "You dont have access",
+          };
+        }
+      }
 
       return {
         status: 200,
