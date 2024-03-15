@@ -25,27 +25,30 @@ export const clientRepository = {
       });
 
       // Count all documents in the collection
-      const totalDocuments = (await Account.countDocuments({
-        logInMethod: "DEFAULT",
-        role: "CLIENT"
-      })) - 1;
+      const totalDocuments =
+        (await Account.countDocuments({
+          logInMethod: "DEFAULT",
+          role: "CLIENT",
+        })) - 1;
 
       // Calculate total pages
       const totalPages = Math.ceil(totalDocuments / itemsPerPage);
-
-      // data.clients = await Client.find().skip(startIndex).limit(itemsPerPage);
 
       data.clients = await Client.find()
         .skip(startIndex)
         .limit(itemsPerPage)
         .populate({
           path: "accountId",
-          select: "_id email role status", // Select only the fields you need
+          select: "_id email role status logInMethod", // Select only the fields you need
         })
         .populate({
           path: "contracts",
           select: "-clientId", // Select the desired fields from the contract document
         });
+
+      data.clients = data.clients.filter(
+        (client) => client.accountId.role == "CLIENT"
+      );
 
       data.page = page;
       data.totalPages = totalPages;
@@ -85,9 +88,12 @@ export const clientRepository = {
         dbName: "interiorConstruction",
       });
 
-      let data = {}
-      console.log('check usId', currentUser.id.toString());
-      if (currentUser.accountId.role !== "ADMIN" || id === currentUser.id.toString()) {
+      let data = {};
+      console.log("check usId", currentUser.id.toString());
+      if (
+        currentUser.accountId.role !== "ADMIN" ||
+        id === currentUser.id.toString()
+      ) {
         data = await Client.findById(id)
           .populate({
             path: "accountId",
@@ -98,11 +104,11 @@ export const clientRepository = {
             select: "-clientId", // Select the desired fields from the contract document
           });
       } else {
-        console.log('vo day r');
+        console.log("vo day r");
         data = await Client.find({ _id: id })
           .populate({
             path: "accountId",
-            match: { role: 'CLIENT' },
+            match: { role: "CLIENT" },
             select: "-_id email role status", // Select only the fields you need
           })
           .populate({
